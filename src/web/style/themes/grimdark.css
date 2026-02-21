@@ -1,0 +1,136 @@
+/* Grimdark Theme — Gothic, oppressive, heavy
+   Fonts: Cinzel (headings), Source Serif 4 (body), IBM Plex Mono (mono) */
+
+:root[data-theme="grimdark"] {
+  /* Fonts — Roman-inscribed headings with a sturdy serif body */
+  --DEFAULT-FONT: "Source Serif 4", serif;
+  --DEFAULT-MONO-FONT: "IBM Plex Mono", monospace;
+  --HEADING-FONT: "Cinzel", serif;
+  --HEADING-LETTER-SPACING: 0.06em;
+  --HEADING-TEXT-TRANSFORM: uppercase;
+
+  /* Canvas */
+  --C-CANVAS: #000000;
+
+  /* Brand */
+  --C-PRIMARY: #1a1a1a;
+  --C-PRIMARY-HOVER: #0d0d0d;
+  --C-PRIMARY-ACTIVE: #2a2a2a;
+  --C-SECONDARY: #3a3a3a;
+  --C-SECONDARY-HOVER: #4a4a4a;
+  --C-ACCENT: #b91c1c;
+  --C-ACCENT-HOVER: #991b1b;
+
+  /* Surface — charcoal and ash */
+  --C-SURFACE-0: #0f0f0f;
+  --C-SURFACE-1: #171717;
+  --C-SURFACE-2: #1f1f1f;
+  --C-SURFACE-3: #2a2a2a;
+
+  /* Text — parchment on dark */
+  --C-TEXT-PRIMARY: #d4c5a9;
+  --C-TEXT-SECONDARY: #9a8e78;
+  --C-TEXT-MUTED: #5c5546;
+  --C-TEXT-INVERSE: #0f0f0f;
+  --C-TEXT-ON-PRIMARY: #d4c5a9;
+  --C-TEXT-ON-ACCENT: #d4c5a9;
+
+  /* Border — iron and rust */
+  --C-BORDER-DEFAULT: #2e2a24;
+  --C-BORDER-STRONG: #443d33;
+  --C-BORDER-FOCUS: #b91c1c;
+
+  /* Status */
+  --C-STATUS-ERROR: #ef4444;
+  --C-STATUS-ERROR-BG: #2a1515;
+  --C-STATUS-SUCCESS: #22c55e;
+  --C-STATUS-SUCCESS-BG: #152a17;
+  --C-STATUS-WARNING: #eab308;
+  --C-STATUS-WARNING-BG: #2a2515;
+  --C-STATUS-INFO: #6b7280;
+  --C-STATUS-INFO-BG: #1a1c20;
+
+  /* Radius — sharp, brutal, no rounding */
+  --RADIUS-SM: 0px;
+  --RADIUS-MD: 0px;
+  --RADIUS-LG: 2px;
+  --RADIUS-XL: 2px;
+
+  /* Shadows — deep voids, inky black */
+  --SHADOW-SM: 0 1px 3px 0 rgb(0 0 0 / 0.4);
+  --SHADOW-MD: 0 4px 8px -1px rgb(0 0 0 / 0.6), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+  --SHADOW-LG: 0 12px 24px -4px rgb(0 0 0 / 0.7), 0 4px 8px -4px rgb(0 0 0 / 0.5);
+
+  /* Typography — heavy, authoritative */
+  --Bold-Weight: 900;
+  --Semibold-Weight: 700;
+
+  --BodyText-1-line-height: 28px;
+  --BodyText-2-line-height: 22px;
+
+  /* Page transitions */
+  --MOTION-PAGE-TRANSITION-IN: grimdark-page-in;
+  --MOTION-PAGE-TRANSITION-OUT: grimdark-page-out;
+
+  /* Motion — slow, weighty, deliberate */
+  --MOTION-DURATION-ENTER: 500ms;
+  --MOTION-DURATION-EXIT: 350ms;
+  --MOTION-DURATION-SHIFT: 600ms;
+  --MOTION-DURATION-PAGE: 500ms;
+  --MOTION-EASE-PAGE: cubic-bezier(0.77, 0.16, 0.2, 0.77);
+  --MOTION-EASE-ENTER: cubic-bezier(0.16, 1, 0.3, 1);
+  --MOTION-EASE-EXIT: cubic-bezier(0.7, 0, 1, 0.5);
+  --MOTION-EASE-SHIFT: cubic-bezier(0.25, 1, 0.5, 1);
+  --MOTION-EASE-BOUNCE: cubic-bezier(0.22, 1.1, 0.5, 1);
+  --MOTION-DISTANCE-SM: 6px;
+  --MOTION-DISTANCE-MD: 16px;
+  --MOTION-DISTANCE-LG: 32px;
+  --MOTION-STAGGER-DELAY: 80ms;
+  --MOTION-SCALE-HOVER: 1.02;
+  --MOTION-SCALE-PRESS: 0.98;
+
+  --MOTION-PAGE-NEW-ANIMATION-FILL-MODE: backwards;
+  --MOTION-PAGE-OLD-ANIMATION-FILL-MODE: forwards;
+
+  /* Overlay — oppressively dark */
+  --OVERLAY-SCRIM-COLOR: rgb(0 0 0 / 0.8);
+  --OVERLAY-GRADIENT-START: rgb(0 0 0 / 0);
+  --OVERLAY-GRADIENT-END: rgb(0 0 0 / 0.9);
+  --OVERLAY-BLUR: 4px;
+  --OVERLAY-BLUR-HEAVY: 12px;
+
+  /* Media */
+  --MEDIA-CARD-HOVER-SCALE: 1.02;
+  --MEDIA-CARD-HOVER-LIFT: -2px;
+
+  /* Transitions */
+  --DURATION-FAST: 150ms;
+  --DURATION-NORMAL: 300ms;
+  --DURATION-SLOW: 500ms;
+}
+
+@keyframes grimdark-page-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.98);
+    filter: brightness(0.6);
+  }
+}
+
+@keyframes grimdark-page-in {
+  from {
+    opacity: 0;
+    transform: scale(1.02);
+    filter: brightness(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}

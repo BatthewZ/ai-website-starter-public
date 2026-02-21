@@ -1,0 +1,129 @@
+/* Events Theme — Warm, editorial, celebratory
+   Fonts: Playfair Display (headings), Nunito (body), Fira Code (mono) */
+
+:root[data-theme="events"] {
+  /* Fonts — elegant serif headings with a warm, rounded body */
+  --DEFAULT-FONT: "Nunito", sans-serif;
+  --DEFAULT-MONO-FONT: "Fira Code", monospace;
+  --HEADING-FONT: "Playfair Display", serif;
+  --HEADING-LETTER-SPACING: -0.02em;
+  --HEADING-TEXT-TRANSFORM: none;
+
+  /* Canvas */
+  --C-CANVAS: #fffbf5;
+
+  /* Brand */
+  --C-PRIMARY: #7c3aed;
+  --C-PRIMARY-HOVER: #6d28d9;
+  --C-PRIMARY-ACTIVE: #8b5cf6;
+  --C-SECONDARY: #fde68a;
+  --C-SECONDARY-HOVER: #fcd34d;
+  --C-ACCENT: #f97316;
+  --C-ACCENT-HOVER: #ea580c;
+
+  /* Surface — warm cream and peach tones */
+  --C-SURFACE-0: #fffbf5;
+  --C-SURFACE-1: #fef7ed;
+  --C-SURFACE-2: #fff1e0;
+  --C-SURFACE-3: #fde5c8;
+
+  /* Text */
+  --C-TEXT-PRIMARY: #1c1917;
+  --C-TEXT-SECONDARY: #57534e;
+  --C-TEXT-MUTED: #a8a29e;
+  --C-TEXT-INVERSE: #ffffff;
+  --C-TEXT-ON-PRIMARY: #ffffff;
+  --C-TEXT-ON-ACCENT: #ffffff;
+
+  /* Border */
+  --C-BORDER-DEFAULT: #e7e5e4;
+  --C-BORDER-STRONG: #d6d3d1;
+  --C-BORDER-FOCUS: #f97316;
+
+  /* Status */
+  --C-STATUS-ERROR: #dc2626;
+  --C-STATUS-ERROR-BG: #fef2f2;
+  --C-STATUS-SUCCESS: #16a34a;
+  --C-STATUS-SUCCESS-BG: #f0fdf4;
+  --C-STATUS-WARNING: #d97706;
+  --C-STATUS-WARNING-BG: #fffbeb;
+  --C-STATUS-INFO: #7c3aed;
+  --C-STATUS-INFO-BG: #f5f3ff;
+
+  /* Radius — large and rounded for a playful feel */
+  --RADIUS-SM: 8px;
+  --RADIUS-MD: 14px;
+  --RADIUS-LG: 20px;
+  --RADIUS-XL: 28px;
+
+  /* Shadows — warmer tones */
+  --SHADOW-SM: 0 1px 3px 0 rgb(124 58 237 / 0.06);
+  --SHADOW-MD: 0 4px 8px -1px rgb(124 58 237 / 0.1), 0 2px 4px -2px rgb(249 115 22 / 0.06);
+  --SHADOW-LG: 0 12px 20px -4px rgb(124 58 237 / 0.12), 0 4px 8px -4px rgb(249 115 22 / 0.08);
+
+  /* Typography — editorial sizing with generous line-heights */
+  --Bold-Weight: 800;
+  --Semibold-Weight: 600;
+
+  --BodyText-1-line-height: 32px;
+  --BodyText-2-line-height: 26px;
+
+  /* Page transitions */
+  --MOTION-PAGE-TRANSITION-IN: events-page-in;
+  --MOTION-PAGE-TRANSITION-OUT: events-page-out;
+
+  /* Motion — smooth, elegant */
+  --MOTION-DURATION-ENTER: 380ms;
+  --MOTION-DURATION-EXIT: 220ms;
+  --MOTION-DURATION-SHIFT: 500ms;
+  --MOTION-DURATION-PAGE: 450ms;
+  --MOTION-EASE-PAGE: cubic-bezier(0.21, 0.45, 0.14, 0.98);
+  --MOTION-EASE-ENTER: cubic-bezier(0.23, 1, 0.32, 1);
+  --MOTION-EASE-EXIT: cubic-bezier(0.55, 0, 1, 0.45);
+  --MOTION-EASE-SHIFT: cubic-bezier(0.25, 1, 0.5, 1);
+  --MOTION-EASE-BOUNCE: cubic-bezier(0.16, 1, 0.3, 1);
+  --MOTION-DISTANCE-SM: 10px;
+  --MOTION-DISTANCE-MD: 24px;
+  --MOTION-DISTANCE-LG: 48px;
+  --MOTION-STAGGER-DELAY: 60ms;
+  --MOTION-SCALE-HOVER: 1.03;
+  --MOTION-SCALE-PRESS: 0.97;
+
+  /* Overlay */
+  --OVERLAY-SCRIM-COLOR: rgb(28 25 23 / 0.45);
+  --OVERLAY-GRADIENT-START: rgb(28 25 23 / 0);
+  --OVERLAY-GRADIENT-END: rgb(28 25 23 / 0.65);
+  --OVERLAY-BLUR: 10px;
+  --OVERLAY-BLUR-HEAVY: 24px;
+
+  /* Media */
+  --MEDIA-CARD-HOVER-SCALE: 1.03;
+  --MEDIA-CARD-HOVER-LIFT: -4px;
+
+  /* Transitions */
+  --DURATION-FAST: 120ms;
+  --DURATION-NORMAL: 220ms;
+  --DURATION-SLOW: 350ms;
+}
+
+@keyframes events-page-in {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes events-page-out {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
