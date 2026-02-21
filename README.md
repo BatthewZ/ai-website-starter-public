@@ -1,3 +1,7 @@
+# Purpose
+
+I didn't want to keep wasting time and tokens having agents constantly rebuild components or auth for new projects. I wanted to make something modular and easy to theme for reuse in future, set up with all of the AI tooling that I'm currently using, and with docs and AGENTS.md ready to go.
+
 # AI Site Starter
 
 A full-stack website starter built on Cloudflare Workers. Hono API + React SPA served from a single Worker, with Better Auth (email/password), Drizzle ORM on D1 SQLite, a token-driven design system, and an AI agentic workflow powered by [swarm-cli](https://github.com/mj1618/swarm-cli).
@@ -52,6 +56,8 @@ bun run db:migrate:local
 # Start the dev server
 bun run dev
 ```
+
+AFter cloning, don't forget to delete your .git file and do a new `git init`.
 
 The app runs at `http://localhost:8787` or `http://localhost:5173` for hot module reloading.
 
