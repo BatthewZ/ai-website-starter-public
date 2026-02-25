@@ -364,7 +364,7 @@ export function Showcase() {
         {/* ------------------------------------------------------------ */}
         <div className="sticky top-0 z-50 py-r5">
           <Container size="xl">
-            <Card padding="r4" className="bg-surface-0/80 backdrop-blur-md">
+            <Card padding="r4" className="bg-surface-0/80 backdrop-blur-md flex justify-center">
               <ThemeSwitcher />
             </Card>
           </Container>
@@ -687,10 +687,17 @@ export function Showcase() {
                 Don't just take our word for it.
               </Text>
               <Carousel>
-                <Carousel.Track className="py-2">
+                <Carousel.Track
+                  className="py-2"
+                  style={
+                    {
+                      "--carousel-item-width": "min(calc(100vw - 6rem), 28rem)",
+                    } as React.CSSProperties
+                  }
+                >
                   {TESTIMONIALS.map((t) => (
                     <Carousel.Item key={t.name}>
-                      <Card padding="r3" className="min-w-75">
+                      <Card padding="r3">
                         <Stack gap="r4">
                           <Text variant="body-1" color="secondary" className="italic">
                             &ldquo;{t.quote}&rdquo;

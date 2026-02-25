@@ -131,7 +131,7 @@ export function Demo() {
         <Stack gap="r2" className="py-r2">
           {/* ── Theme Switcher ── */}
           <div className="sticky top-0 z-50">
-            <Card padding="r4" className="bg-surface-0/80 backdrop-blur-md">
+            <Card padding="r4" className="bg-surface-0/80 backdrop-blur-md flex justify-center">
               <ThemeSwitcher />
             </Card>
           </div>
