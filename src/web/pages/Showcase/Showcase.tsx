@@ -1,4 +1,17 @@
-import { Award, Briefcase, Code2, Film, Heart, Palette, Users } from "lucide-react";
+import {
+  Award,
+  Briefcase,
+  Check,
+  ChevronRight,
+  Code2,
+  Film,
+  Heart,
+  Menu,
+  Palette,
+  Users,
+  X,
+} from "lucide-react";
+import { useState } from "react";
 
 import { Parallax, ScrollReveal, Stagger, useViewTransition } from "@/web/components/animation";
 import { Container, Row, Stack } from "@/web/components/layout";
@@ -10,7 +23,9 @@ import {
   Button,
   Card,
   Carousel,
+  Dialog,
   Hero,
+  IconButton,
   MasonryGrid,
   MediaCard,
   ProgressBar,
@@ -23,6 +38,7 @@ import {
   Timeline,
 } from "@/web/components/ui";
 import { useDocumentTitle } from "@/web/hooks/use-document-title";
+import { useTheme } from "@/web/hooks/use-theme";
 
 /* ------------------------------------------------------------------ */
 /*  Constants                                                          */
@@ -311,6 +327,13 @@ const EXPERTISE_TABS = [
   { value: "strategy", label: "Strategy" },
 ];
 
+const THEME_LABELS: Record<string, string> = {
+  default: "Default",
+  events: "Events",
+  grimdark: "Grimdark",
+  tech: "Tech",
+};
+
 /* ------------------------------------------------------------------ */
 /*  Showcase page                                                      */
 /* ------------------------------------------------------------------ */
@@ -318,6 +341,8 @@ const EXPERTISE_TABS = [
 export function Showcase() {
   useDocumentTitle("Showcase");
   const navigateWithTransition = useViewTransition();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const { theme, setTheme, themes } = useTheme();
 
   return (
     <>
@@ -326,19 +351,85 @@ export function Showcase() {
       {/* ------------------------------------------------------------ */}
       <header className="sticky top-0 z-50 bg-surface-0/90 backdrop-blur-md border-b border-border-default">
         <Container size="xl">
-          <Row justify="between" className="py-r5">
+          <Row justify="between" wrap className="py-r5">
             <Text variant="h4" weight="bold" as="span">
-              Horizon
+              Showcase
             </Text>
-            <Row gap="r4">
+
+            {/* Desktop nav */}
+            <Row gap="r4" className="hidden sm:flex">
               <ThemeSwitcher />
               <Button variant="ghost" size="sm" onClick={() => navigateWithTransition("/demo")}>
                 Component Demo
               </Button>
             </Row>
+
+            {/* Mobile burger trigger */}
+            <IconButton
+              aria-label="Open menu"
+              className="sm:hidden"
+              onClick={() => setMenuOpen(true)}
+            >
+              <Menu size={20} />
+            </IconButton>
           </Row>
         </Container>
       </header>
+
+      {/* Mobile drawer */}
+      <Dialog
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        onClick={(e) => e.target === e.currentTarget && setMenuOpen(false)}
+        className="absolute bg-surface-0 shadow-xl p-r3 inset-y-0 right-0 animate-morph-expand max-w-75"
+      >
+        <Stack gap="r4">
+          <IconButton
+            aria-label="Close menu"
+            className="self-end"
+            onClick={() => setMenuOpen(false)}
+          >
+            <X size={20} />
+          </IconButton>
+
+          {/* Theme section */}
+          <Text
+            variant="body-3"
+            color="muted"
+            weight="semibold"
+            className="uppercase tracking-wider px-r5"
+          >
+            Theme
+          </Text>
+          <Stack gap="r6">
+            {themes.map((t) => (
+              <button
+                key={t}
+                onClick={() => setTheme(t)}
+                className="flex items-center justify-between w-full px-r4 py-r5 rounded-md text-body-2 text-fg-primary hover:bg-surface-2 transition-colors"
+              >
+                <span>{THEME_LABELS[t] ?? t}</span>
+                {theme === t && <Check size={16} className="text-accent" />}
+              </button>
+            ))}
+          </Stack>
+
+          {/* Divider */}
+          <div className="border-t border-border-default" />
+
+          {/* Nav link */}
+          <button
+            onClick={() => {
+              setMenuOpen(false);
+              navigateWithTransition("/demo");
+            }}
+            className="flex items-center justify-between w-full px-r4 py-r5 rounded-md text-body-2 text-fg-primary hover:bg-surface-2 transition-colors"
+          >
+            <span>Component Demo</span>
+            <ChevronRight size={16} className="text-fg-muted" />
+          </button>
+        </Stack>
+      </Dialog>
 
       {/* ------------------------------------------------------------ */}
       {/*  2. Hero (full viewport)                                      */}
@@ -411,7 +502,7 @@ export function Showcase() {
                   <Tabs.Panel key={tab.value} value={tab.value}>
                     <Stagger className="grid grid-cols-1 md:grid-cols-3 gap-r4 mt-r4">
                       {SERVICES[tab.value as keyof typeof SERVICES].map((s) => (
-                        <Card key={s.title} padding="r3">
+                        <Card key={s.title} padding="r3" className="h-full">
                           <Stack gap="r5">
                             <div
                               className="h-2 w-12 rounded-full"
@@ -444,7 +535,7 @@ export function Showcase() {
             viewAllHref="#"
           >
             <Carousel>
-              <Carousel.Track>
+              <Carousel.Track className="py-2">
                 {FEATURED_WORKS.map((w) => (
                   <Carousel.Item key={w.title}>
                     <MediaCard orientation="landscape">
@@ -455,10 +546,10 @@ export function Showcase() {
                       />
                       <MediaCard.Overlay />
                       <MediaCard.Content>
-                        <Text variant="h5" color="inverse" weight="semibold">
+                        <Text variant="h5" weight="semibold">
                           {w.title}
                         </Text>
-                        <Text variant="body-3" color="inverse" className="opacity-80">
+                        <Text variant="body-3" className="opacity-80">
                           {w.category}
                         </Text>
                       </MediaCard.Content>
@@ -497,7 +588,7 @@ export function Showcase() {
                     />
                     <MediaCard.Overlay />
                     <MediaCard.Content>
-                      <Text variant="body-2" color="inverse" weight="semibold">
+                      <Text variant="body-2" weight="semibold">
                         {item.title}
                       </Text>
                     </MediaCard.Content>
@@ -680,7 +771,7 @@ export function Showcase() {
               Don't just take our word for it.
             </Text>
             <Carousel>
-              <Carousel.Track>
+              <Carousel.Track className="py-2">
                 {TESTIMONIALS.map((t) => (
                   <Carousel.Item key={t.name}>
                     <Card padding="r3" className="min-w-75">

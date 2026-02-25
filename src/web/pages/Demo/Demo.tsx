@@ -106,7 +106,7 @@ export function Demo() {
           }}
         />
         <Hero.Content animate animation="fade-up">
-          <Row justify="between" align="center" className="w-full">
+          <Row justify="between" align="center" className="w-full flex-wrap">
             <Text variant="h1" color="on-primary">
               Component Library
             </Text>
@@ -122,7 +122,7 @@ export function Demo() {
             </Row>
           </Row>
           <Text variant="body-1" color="on-primary">
-            A showcase of every UI, display, and interactive component.
+            A showcase of UI Primitives for the project
           </Text>
         </Hero.Content>
       </Hero>
@@ -130,9 +130,11 @@ export function Demo() {
       <Container size="xl">
         <Stack gap="r2" className="py-r2">
           {/* ── Theme Switcher ── */}
-          <Card padding="r4">
-            <ThemeSwitcher />
-          </Card>
+          <div className="sticky top-0 z-50">
+            <Card padding="r4">
+              <ThemeSwitcher />
+            </Card>
+          </div>
 
           {/* ── Typography ── */}
           <Section title="Typography">
@@ -1085,7 +1087,7 @@ export function Demo() {
           <Section title="Swimlane">
             <Swimlane title="Trending Now" subtitle="Most popular items this week" viewAllHref="#">
               {Array.from({ length: 6 }, (_, i) => (
-                <Card key={i} padding="r4" className="min-w-44">
+                <Card key={i} padding="r4" className="min-w-44 not-first:mt-r4">
                   <Stack gap="r5">
                     <div
                       className="h-20 rounded-md"

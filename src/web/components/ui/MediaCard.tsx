@@ -89,7 +89,7 @@ const MediaCardContent = forwardRef<HTMLDivElement, MediaCardContentProps>(
     return (
       <div
         ref={ref}
-        className={cn("absolute inset-x-0 bottom-0 p-r3 text-fg-inverse", className)}
+        className={cn("media-card__content absolute inset-x-0 bottom-0 p-r3", className)}
         {...props}
       />
     );
