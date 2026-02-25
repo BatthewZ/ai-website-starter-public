@@ -336,12 +336,15 @@ export function Showcase() {
             The launchpad for AI-driven websites. A themed component library, responsive layouts,
             and production-ready patterns — so you can go from prompt to product in record time.
           </Text>
-          <Text
-            variant="body-1"
-            color="on-primary"
-            className="max-w-2xl mx-auto opacity-90 my-r2 font-semibold"
-          >
-            Note: This is just a demo page.
+          <Text variant="body-1" color="on-primary" className="max-w-2xl mx-auto opacity-90 my-r2">
+            <span className="font-semibold">Note: This is just a demo page.</span>{" "}
+            <a
+              href="https://github.com/BatthewZ/ai-website-starter-public"
+              target="_blank"
+              className="link"
+            >
+              See GitHub for more.
+            </a>
           </Text>
           <Row gap="r2" justify="center">
             <Button size="lg" onClick={() => void navigate("/demo")}>
