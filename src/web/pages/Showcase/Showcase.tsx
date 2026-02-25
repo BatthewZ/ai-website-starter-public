@@ -1,19 +1,7 @@
-import {
-  Award,
-  Briefcase,
-  Check,
-  ChevronRight,
-  Code2,
-  Film,
-  Heart,
-  Menu,
-  Palette,
-  Users,
-  X,
-} from "lucide-react";
-import { useState } from "react";
+import { Award, Briefcase, Code2, Film, Heart, Palette, Users } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-import { Parallax, ScrollReveal, Stagger, useViewTransition } from "@/web/components/animation";
+import { Parallax, ScrollReveal, Stagger } from "@/web/components/animation";
 import { Container, Row, Stack } from "@/web/components/layout";
 import {
   Accordion,
@@ -23,9 +11,7 @@ import {
   Button,
   Card,
   Carousel,
-  Dialog,
   Hero,
-  IconButton,
   MasonryGrid,
   MediaCard,
   ProgressBar,
@@ -38,7 +24,6 @@ import {
   Timeline,
 } from "@/web/components/ui";
 import { useDocumentTitle } from "@/web/hooks/use-document-title";
-import { useTheme } from "@/web/hooks/use-theme";
 
 /* ------------------------------------------------------------------ */
 /*  Constants                                                          */
@@ -327,126 +312,41 @@ const EXPERTISE_TABS = [
   { value: "strategy", label: "Strategy" },
 ];
 
-const THEME_LABELS: Record<string, string> = {
-  default: "Default",
-  events: "Events",
-  grimdark: "Grimdark",
-  tech: "Tech",
-};
-
 /* ------------------------------------------------------------------ */
 /*  Showcase page                                                      */
 /* ------------------------------------------------------------------ */
 
 export function Showcase() {
   useDocumentTitle("Showcase");
-  const navigateWithTransition = useViewTransition();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const { theme, setTheme, themes } = useTheme();
+  const navigate = useNavigate();
 
   return (
     <>
       {/* ------------------------------------------------------------ */}
-      {/*  1. Sticky Nav Bar                                            */}
-      {/* ------------------------------------------------------------ */}
-      <header className="sticky top-0 z-50 bg-surface-0/90 backdrop-blur-md border-b border-border-default">
-        <Container size="xl">
-          <Row justify="between" wrap className="py-r5">
-            <Text variant="h4" weight="bold" as="span">
-              Showcase
-            </Text>
-
-            {/* Desktop nav */}
-            <Row gap="r4" className="hidden sm:flex">
-              <ThemeSwitcher />
-              <Button variant="ghost" size="sm" onClick={() => navigateWithTransition("/demo")}>
-                Component Demo
-              </Button>
-            </Row>
-
-            {/* Mobile burger trigger */}
-            <IconButton
-              aria-label="Open menu"
-              className="sm:hidden"
-              onClick={() => setMenuOpen(true)}
-            >
-              <Menu size={20} />
-            </IconButton>
-          </Row>
-        </Container>
-      </header>
-
-      {/* Mobile drawer */}
-      <Dialog
-        open={menuOpen}
-        onClose={() => setMenuOpen(false)}
-        onClick={(e) => e.target === e.currentTarget && setMenuOpen(false)}
-        className="absolute bg-surface-0 shadow-xl p-r3 inset-y-0 right-0 animate-morph-expand max-w-75"
-      >
-        <Stack gap="r4">
-          <IconButton
-            aria-label="Close menu"
-            className="self-end"
-            onClick={() => setMenuOpen(false)}
-          >
-            <X size={20} />
-          </IconButton>
-
-          {/* Theme section */}
-          <Text
-            variant="body-3"
-            color="muted"
-            weight="semibold"
-            className="uppercase tracking-wider px-r5"
-          >
-            Theme
-          </Text>
-          <Stack gap="r6">
-            {themes.map((t) => (
-              <button
-                key={t}
-                onClick={() => setTheme(t)}
-                className="flex items-center justify-between w-full px-r4 py-r5 rounded-md text-body-2 text-fg-primary hover:bg-surface-2 transition-colors"
-              >
-                <span>{THEME_LABELS[t] ?? t}</span>
-                {theme === t && <Check size={16} className="text-accent" />}
-              </button>
-            ))}
-          </Stack>
-
-          {/* Divider */}
-          <div className="border-t border-border-default" />
-
-          {/* Nav link */}
-          <button
-            onClick={() => {
-              setMenuOpen(false);
-              navigateWithTransition("/demo");
-            }}
-            className="flex items-center justify-between w-full px-r4 py-r5 rounded-md text-body-2 text-fg-primary hover:bg-surface-2 transition-colors"
-          >
-            <span>Component Demo</span>
-            <ChevronRight size={16} className="text-fg-muted" />
-          </button>
-        </Stack>
-      </Dialog>
-
-      {/* ------------------------------------------------------------ */}
-      {/*  2. Hero (full viewport)                                      */}
+      {/*  1. Hero (full viewport)                                      */}
       {/* ------------------------------------------------------------ */}
       <Hero size="full" align="center">
         <Hero.Background parallax style={{ background: G.hero }} />
         <Hero.Content animate className="text-center">
-          <Badge variant="info">Creative Agency</Badge>
+          <Badge variant="info">Starter Kit</Badge>
           <Text variant="h1" color="on-primary" className="my-r2">
-            We Build Digital{"\n"}Experiences That Matter
+            AI Site Starter
           </Text>
           <Text variant="body-1" color="on-primary" className="max-w-2xl mx-auto opacity-90 my-r2">
-            Horizon is a full-service creative agency specializing in brand, design, and technology.
-            We partner with ambitious companies to create products people love.
+            The launchpad for AI-driven websites. A themed component library, responsive layouts,
+            and production-ready patterns — so you can go from prompt to product in record time.
+          </Text>
+          <Text
+            variant="body-1"
+            color="on-primary"
+            className="max-w-2xl mx-auto opacity-90 my-r2 font-semibold"
+          >
+            Note: This is just a demo page.
           </Text>
           <Row gap="r2" justify="center">
-            <Button size="lg">View Our Work</Button>
+            <Button size="lg" onClick={() => void navigate("/demo")}>
+              View Our Work
+            </Button>
             <Button variant="secondary" size="lg">
               Get in Touch
             </Button>
@@ -454,383 +354,397 @@ export function Showcase() {
         </Hero.Content>
       </Hero>
 
-      {/* ------------------------------------------------------------ */}
-      {/*  3. Metrics Bar (StatCards)                                    */}
-      {/* ------------------------------------------------------------ */}
-      <section className="py-r1">
-        <Container size="xl">
-          <ScrollReveal>
-            <Stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-r4">
-              {METRICS.map((m) => (
-                <StatCard key={m.label}>
-                  <StatCard.Icon>{m.icon}</StatCard.Icon>
-                  <StatCard.Value animateValue from={0} to={m.to} format={m.fmt} />
-                  <StatCard.Label>{m.label}</StatCard.Label>
-                  <StatCard.Trend value={m.trend} direction={m.dir} />
-                </StatCard>
-              ))}
-            </Stagger>
-          </ScrollReveal>
-        </Container>
-      </section>
+      {/* Wrapper so the sticky theme switcher has a tall parent */}
+      <div>
+        {/* ------------------------------------------------------------ */}
+        {/*  2. Sticky Theme Switcher                                     */}
+        {/* ------------------------------------------------------------ */}
+        <div className="sticky top-0 z-50 py-r5">
+          <Container size="xl">
+            <Card padding="r4" className="bg-surface-0/80 backdrop-blur-md">
+              <ThemeSwitcher />
+            </Card>
+          </Container>
+        </div>
 
-      {/* ------------------------------------------------------------ */}
-      {/*  4. Services (Tabs — pill variant)                            */}
-      {/* ------------------------------------------------------------ */}
-      <section className="py-r1 bg-surface-1">
-        <Container size="xl">
-          <ScrollReveal>
+        {/* ------------------------------------------------------------ */}
+        {/*  3. Metrics Bar (StatCards)                                    */}
+        {/* ------------------------------------------------------------ */}
+        <section className="py-r1">
+          <Container size="xl">
+            <ScrollReveal>
+              <Stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-r4">
+                {METRICS.map((m) => (
+                  <StatCard key={m.label}>
+                    <StatCard.Icon>{m.icon}</StatCard.Icon>
+                    <StatCard.Value animateValue from={0} to={m.to} format={m.fmt} />
+                    <StatCard.Label>{m.label}</StatCard.Label>
+                    <StatCard.Trend value={m.trend} direction={m.dir} />
+                  </StatCard>
+                ))}
+              </Stagger>
+            </ScrollReveal>
+          </Container>
+        </section>
+
+        {/* ------------------------------------------------------------ */}
+        {/*  4. Services (Tabs — pill variant)                            */}
+        {/* ------------------------------------------------------------ */}
+        <section className="py-r1 bg-surface-1">
+          <Container size="xl">
+            <ScrollReveal>
+              <Stack gap="r3">
+                <Text variant="h2" className="text-center">
+                  Our Services
+                </Text>
+                <Text variant="body-1" color="secondary" className="text-center max-w-xl mx-auto">
+                  End-to-end capabilities that take your product from concept to launch and beyond.
+                </Text>
+                <Tabs variant="pill" defaultValue="design">
+                  <Tabs.List className="justify-center">
+                    {SERVICE_TABS.map((t) => (
+                      <Tabs.Tab key={t.value} value={t.value}>
+                        <Row gap="r6" as="span">
+                          {t.icon}
+                          {t.label}
+                        </Row>
+                      </Tabs.Tab>
+                    ))}
+                  </Tabs.List>
+                  {SERVICE_TABS.map((tab) => (
+                    <Tabs.Panel key={tab.value} value={tab.value}>
+                      <Stagger className="grid grid-cols-1 md:grid-cols-3 gap-r4 mt-r4">
+                        {SERVICES[tab.value as keyof typeof SERVICES].map((s) => (
+                          <Card key={s.title} padding="r3" className="h-full">
+                            <Stack gap="r5">
+                              <div
+                                className="h-2 w-12 rounded-full"
+                                style={{ background: s.gradient }}
+                              />
+                              <Text variant="h5">{s.title}</Text>
+                              <Text variant="body-2" color="secondary">
+                                {s.desc}
+                              </Text>
+                            </Stack>
+                          </Card>
+                        ))}
+                      </Stagger>
+                    </Tabs.Panel>
+                  ))}
+                </Tabs>
+              </Stack>
+            </ScrollReveal>
+          </Container>
+        </section>
+
+        {/* ------------------------------------------------------------ */}
+        {/*  5. Featured Work (Swimlane + Carousel + MediaCards)          */}
+        {/* ------------------------------------------------------------ */}
+        <section className="py-r1">
+          <Container size="xl">
+            <Swimlane
+              title="Featured Work"
+              subtitle="A selection of projects we're proud of"
+              viewAllHref="#"
+            >
+              <Carousel>
+                <Carousel.Track className="py-2">
+                  {FEATURED_WORKS.map((w) => (
+                    <Carousel.Item key={w.title}>
+                      <MediaCard orientation="landscape">
+                        <MediaCard.Image
+                          alt={w.title}
+                          src={TRANSPARENT_PX}
+                          style={{ background: w.gradient }}
+                        />
+                        <MediaCard.Overlay />
+                        <MediaCard.Content>
+                          <Text variant="h5" weight="semibold">
+                            {w.title}
+                          </Text>
+                          <Text variant="body-3" className="opacity-80">
+                            {w.category}
+                          </Text>
+                        </MediaCard.Content>
+                        <MediaCard.Badge>
+                          <Badge>{w.tag}</Badge>
+                        </MediaCard.Badge>
+                      </MediaCard>
+                    </Carousel.Item>
+                  ))}
+                </Carousel.Track>
+              </Carousel>
+            </Swimlane>
+          </Container>
+        </section>
+
+        {/* ------------------------------------------------------------ */}
+        {/*  6. Work Gallery (MasonryGrid + MediaCards)                   */}
+        {/* ------------------------------------------------------------ */}
+        <section className="py-r1 bg-surface-1">
+          <Container size="xl">
             <Stack gap="r3">
               <Text variant="h2" className="text-center">
-                Our Services
+                Work Gallery
               </Text>
               <Text variant="body-1" color="secondary" className="text-center max-w-xl mx-auto">
-                End-to-end capabilities that take your product from concept to launch and beyond.
+                Browse our portfolio spanning brand, product, and campaign work.
               </Text>
-              <Tabs variant="pill" defaultValue="design">
+              <MasonryGrid columns={{ base: 1, sm: 2, md: 3 }} animate animation="scale">
+                {GALLERY_ITEMS.map((item) => (
+                  <MasonryGrid.Item key={item.title}>
+                    <MediaCard orientation={item.orientation}>
+                      <MediaCard.Image
+                        alt={item.title}
+                        src={TRANSPARENT_PX}
+                        style={{ background: item.gradient }}
+                      />
+                      <MediaCard.Overlay />
+                      <MediaCard.Content>
+                        <Text variant="body-2" weight="semibold">
+                          {item.title}
+                        </Text>
+                      </MediaCard.Content>
+                    </MediaCard>
+                  </MasonryGrid.Item>
+                ))}
+              </MasonryGrid>
+            </Stack>
+          </Container>
+        </section>
+
+        {/* ------------------------------------------------------------ */}
+        {/*  7. Our Process (Spotlight)                                   */}
+        {/* ------------------------------------------------------------ */}
+        <section className="py-r1">
+          <Container size="xl">
+            <Stack gap="r3">
+              <Text variant="h2" className="text-center">
+                Our Process
+              </Text>
+              <Text variant="body-1" color="secondary" className="text-center max-w-xl mx-auto">
+                A proven methodology refined over hundreds of projects.
+              </Text>
+              <Spotlight animate>
+                {PROCESS_STEPS.map((step, i) => (
+                  <Spotlight.Item key={step.title} reversed={i === 1}>
+                    <Spotlight.Image
+                      src={TRANSPARENT_PX}
+                      parallax
+                      className="aspect-4/3"
+                      style={{ background: step.gradient }}
+                    />
+                    <Spotlight.Content>
+                      <Stack gap="r4">
+                        <Badge variant="info">Step {i + 1}</Badge>
+                        <Text variant="h3">{step.title}</Text>
+                        <Text variant="body-1" color="secondary">
+                          {step.desc}
+                        </Text>
+                        {i === 1 && (
+                          <Stack gap="r6">
+                            <Row justify="between">
+                              <ProgressBar.Label>Design completion</ProgressBar.Label>
+                              <ProgressBar.Value>92%</ProgressBar.Value>
+                            </Row>
+                            <ProgressBar value={92} variant="gradient" color="accent" />
+                          </Stack>
+                        )}
+                      </Stack>
+                    </Spotlight.Content>
+                  </Spotlight.Item>
+                ))}
+              </Spotlight>
+            </Stack>
+          </Container>
+        </section>
+
+        {/* ------------------------------------------------------------ */}
+        {/*  8. Timeline (Our Journey)                                    */}
+        {/* ------------------------------------------------------------ */}
+        <section className="py-r1 bg-surface-1">
+          <Container size="xl">
+            <Stack gap="r3">
+              <Text variant="h2" className="text-center">
+                Our Journey
+              </Text>
+              <Text variant="body-1" color="secondary" className="text-center max-w-xl mx-auto">
+                Key milestones that shaped who we are today.
+              </Text>
+              <Timeline animate>
+                {TIMELINE_EVENTS.map((evt) => (
+                  <Timeline.Item key={evt.date} date={evt.date} title={evt.title}>
+                    <Text variant="body-2" color="secondary">
+                      {evt.body}
+                    </Text>
+                  </Timeline.Item>
+                ))}
+              </Timeline>
+            </Stack>
+          </Container>
+        </section>
+
+        {/* ------------------------------------------------------------ */}
+        {/*  9. Team Section (Avatars)                                    */}
+        {/* ------------------------------------------------------------ */}
+        <section className="py-r1">
+          <Container size="xl">
+            <Stack gap="r3">
+              <Text variant="h2" className="text-center">
+                Meet the Team
+              </Text>
+              <Text variant="body-1" color="secondary" className="text-center max-w-xl mx-auto">
+                The talented people behind every project.
+              </Text>
+              <ScrollReveal>
+                <Stagger className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-r4">
+                  {TEAM.map((m) => (
+                    <Card
+                      key={m.name}
+                      padding="r3"
+                      className="flex flex-col items-center text-center gap-r5"
+                    >
+                      <Avatar size="xl" name={m.name} status={m.status} />
+                      <Text variant="body-1" weight="semibold">
+                        {m.name}
+                      </Text>
+                      <Badge>{m.role}</Badge>
+                    </Card>
+                  ))}
+                </Stagger>
+              </ScrollReveal>
+              <Row justify="center">
+                <AvatarGroup max={5} size="md">
+                  {TEAM.map((m) => (
+                    <Avatar key={m.name} name={m.name} size="md" />
+                  ))}
+                </AvatarGroup>
+              </Row>
+            </Stack>
+          </Container>
+        </section>
+
+        {/* ------------------------------------------------------------ */}
+        {/*  10. Expertise (Tabs — enclosed variant + ProgressBars)       */}
+        {/* ------------------------------------------------------------ */}
+        <section className="py-r1 bg-surface-1">
+          <Container size="xl">
+            <Stack gap="r3">
+              <Text variant="h2" className="text-center">
+                Our Expertise
+              </Text>
+              <Text variant="body-1" color="secondary" className="text-center max-w-xl mx-auto">
+                Deep skills across the disciplines that matter most.
+              </Text>
+              <Tabs variant="enclosed" defaultValue="technical">
                 <Tabs.List className="justify-center">
-                  {SERVICE_TABS.map((t) => (
+                  {EXPERTISE_TABS.map((t) => (
                     <Tabs.Tab key={t.value} value={t.value}>
-                      <Row gap="r6" as="span">
-                        {t.icon}
-                        {t.label}
-                      </Row>
+                      {t.label}
                     </Tabs.Tab>
                   ))}
                 </Tabs.List>
-                {SERVICE_TABS.map((tab) => (
+                {EXPERTISE_TABS.map((tab) => (
                   <Tabs.Panel key={tab.value} value={tab.value}>
-                    <Stagger className="grid grid-cols-1 md:grid-cols-3 gap-r4 mt-r4">
-                      {SERVICES[tab.value as keyof typeof SERVICES].map((s) => (
-                        <Card key={s.title} padding="r3" className="h-full">
-                          <Stack gap="r5">
-                            <div
-                              className="h-2 w-12 rounded-full"
-                              style={{ background: s.gradient }}
-                            />
-                            <Text variant="h5">{s.title}</Text>
-                            <Text variant="body-2" color="secondary">
-                              {s.desc}
-                            </Text>
-                          </Stack>
-                        </Card>
+                    <Stack gap="r4" className="mt-r4 max-w-2xl mx-auto">
+                      {EXPERTISE[tab.value].map((skill) => (
+                        <Stack key={skill.label} gap="r6">
+                          <Row justify="between">
+                            <ProgressBar.Label>{skill.label}</ProgressBar.Label>
+                            <ProgressBar.Value>{skill.value}%</ProgressBar.Value>
+                          </Row>
+                          <ProgressBar
+                            value={skill.value}
+                            variant={skill.variant}
+                            color={skill.color}
+                          />
+                        </Stack>
                       ))}
-                    </Stagger>
+                    </Stack>
                   </Tabs.Panel>
                 ))}
               </Tabs>
             </Stack>
-          </ScrollReveal>
-        </Container>
-      </section>
+          </Container>
+        </section>
 
-      {/* ------------------------------------------------------------ */}
-      {/*  5. Featured Work (Swimlane + Carousel + MediaCards)          */}
-      {/* ------------------------------------------------------------ */}
-      <section className="py-r1">
-        <Container size="xl">
-          <Swimlane
-            title="Featured Work"
-            subtitle="A selection of projects we're proud of"
-            viewAllHref="#"
-          >
-            <Carousel>
-              <Carousel.Track className="py-2">
-                {FEATURED_WORKS.map((w) => (
-                  <Carousel.Item key={w.title}>
-                    <MediaCard orientation="landscape">
-                      <MediaCard.Image
-                        alt={w.title}
-                        src={TRANSPARENT_PX}
-                        style={{ background: w.gradient }}
-                      />
-                      <MediaCard.Overlay />
-                      <MediaCard.Content>
-                        <Text variant="h5" weight="semibold">
-                          {w.title}
-                        </Text>
-                        <Text variant="body-3" className="opacity-80">
-                          {w.category}
-                        </Text>
-                      </MediaCard.Content>
-                      <MediaCard.Badge>
-                        <Badge>{w.tag}</Badge>
-                      </MediaCard.Badge>
-                    </MediaCard>
-                  </Carousel.Item>
-                ))}
-              </Carousel.Track>
-            </Carousel>
-          </Swimlane>
-        </Container>
-      </section>
-
-      {/* ------------------------------------------------------------ */}
-      {/*  6. Work Gallery (MasonryGrid + MediaCards)                   */}
-      {/* ------------------------------------------------------------ */}
-      <section className="py-r1 bg-surface-1">
-        <Container size="xl">
-          <Stack gap="r3">
-            <Text variant="h2" className="text-center">
-              Work Gallery
-            </Text>
-            <Text variant="body-1" color="secondary" className="text-center max-w-xl mx-auto">
-              Browse our portfolio spanning brand, product, and campaign work.
-            </Text>
-            <MasonryGrid columns={{ base: 1, sm: 2, md: 3 }} animate animation="scale">
-              {GALLERY_ITEMS.map((item) => (
-                <MasonryGrid.Item key={item.title}>
-                  <MediaCard orientation={item.orientation}>
-                    <MediaCard.Image
-                      alt={item.title}
-                      src={TRANSPARENT_PX}
-                      style={{ background: item.gradient }}
-                    />
-                    <MediaCard.Overlay />
-                    <MediaCard.Content>
-                      <Text variant="body-2" weight="semibold">
-                        {item.title}
-                      </Text>
-                    </MediaCard.Content>
-                  </MediaCard>
-                </MasonryGrid.Item>
-              ))}
-            </MasonryGrid>
-          </Stack>
-        </Container>
-      </section>
-
-      {/* ------------------------------------------------------------ */}
-      {/*  7. Our Process (Spotlight)                                   */}
-      {/* ------------------------------------------------------------ */}
-      <section className="py-r1">
-        <Container size="xl">
-          <Stack gap="r3">
-            <Text variant="h2" className="text-center">
-              Our Process
-            </Text>
-            <Text variant="body-1" color="secondary" className="text-center max-w-xl mx-auto">
-              A proven methodology refined over hundreds of projects.
-            </Text>
-            <Spotlight animate>
-              {PROCESS_STEPS.map((step, i) => (
-                <Spotlight.Item key={step.title} reversed={i === 1}>
-                  <Spotlight.Image
-                    src={TRANSPARENT_PX}
-                    parallax
-                    className="aspect-4/3"
-                    style={{ background: step.gradient }}
-                  />
-                  <Spotlight.Content>
-                    <Stack gap="r4">
-                      <Badge variant="info">Step {i + 1}</Badge>
-                      <Text variant="h3">{step.title}</Text>
-                      <Text variant="body-1" color="secondary">
-                        {step.desc}
-                      </Text>
-                      {i === 1 && (
-                        <Stack gap="r6">
-                          <Row justify="between">
-                            <ProgressBar.Label>Design completion</ProgressBar.Label>
-                            <ProgressBar.Value>92%</ProgressBar.Value>
+        {/* ------------------------------------------------------------ */}
+        {/*  11. Testimonials (Parallax + Carousel)                      */}
+        {/* ------------------------------------------------------------ */}
+        <section className="py-r1 relative overflow-hidden">
+          <Parallax rate={0.1} className="absolute inset-0 -z-10">
+            <div className="size-full" style={{ background: G.testimonial }} />
+          </Parallax>
+          <Container size="xl">
+            <Stack gap="r3">
+              <Text variant="h2" className="text-center">
+                What Clients Say
+              </Text>
+              <Text variant="body-1" color="secondary" className="text-center max-w-xl mx-auto">
+                Don't just take our word for it.
+              </Text>
+              <Carousel>
+                <Carousel.Track className="py-2">
+                  {TESTIMONIALS.map((t) => (
+                    <Carousel.Item key={t.name}>
+                      <Card padding="r3" className="min-w-75">
+                        <Stack gap="r4">
+                          <Text variant="body-1" color="secondary" className="italic">
+                            &ldquo;{t.quote}&rdquo;
+                          </Text>
+                          <Row gap="r4">
+                            <Avatar size="md" name={t.name} />
+                            <Stack gap="r6">
+                              <Text variant="body-2" weight="semibold">
+                                {t.name}
+                              </Text>
+                              <Text variant="body-3" color="muted">
+                                {t.company}
+                              </Text>
+                            </Stack>
                           </Row>
-                          <ProgressBar value={92} variant="gradient" color="accent" />
                         </Stack>
-                      )}
-                    </Stack>
-                  </Spotlight.Content>
-                </Spotlight.Item>
-              ))}
-            </Spotlight>
-          </Stack>
-        </Container>
-      </section>
-
-      {/* ------------------------------------------------------------ */}
-      {/*  8. Timeline (Our Journey)                                    */}
-      {/* ------------------------------------------------------------ */}
-      <section className="py-r1 bg-surface-1">
-        <Container size="xl">
-          <Stack gap="r3">
-            <Text variant="h2" className="text-center">
-              Our Journey
-            </Text>
-            <Text variant="body-1" color="secondary" className="text-center max-w-xl mx-auto">
-              Key milestones that shaped who we are today.
-            </Text>
-            <Timeline animate>
-              {TIMELINE_EVENTS.map((evt) => (
-                <Timeline.Item key={evt.date} date={evt.date} title={evt.title}>
-                  <Text variant="body-2" color="secondary">
-                    {evt.body}
-                  </Text>
-                </Timeline.Item>
-              ))}
-            </Timeline>
-          </Stack>
-        </Container>
-      </section>
-
-      {/* ------------------------------------------------------------ */}
-      {/*  9. Team Section (Avatars)                                    */}
-      {/* ------------------------------------------------------------ */}
-      <section className="py-r1">
-        <Container size="xl">
-          <Stack gap="r3">
-            <Text variant="h2" className="text-center">
-              Meet the Team
-            </Text>
-            <Text variant="body-1" color="secondary" className="text-center max-w-xl mx-auto">
-              The talented people behind every project.
-            </Text>
-            <ScrollReveal>
-              <Stagger className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-r4">
-                {TEAM.map((m) => (
-                  <Card
-                    key={m.name}
-                    padding="r3"
-                    className="flex flex-col items-center text-center gap-r5"
-                  >
-                    <Avatar size="xl" name={m.name} status={m.status} />
-                    <Text variant="body-1" weight="semibold">
-                      {m.name}
-                    </Text>
-                    <Badge>{m.role}</Badge>
-                  </Card>
-                ))}
-              </Stagger>
-            </ScrollReveal>
-            <Row justify="center">
-              <AvatarGroup max={5} size="md">
-                {TEAM.map((m) => (
-                  <Avatar key={m.name} name={m.name} size="md" />
-                ))}
-              </AvatarGroup>
-            </Row>
-          </Stack>
-        </Container>
-      </section>
-
-      {/* ------------------------------------------------------------ */}
-      {/*  10. Expertise (Tabs — enclosed variant + ProgressBars)       */}
-      {/* ------------------------------------------------------------ */}
-      <section className="py-r1 bg-surface-1">
-        <Container size="xl">
-          <Stack gap="r3">
-            <Text variant="h2" className="text-center">
-              Our Expertise
-            </Text>
-            <Text variant="body-1" color="secondary" className="text-center max-w-xl mx-auto">
-              Deep skills across the disciplines that matter most.
-            </Text>
-            <Tabs variant="enclosed" defaultValue="technical">
-              <Tabs.List className="justify-center">
-                {EXPERTISE_TABS.map((t) => (
-                  <Tabs.Tab key={t.value} value={t.value}>
-                    {t.label}
-                  </Tabs.Tab>
-                ))}
-              </Tabs.List>
-              {EXPERTISE_TABS.map((tab) => (
-                <Tabs.Panel key={tab.value} value={tab.value}>
-                  <Stack gap="r4" className="mt-r4 max-w-2xl mx-auto">
-                    {EXPERTISE[tab.value].map((skill) => (
-                      <Stack key={skill.label} gap="r6">
-                        <Row justify="between">
-                          <ProgressBar.Label>{skill.label}</ProgressBar.Label>
-                          <ProgressBar.Value>{skill.value}%</ProgressBar.Value>
-                        </Row>
-                        <ProgressBar
-                          value={skill.value}
-                          variant={skill.variant}
-                          color={skill.color}
-                        />
-                      </Stack>
-                    ))}
-                  </Stack>
-                </Tabs.Panel>
-              ))}
-            </Tabs>
-          </Stack>
-        </Container>
-      </section>
-
-      {/* ------------------------------------------------------------ */}
-      {/*  11. Testimonials (Parallax + Carousel)                      */}
-      {/* ------------------------------------------------------------ */}
-      <section className="py-r1 relative overflow-hidden">
-        <Parallax rate={0.1} className="absolute inset-0 -z-10">
-          <div className="size-full" style={{ background: G.testimonial }} />
-        </Parallax>
-        <Container size="xl">
-          <Stack gap="r3">
-            <Text variant="h2" className="text-center">
-              What Clients Say
-            </Text>
-            <Text variant="body-1" color="secondary" className="text-center max-w-xl mx-auto">
-              Don't just take our word for it.
-            </Text>
-            <Carousel>
-              <Carousel.Track className="py-2">
-                {TESTIMONIALS.map((t) => (
-                  <Carousel.Item key={t.name}>
-                    <Card padding="r3" className="min-w-75">
-                      <Stack gap="r4">
-                        <Text variant="body-1" color="secondary" className="italic">
-                          &ldquo;{t.quote}&rdquo;
-                        </Text>
-                        <Row gap="r4">
-                          <Avatar size="md" name={t.name} />
-                          <Stack gap="r6">
-                            <Text variant="body-2" weight="semibold">
-                              {t.name}
-                            </Text>
-                            <Text variant="body-3" color="muted">
-                              {t.company}
-                            </Text>
-                          </Stack>
-                        </Row>
-                      </Stack>
-                    </Card>
-                  </Carousel.Item>
-                ))}
-              </Carousel.Track>
-            </Carousel>
-          </Stack>
-        </Container>
-      </section>
-
-      {/* ------------------------------------------------------------ */}
-      {/*  12. FAQ (Accordion)                                          */}
-      {/* ------------------------------------------------------------ */}
-      <section className="py-r1">
-        <Container size="xl">
-          <Stack gap="r3">
-            <Text variant="h2" className="text-center">
-              Frequently Asked Questions
-            </Text>
-            <Text variant="body-1" color="secondary" className="text-center max-w-xl mx-auto">
-              Everything you need to know about working with us.
-            </Text>
-            <ScrollReveal>
-              <div className="max-w-2xl mx-auto">
-                <Accordion mode="single">
-                  {FAQ.map((item) => (
-                    <Accordion.Item key={item.q} value={item.q}>
-                      <Accordion.Trigger>{item.q}</Accordion.Trigger>
-                      <Accordion.Content>
-                        <Text variant="body-2" color="secondary">
-                          {item.a}
-                        </Text>
-                      </Accordion.Content>
-                    </Accordion.Item>
+                      </Card>
+                    </Carousel.Item>
                   ))}
-                </Accordion>
-              </div>
-            </ScrollReveal>
-          </Stack>
-        </Container>
-      </section>
+                </Carousel.Track>
+              </Carousel>
+            </Stack>
+          </Container>
+        </section>
+
+        {/* ------------------------------------------------------------ */}
+        {/*  12. FAQ (Accordion)                                          */}
+        {/* ------------------------------------------------------------ */}
+        <section className="py-r1">
+          <Container size="xl">
+            <Stack gap="r3">
+              <Text variant="h2" className="text-center">
+                Frequently Asked Questions
+              </Text>
+              <Text variant="body-1" color="secondary" className="text-center max-w-xl mx-auto">
+                Everything you need to know about working with us.
+              </Text>
+              <ScrollReveal>
+                <div className="max-w-2xl mx-auto">
+                  <Accordion mode="single">
+                    {FAQ.map((item) => (
+                      <Accordion.Item key={item.q} value={item.q}>
+                        <Accordion.Trigger>{item.q}</Accordion.Trigger>
+                        <Accordion.Content>
+                          <Text variant="body-2" color="secondary">
+                            {item.a}
+                          </Text>
+                        </Accordion.Content>
+                      </Accordion.Item>
+                    ))}
+                  </Accordion>
+                </div>
+              </ScrollReveal>
+            </Stack>
+          </Container>
+        </section>
+      </div>
 
       {/* ------------------------------------------------------------ */}
       {/*  13. CTA Footer (Hero reprise)                               */}
