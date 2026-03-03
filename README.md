@@ -6,9 +6,11 @@ I didn't want to keep wasting time and tokens having agents constantly rebuild c
 
 Check it out, try the theme switches. These are the building blocks to work with, to re-theme or to build upon.
 
+[UI Primitves Demo](https://ai-website-starter.benmatthews-it.workers.dev/demo)
+
 [Advanced Components Showcase](https://ai-website-starter.benmatthews-it.workers.dev/showcase)
 
-[UI Primitives Demo](https://ai-website-starter.benmatthews-it.workers.dev/demo)
+
 
 # AI Site Starter
 
