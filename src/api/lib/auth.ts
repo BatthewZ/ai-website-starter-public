@@ -4,9 +4,14 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createDb } from "../../db";
 import * as schema from "../../db/schema";
 import type { AppBindings } from "../env";
+import { createEmailService } from "./email";
+import { emailVerificationEmail } from "./email/templates/email-verification";
+import { passwordResetEmail } from "./email/templates/password-reset";
 
 export function createAuth(env: AppBindings) {
   const db = createDb(env.DB);
+  const emailService = createEmailService(env);
+  const fromAddress = env.EMAIL_FROM ?? "noreply@example.com";
 
   return betterAuth({
     database: drizzleAdapter(db, {
@@ -19,10 +24,35 @@ export function createAuth(env: AppBindings) {
     trustedOrigins: [env.BETTER_AUTH_URL, ...parseTrustedOrigins(env.TRUSTED_ORIGINS)],
     emailAndPassword: {
       enabled: true,
-      // eslint-disable-next-line @typescript-eslint/require-await
       sendResetPassword: async ({ user, url }) => {
-        // Replace with a real email service (Resend, Mailchannels, etc.)
-        console.warn(`[Auth] Password reset email NOT sent for ${user.email}. URL: ${url}`);
+        try {
+          const { subject, html, text } = passwordResetEmail({ url });
+          await emailService.send({
+            to: user.email,
+            from: fromAddress,
+            subject,
+            html,
+            text,
+          });
+        } catch (error) {
+          console.error("Failed to send password reset email:", error);
+        }
+      },
+    },
+    emailVerification: {
+      sendVerificationEmail: async ({ user, url }) => {
+        try {
+          const { subject, html, text } = emailVerificationEmail({ url });
+          await emailService.send({
+            to: user.email,
+            from: fromAddress,
+            subject,
+            html,
+            text,
+          });
+        } catch (error) {
+          console.error("Failed to send verification email:", error);
+        }
       },
     },
     user: {

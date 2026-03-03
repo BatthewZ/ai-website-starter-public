@@ -72,7 +72,7 @@
 * ------------
 */
 
-@theme {
+@theme inline {
   --animate-morph-expand: morph-expand var(--MOTION-DURATION-SHIFT) var(--MOTION-EASE-SHIFT);
   --animate-morph-collapse: morph-collapse var(--MOTION-DURATION-EXIT) var(--MOTION-EASE-EXIT);
   --animate-morph-reorder: morph-reorder var(--MOTION-DURATION-SHIFT) var(--MOTION-EASE-SHIFT);

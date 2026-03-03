@@ -107,7 +107,7 @@ export function App() {
                   />
                   <Route path="/demo" element={<Demo />} />
                   <Route path="/showcase" element={<Showcase />} />
-                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="/" element={<Navigate to="/showcase" replace />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>

@@ -16,17 +16,21 @@ The D1 database binding (`c.env.DB`) only exists inside a request handler, after
 
 ### The Solution
 
-The project uses a **factory function** that creates a fresh Better Auth instance on every request, receiving the D1 binding from the request context:
+The project uses a **factory function** that creates a fresh Better Auth instance on every request, receiving the full `AppBindings` from the request context:
 
 ```ts
 // src/api/lib/auth.ts
-export function createAuth(d1: D1Database, env: AppBindings) {
+export function createAuth(env: AppBindings) {
+  const db = createDb(env.DB);
+  const emailService = createEmailService(env);
+
   return betterAuth({
-    database: drizzleAdapter(createDb(d1), {
+    database: drizzleAdapter(db, {
       provider: "sqlite",
       schema,
     }),
-    emailAndPassword: { enabled: true },
+    emailAndPassword: { enabled: true, sendResetPassword: /* ... */ },
+    emailVerification: { sendVerificationEmail: /* ... */ },
     basePath: "/api/auth",
     secret: env.BETTER_AUTH_SECRET,
     baseURL: env.BETTER_AUTH_URL,
@@ -40,7 +44,7 @@ This pattern is used in two places:
 1. **Session middleware** (`src/api/middleware/auth.ts`) -- creates auth to extract the session from cookies on every `/api/*` request.
 2. **Auth routes** (`src/api/routes/auth/auth.routes.ts`) -- creates auth to delegate sign-in/sign-up/etc. to Better Auth's handler.
 
-Both call `createAuth(c.env.DB, c.env)` inside a request handler where `c.env.DB` is available.
+Both call `createAuth(c.env)` inside a request handler where `c.env` is available.
 
 ### Why Not Cache the Instance?
 

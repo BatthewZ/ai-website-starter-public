@@ -20,22 +20,33 @@ src/
 │   ├── env.ts                    # Bindings & env type definitions
 │   ├── middleware/               # Shared middleware
 │   ├── lib/                      # Shared API utilities
+│   │   ├── auth.ts               # Better Auth factory
+│   │   ├── email/                # Email service (Resend + console fallback)
+│   │   └── storage.ts            # R2 storage helpers (put, get, delete)
 │   └── routes/                   # Domain-grouped route modules
 │       ├── index.ts              # Route aggregator
 │       ├── auth/                 # Auth domain
 │       │   └── auth.routes.ts
-│       └── users/                # Users domain
-│           ├── users.routes.ts
-│           └── users.handlers.ts
+│       ├── users/                # Users domain
+│       │   ├── users.routes.ts
+│       │   └── users.handlers.ts
+│       └── uploads/              # File upload domain
+│           ├── uploads.routes.ts
+│           └── uploads.handlers.ts
 │
 ├── db/                           # Database layer
 │   ├── index.ts                  # createDb(d1) factory
 │   └── schema/                   # Drizzle schemas grouped by domain
 │       ├── auth.ts               # user, session, account, verification
+│       ├── uploads.ts            # upload
 │       └── index.ts              # Re-exports all schemas
 │
 ├── shared/                       # Shared (frontend + backend)
 │   ├── schemas/                  # Zod schemas grouped by domain
+│   │   ├── index.ts              # Re-exports all schemas
+│   │   ├── auth.ts               # Auth validation schemas (login, register, etc.)
+│   │   ├── upload.ts             # Upload validation constants & schemas
+│   │   └── user.ts               # User profile & password schemas
 │   └── types/                    # Shared TypeScript types
 │
 └── web/                          # Frontend (React SPA)
@@ -49,9 +60,15 @@ src/
     │   └── guards/               # Route guards
     └── pages/                    # Route-level page components
         ├── Dashboard/
+        ├── Demo/
+        │   └── sections/         # Demo page section components
+        ├── ForgotPassword/
         ├── Login/
+        ├── NotFound/
         ├── Register/
-        └── Settings/
+        ├── ResetPassword/
+        ├── Settings/
+        └── Showcase/
 ```
 
 ### Web Conventions

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { updateProfileSchema } from "@/shared/schemas/user";
 import { Field, Input, Label } from "@/web/components/form";
 import { Stack } from "@/web/components/layout";
-import { Alert, Button, Card, Text } from "@/web/components/ui";
+import { Alert, AvatarUpload, Button, Card, Text } from "@/web/components/ui";
 import { updateUser, useSession } from "@/web/lib/auth/auth-client";
 
 export function ProfileSection() {
@@ -43,6 +43,12 @@ export function ProfileSection() {
     <Card>
       <Stack gap="r4">
         <Text variant="h5">Profile</Text>
+
+        <AvatarUpload
+          src={session?.user?.image}
+          name={session?.user?.name ?? ""}
+          size="xl"
+        />
 
         <form onSubmit={(e) => void handleSubmit(e)}>
           <Stack gap="r4">

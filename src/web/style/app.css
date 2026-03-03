@@ -28,7 +28,7 @@ html {
 }
 
 :root {
-  /* color-scheme: light dark; */
+  color-scheme: light;
 
   --DEFAULT-FONT: "Poppins", sans-serif;
   --DEFAULT-MONO-FONT: "Libertinus Mono", monospace;

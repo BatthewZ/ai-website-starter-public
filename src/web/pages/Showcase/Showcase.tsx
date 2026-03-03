@@ -1,28 +1,43 @@
-import { Award, Briefcase, Code2, Film, Heart, Palette, Users } from "lucide-react";
+import { Award, Briefcase, Code2, Film, Filter, Heart, Palette, Search, Users } from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Parallax, ScrollReveal, Stagger } from "@/web/components/animation";
+import { SearchInput } from "@/web/components/form";
 import { Container, Row, Stack } from "@/web/components/layout";
+import type { ColumnDef } from "@/web/components/ui";
 import {
   Accordion,
   Avatar,
   AvatarGroup,
   Badge,
+  Breadcrumbs,
   Button,
   Card,
   Carousel,
+  DataTable,
+  DropdownMenu,
+  EmptyState,
+  EmptyStateActions,
+  EmptyStateDescription,
+  EmptyStateIcon,
+  EmptyStateTitle,
   Hero,
   MasonryGrid,
   MediaCard,
+  Popover,
   ProgressBar,
   Spotlight,
   StatCard,
   Swimlane,
+  Table,
   Tabs,
   Text,
   ThemeSwitcher,
   Timeline,
+  Tooltip,
 } from "@/web/components/ui";
+import { useDebounce } from "@/web/hooks/use-debounce";
 import { useDocumentTitle } from "@/web/hooks/use-document-title";
 
 /* ------------------------------------------------------------------ */
@@ -137,17 +152,20 @@ const GALLERY_ITEMS: {
   title: string;
   orientation: "portrait" | "landscape" | "square";
   gradient: string;
+  category: string;
 }[] = [
-  { title: "Brand Redesign", orientation: "portrait", gradient: G.a },
-  { title: "App Dashboard", orientation: "landscape", gradient: G.b },
-  { title: "Icon System", orientation: "square", gradient: G.c },
-  { title: "Marketing Site", orientation: "portrait", gradient: G.d },
-  { title: "E-commerce Platform", orientation: "landscape", gradient: G.e },
-  { title: "Mobile App", orientation: "portrait", gradient: G.f },
-  { title: "Social Campaign", orientation: "square", gradient: G.g },
-  { title: "Product Launch", orientation: "landscape", gradient: G.hero },
-  { title: "Annual Report", orientation: "portrait", gradient: G.cta },
+  { title: "Brand Redesign", orientation: "portrait", gradient: G.a, category: "Brand" },
+  { title: "App Dashboard", orientation: "landscape", gradient: G.b, category: "Product" },
+  { title: "Icon System", orientation: "square", gradient: G.c, category: "Brand" },
+  { title: "Marketing Site", orientation: "portrait", gradient: G.d, category: "Campaign" },
+  { title: "E-commerce Platform", orientation: "landscape", gradient: G.e, category: "Product" },
+  { title: "Mobile App", orientation: "portrait", gradient: G.f, category: "Product" },
+  { title: "Social Campaign", orientation: "square", gradient: G.g, category: "Campaign" },
+  { title: "Product Launch", orientation: "landscape", gradient: G.hero, category: "Campaign" },
+  { title: "Annual Report", orientation: "portrait", gradient: G.cta, category: "Brand" },
 ];
+
+const GALLERY_CATEGORIES = [...new Set(GALLERY_ITEMS.map((item) => item.category))];
 
 const PROCESS_STEPS = [
   {
@@ -296,6 +314,121 @@ const FAQ = [
   },
 ];
 
+const PRICING = [
+  { plan: "Starter", design: "1 concept", dev: "Landing page", support: "Email", price: "$5,000" },
+  {
+    plan: "Growth",
+    design: "3 concepts",
+    dev: "Multi-page site",
+    support: "Slack + Email",
+    price: "$15,000",
+  },
+  {
+    plan: "Enterprise",
+    design: "Unlimited",
+    dev: "Full application",
+    support: "Dedicated PM",
+    price: "Custom",
+  },
+];
+
+type Project = {
+  name: string;
+  client: string;
+  category: string;
+  year: number;
+  status: string;
+};
+
+const PROJECTS: Project[] = [
+  {
+    name: "Nova Banking App",
+    client: "Nova Financial",
+    category: "Fintech",
+    year: 2024,
+    status: "Completed",
+  },
+  {
+    name: "Pulse Health Platform",
+    client: "Pulse Health",
+    category: "Healthcare",
+    year: 2024,
+    status: "Completed",
+  },
+  {
+    name: "Vertex Dashboard",
+    client: "Vertex Technologies",
+    category: "Enterprise",
+    year: 2023,
+    status: "Completed",
+  },
+  {
+    name: "Bloom E-commerce",
+    client: "Bloom Commerce",
+    category: "Retail",
+    year: 2023,
+    status: "Completed",
+  },
+  {
+    name: "Echo Music App",
+    client: "Echo Media",
+    category: "Entertainment",
+    year: 2024,
+    status: "In Progress",
+  },
+  {
+    name: "Atlas Travel Platform",
+    client: "Atlas Group",
+    category: "Travel",
+    year: 2024,
+    status: "In Progress",
+  },
+  {
+    name: "Zen Wellness Portal",
+    client: "Zen Health",
+    category: "Healthcare",
+    year: 2022,
+    status: "Completed",
+  },
+  {
+    name: "Orbit SaaS Platform",
+    client: "Orbit Inc.",
+    category: "Enterprise",
+    year: 2023,
+    status: "Completed",
+  },
+  {
+    name: "Spark Fitness App",
+    client: "Spark Studios",
+    category: "Health & Fitness",
+    year: 2024,
+    status: "In Progress",
+  },
+  {
+    name: "Coral Design System",
+    client: "Coral Labs",
+    category: "Design Tools",
+    year: 2022,
+    status: "Completed",
+  },
+];
+
+const PROJECT_PAGE_SIZE = 5;
+
+const PROJECT_COLUMNS: ColumnDef<Project>[] = [
+  { key: "name", header: "Project" },
+  { key: "client", header: "Client" },
+  { key: "category", header: "Category" },
+  { key: "year", header: "Year" },
+  {
+    key: "status",
+    header: "Status",
+    render: (row) => (
+      <Badge variant={row.status === "Completed" ? "success" : "info"}>{row.status}</Badge>
+    ),
+  },
+];
+
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                            */
 /* ------------------------------------------------------------------ */
@@ -319,6 +452,36 @@ const EXPERTISE_TABS = [
 export function Showcase() {
   useDocumentTitle("Showcase");
   const navigate = useNavigate();
+  const [galleryFilter, setGalleryFilter] = useState<string | null>(null);
+  const [projectPage, setProjectPage] = useState(1);
+  const [projectSearch, setProjectSearch] = useState("");
+  const debouncedSearch = useDebounce(projectSearch, 250);
+
+  function handleProjectSearch(value: string) {
+    setProjectSearch(value);
+    setProjectPage(1);
+  }
+
+  const filteredGallery = galleryFilter
+    ? GALLERY_ITEMS.filter((item) => item.category === galleryFilter)
+    : GALLERY_ITEMS;
+
+  const filteredProjects = debouncedSearch
+    ? PROJECTS.filter((p) => {
+        const q = debouncedSearch.toLowerCase();
+        return (
+          p.name.toLowerCase().includes(q) ||
+          p.client.toLowerCase().includes(q) ||
+          p.category.toLowerCase().includes(q)
+        );
+      })
+    : PROJECTS;
+
+  const projectTotalPages = Math.ceil(filteredProjects.length / PROJECT_PAGE_SIZE);
+  const paginatedProjects = filteredProjects.slice(
+    (projectPage - 1) * PROJECT_PAGE_SIZE,
+    projectPage * PROJECT_PAGE_SIZE
+  );
 
   return (
     <>
@@ -371,6 +534,19 @@ export function Showcase() {
         </div>
 
         {/* ------------------------------------------------------------ */}
+        {/*  2b. Breadcrumbs                                               */}
+        {/* ------------------------------------------------------------ */}
+        <section className="py-r5">
+          <Container size="xl">
+            <Breadcrumbs>
+              <Breadcrumbs.Item href="/">Home</Breadcrumbs.Item>
+              <Breadcrumbs.Item href="/showcase">Portfolio</Breadcrumbs.Item>
+              <Breadcrumbs.Item current>Horizon Creative</Breadcrumbs.Item>
+            </Breadcrumbs>
+          </Container>
+        </section>
+
+        {/* ------------------------------------------------------------ */}
         {/*  3. Metrics Bar (StatCards)                                    */}
         {/* ------------------------------------------------------------ */}
         <section className="py-r1">
@@ -379,7 +555,11 @@ export function Showcase() {
               <Stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-r4">
                 {METRICS.map((m) => (
                   <StatCard key={m.label}>
-                    <StatCard.Icon>{m.icon}</StatCard.Icon>
+                    <StatCard.Icon>
+                      <Tooltip content={m.label}>
+                        <span>{m.icon}</span>
+                      </Tooltip>
+                    </StatCard.Icon>
                     <StatCard.Value animateValue from={0} to={m.to} format={m.fmt} />
                     <StatCard.Label>{m.label}</StatCard.Label>
                     <StatCard.Trend value={m.trend} direction={m.dir} />
@@ -487,31 +667,75 @@ export function Showcase() {
         <section className="py-r1 bg-surface-1">
           <Container size="xl">
             <Stack gap="r3">
-              <Text variant="h2" className="text-center">
-                Work Gallery
-              </Text>
-              <Text variant="body-1" color="secondary" className="text-center max-w-xl mx-auto">
-                Browse our portfolio spanning brand, product, and campaign work.
-              </Text>
-              <MasonryGrid columns={{ base: 1, sm: 2, md: 3 }} animate animation="scale">
-                {GALLERY_ITEMS.map((item) => (
-                  <MasonryGrid.Item key={item.title}>
-                    <MediaCard orientation={item.orientation}>
-                      <MediaCard.Image
-                        alt={item.title}
-                        src={TRANSPARENT_PX}
-                        style={{ background: item.gradient }}
-                      />
-                      <MediaCard.Overlay />
-                      <MediaCard.Content>
-                        <Text variant="body-2" weight="semibold">
-                          {item.title}
-                        </Text>
-                      </MediaCard.Content>
-                    </MediaCard>
-                  </MasonryGrid.Item>
-                ))}
-              </MasonryGrid>
+              <Row justify="between" align="center">
+                <Stack gap="r5">
+                  <Text variant="h2">Work Gallery</Text>
+                  <Text variant="body-1" color="secondary" className="max-w-xl">
+                    Browse our portfolio spanning brand, product, and campaign work.
+                  </Text>
+                </Stack>
+                <DropdownMenu>
+                  <DropdownMenu.Trigger asChild>
+                    <Button variant="secondary" size="sm">
+                      <Row gap="r6" as="span">
+                        <Filter size={14} /> {galleryFilter ?? "All Work"}
+                      </Row>
+                    </Button>
+                  </DropdownMenu.Trigger>
+                  <DropdownMenu.Content>
+                    <DropdownMenu.Label>Filter by Type</DropdownMenu.Label>
+                    <DropdownMenu.Item index={0} onSelect={() => setGalleryFilter(null)}>
+                      All Work
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Divider />
+                    {GALLERY_CATEGORIES.map((cat, i) => (
+                      <DropdownMenu.Item
+                        key={cat}
+                        index={i + 1}
+                        onSelect={() => setGalleryFilter(cat)}
+                      >
+                        {cat}
+                      </DropdownMenu.Item>
+                    ))}
+                  </DropdownMenu.Content>
+                </DropdownMenu>
+              </Row>
+              {filteredGallery.length > 0 ? (
+                <MasonryGrid columns={{ base: 1, sm: 2, md: 3 }} animate animation="scale">
+                  {filteredGallery.map((item) => (
+                    <MasonryGrid.Item key={item.title}>
+                      <MediaCard orientation={item.orientation}>
+                        <MediaCard.Image
+                          alt={item.title}
+                          src={TRANSPARENT_PX}
+                          style={{ background: item.gradient }}
+                        />
+                        <MediaCard.Overlay />
+                        <MediaCard.Content>
+                          <Text variant="body-2" weight="semibold">
+                            {item.title}
+                          </Text>
+                        </MediaCard.Content>
+                      </MediaCard>
+                    </MasonryGrid.Item>
+                  ))}
+                </MasonryGrid>
+              ) : (
+                <EmptyState size="md">
+                  <EmptyStateIcon>
+                    <Palette size={48} />
+                  </EmptyStateIcon>
+                  <EmptyStateTitle>No matching projects</EmptyStateTitle>
+                  <EmptyStateDescription>
+                    Try a different filter to find what you&apos;re looking for.
+                  </EmptyStateDescription>
+                  <EmptyStateActions>
+                    <Button variant="secondary" size="sm" onClick={() => setGalleryFilter(null)}>
+                      Show All Work
+                    </Button>
+                  </EmptyStateActions>
+                </EmptyState>
+              )}
             </Stack>
           </Container>
         </section>
@@ -607,7 +831,30 @@ export function Showcase() {
                       padding="r3"
                       className="flex flex-col items-center text-center gap-r5"
                     >
-                      <Avatar size="xl" name={m.name} status={m.status} />
+                      <Popover placement="top">
+                        <Popover.Trigger asChild>
+                          <button className="cursor-pointer border-none bg-transparent p-0">
+                            <Tooltip content={`${m.name} — ${m.role}`} placement="top">
+                              <span>
+                                <Avatar size="xl" name={m.name} status={m.status} />
+                              </span>
+                            </Tooltip>
+                          </button>
+                        </Popover.Trigger>
+                        <Popover.Content>
+                          <Stack gap="r5" className="p-r5">
+                            <Text variant="body-2" weight="semibold">
+                              {m.name}
+                            </Text>
+                            <Text variant="body-3" color="secondary">
+                              {m.role}
+                            </Text>
+                            <Text variant="body-3" color="muted">
+                              Click to view profile
+                            </Text>
+                          </Stack>
+                        </Popover.Content>
+                      </Popover>
                       <Text variant="body-1" weight="semibold">
                         {m.name}
                       </Text>
@@ -667,6 +914,102 @@ export function Showcase() {
                   </Tabs.Panel>
                 ))}
               </Tabs>
+            </Stack>
+          </Container>
+        </section>
+
+        {/* ------------------------------------------------------------ */}
+        {/*  10b. Pricing (Table)                                         */}
+        {/* ------------------------------------------------------------ */}
+        <section className="py-r1">
+          <Container size="xl">
+            <Stack gap="r3">
+              <Text variant="h2" className="text-center">
+                Pricing
+              </Text>
+              <Text variant="body-1" color="secondary" className="text-center max-w-xl mx-auto">
+                Transparent pricing for every stage of your business.
+              </Text>
+              <ScrollReveal>
+                <Table density="comfortable" striped>
+                  <Table.Head>
+                    <Table.Row>
+                      <Table.HeaderCell>Plan</Table.HeaderCell>
+                      <Table.HeaderCell>Design</Table.HeaderCell>
+                      <Table.HeaderCell>Development</Table.HeaderCell>
+                      <Table.HeaderCell>Support</Table.HeaderCell>
+                      <Table.HeaderCell>Starting At</Table.HeaderCell>
+                    </Table.Row>
+                  </Table.Head>
+                  <Table.Body>
+                    {PRICING.map((row) => (
+                      <Table.Row key={row.plan}>
+                        <Table.Cell>
+                          <Text weight="semibold">{row.plan}</Text>
+                        </Table.Cell>
+                        <Table.Cell>{row.design}</Table.Cell>
+                        <Table.Cell>{row.dev}</Table.Cell>
+                        <Table.Cell>{row.support}</Table.Cell>
+                        <Table.Cell>
+                          <Text weight="semibold" color="primary">
+                            {row.price}
+                          </Text>
+                        </Table.Cell>
+                      </Table.Row>
+                    ))}
+                  </Table.Body>
+                </Table>
+              </ScrollReveal>
+            </Stack>
+          </Container>
+        </section>
+
+        {/* ------------------------------------------------------------ */}
+        {/*  10c. Project Archive (DataTable)                              */}
+        {/* ------------------------------------------------------------ */}
+        <section className="py-r1 bg-surface-1">
+          <Container size="xl">
+            <Stack gap="r3">
+              <Text variant="h2" className="text-center">
+                Project Archive
+              </Text>
+              <Text variant="body-1" color="secondary" className="text-center max-w-xl mx-auto">
+                A comprehensive view of our project portfolio with sorting and pagination.
+              </Text>
+              <SearchInput
+                value={projectSearch}
+                onChange={handleProjectSearch}
+                placeholder="Search projects by name, client, or category..."
+              />
+              {paginatedProjects.length > 0 || !debouncedSearch ? (
+                <ScrollReveal>
+                  <DataTable
+                    data={paginatedProjects}
+                    columns={PROJECT_COLUMNS}
+                    rowKey={(row) => row.name}
+                    page={projectPage}
+                    totalPages={projectTotalPages}
+                    onPageChange={setProjectPage}
+                    density="comfortable"
+                    striped
+                  />
+                </ScrollReveal>
+              ) : (
+                <EmptyState size="md">
+                  <EmptyStateIcon>
+                    <Search size={32} />
+                  </EmptyStateIcon>
+                  <EmptyStateTitle>No matching projects</EmptyStateTitle>
+                  <EmptyStateDescription>
+                    No projects match &quot;{debouncedSearch}&quot;. Try a different search term.
+                  </EmptyStateDescription>
+                  <EmptyStateActions>
+                    <Button variant="secondary" size="sm" onClick={() => handleProjectSearch("")}>
+                      Clear Search
+                    </Button>
+                  </EmptyStateActions>
+                </EmptyState>
+              )}
             </Stack>
           </Container>
         </section>
@@ -765,7 +1108,11 @@ export function Showcase() {
           <Text variant="h2" color="on-primary">
             Ready to Build Something Great?
           </Text>
-          <Text variant="body-1" color="on-primary" className="max-w-xl mx-auto opacity-90">
+          <Text
+            variant="body-1"
+            color="on-primary"
+            className="max-w-xl mx-auto opacity-90 mt-r3 mb-r2"
+          >
             Let&apos;s turn your vision into reality. Start a conversation today.
           </Text>
           <Row gap="r4" justify="center">

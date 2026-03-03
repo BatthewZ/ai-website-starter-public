@@ -11,7 +11,7 @@ Authentication is handled by [Better Auth](https://www.better-auth.com/), a Type
 ## Documentation
 
 - [Configuration](./configuration.md) -- Better Auth setup, configuration options, and per-request auth factory
-- [Auth Flows](./flows.md) -- sign up, sign in, sign out, password reset, session management, and account deletion
+- [Auth Flows](./flows.md) -- sign up, sign in, sign out, password reset, email verification, session management, and account deletion
 - [Rate Limiting](./rate-limiting.md) -- rate limit rules on auth endpoints
 - [Middleware](./middleware.md) -- session extraction middleware and auth guard middleware
 - [Frontend Auth Client](./client.md) -- Better Auth React client and exported functions

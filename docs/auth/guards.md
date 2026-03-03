@@ -1,6 +1,6 @@
 # Route Guards
 
-Route guards are React components that wrap page components to control access based on auth state. They are defined in `src/web/components/guards/`.
+Route guards are React components that wrap page components to control access based on auth state. They are defined in `src/web/components/guards/` and re-exported from `src/web/components/guards/index.ts`.
 
 ### AuthGuard
 

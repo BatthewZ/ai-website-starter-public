@@ -6,17 +6,35 @@ The auth configuration lives in `src/api/lib/auth.ts`. It uses a **factory funct
 
 ```ts
 // src/api/lib/auth.ts
-export function createAuth(d1: D1Database, env: AppBindings) {
+export function createAuth(env: AppBindings) {
+  const db = createDb(env.DB);
+  const emailService = createEmailService(env);
+  const fromAddress = env.EMAIL_FROM ?? "noreply@example.com";
+
   return betterAuth({
-    database: drizzleAdapter(createDb(d1), {
+    database: drizzleAdapter(db, {
       provider: "sqlite",
       schema,
     }),
     emailAndPassword: {
       enabled: true,
       sendResetPassword: async ({ user, url }) => {
-        // Replace with a real email service in production
-        console.log(`[Auth] Password reset requested for ${user.email}: ${url}`);
+        try {
+          const { subject, html, text } = passwordResetEmail({ url });
+          await emailService.send({ to: user.email, from: fromAddress, subject, html, text });
+        } catch (error) {
+          console.error("Failed to send password reset email:", error);
+        }
+      },
+    },
+    emailVerification: {
+      sendVerificationEmail: async ({ user, url }) => {
+        try {
+          const { subject, html, text } = emailVerificationEmail({ url });
+          await emailService.send({ to: user.email, from: fromAddress, subject, html, text });
+        } catch (error) {
+          console.error("Failed to send verification email:", error);
+        }
       },
     },
     user: {
@@ -41,7 +59,8 @@ export function createAuth(d1: D1Database, env: AppBindings) {
 |---|---|---|
 | `database` | Drizzle adapter with D1 + SQLite provider | Stores users, sessions, accounts, and verification tokens in D1. |
 | `emailAndPassword.enabled` | `true` | Enables email/password sign-up and sign-in. |
-| `emailAndPassword.sendResetPassword` | Console log (placeholder) | Called when a password reset is requested. Replace with Resend, Mailchannels, or another email service. |
+| `emailAndPassword.sendResetPassword` | Email service (Resend or console fallback) | Sends a password reset email via the configured email service. Failures are caught and logged so they do not crash the auth flow. See [Email Service](../api/email.md). |
+| `emailVerification.sendVerificationEmail` | Email service (Resend or console fallback) | Sends an email verification link after sign-up. Failures are caught and logged so they do not crash the auth flow. See [Email Service](../api/email.md). |
 | `user.deleteUser.enabled` | `true` | Enables the account deletion endpoint. |
 | `basePath` | `/api/auth` | All Better Auth endpoints are mounted under this path. |
 | `secret` | `env.BETTER_AUTH_SECRET` | Secret key for signing session tokens. |
@@ -61,7 +80,7 @@ In Cloudflare Workers, bindings like `D1Database` are only available inside requ
 const auth = betterAuth({ database: drizzleAdapter(someDb, ...) });
 ```
 
-Instead, the project calls `createAuth(c.env.DB, c.env)` inside every request handler and middleware that needs auth functionality. The factory creates a new Better Auth instance each time, passing in the D1 binding from the current request context.
+Instead, the project calls `createAuth(c.env)` inside every request handler and middleware that needs auth functionality. The factory creates a new Better Auth instance each time, receiving the full `AppBindings` object which includes the D1 binding and other environment variables.
 
 ### Where It Is Called
 

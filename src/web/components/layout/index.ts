@@ -1,3 +1,4 @@
+export { AuthenticatedLayout } from "./AuthenticatedLayout";
 export { Center } from "./Center";
 export { Container } from "./Container";
 export { Divider } from "./Divider";

@@ -15,11 +15,12 @@ export function setOnUnauthorized(handler: (() => void) | null) {
 }
 
 export async function api<T>(path: string, options?: RequestInit): Promise<T> {
+  const isFormData = options?.body instanceof FormData;
   const res = await fetch(path, {
     ...options,
     credentials: "include",
     headers: {
-      "Content-Type": "application/json",
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
       ...options?.headers,
     },
   });
@@ -37,10 +38,14 @@ export async function api<T>(path: string, options?: RequestInit): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+function serializeBody(body: unknown): BodyInit {
+  return body instanceof FormData ? body : JSON.stringify(body);
+}
+
 api.get = <T>(path: string, options?: RequestInit) => api<T>(path, options);
 api.post = <T>(path: string, body: unknown, options?: RequestInit) =>
-  api<T>(path, { method: "POST", body: JSON.stringify(body), ...options });
+  api<T>(path, { method: "POST", body: serializeBody(body), ...options });
 api.put = <T>(path: string, body: unknown, options?: RequestInit) =>
-  api<T>(path, { method: "PUT", body: JSON.stringify(body), ...options });
+  api<T>(path, { method: "PUT", body: serializeBody(body), ...options });
 api.delete = <T>(path: string, options?: RequestInit) =>
   api<T>(path, { method: "DELETE", ...options });

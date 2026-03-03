@@ -2,6 +2,8 @@
    Fonts: Space Grotesk (headings), Inter (body), JetBrains Mono (mono) */
 
 :root[data-theme="tech"] {
+  color-scheme: dark;
+
   /* Fonts — geometric headings, screen-optimized body, dev mono */
   --DEFAULT-FONT: "Inter", sans-serif;
   --DEFAULT-MONO-FONT: "JetBrains Mono", monospace;

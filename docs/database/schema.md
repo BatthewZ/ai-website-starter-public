@@ -4,6 +4,7 @@ All table definitions live in `src/db/schema/`. The barrel file `src/db/schema/i
 
 ```ts
 export * from "./auth";
+export * from "./uploads";
 ```
 
 ### Tables
@@ -63,9 +64,25 @@ export * from "./auth";
 | `createdAt`  | `integer` (mode: `timestamp`) | `NOT NULL`   | Creation timestamp                              |
 | `updatedAt`  | `integer` (mode: `timestamp`) | `NOT NULL`   | Last update timestamp                           |
 
+#### `upload`
+
+**File:** `src/db/schema/uploads.ts`
+
+| Column     | Type                          | Constraints                            | Description                                      |
+| ---------- | ----------------------------- | -------------------------------------- | ------------------------------------------------ |
+| `id`       | `text`                        | **Primary key**                        | Unique upload identifier                         |
+| `userId`   | `text`                        | `NOT NULL`, **FK** -> `user.id` (cascade) | References the owning user                    |
+| `key`      | `text`                        | `NOT NULL`                             | R2 object key (`purpose/userId/uuid.ext`)        |
+| `filename` | `text`                        | `NOT NULL`                             | Original filename                                |
+| `mimeType` | `text`                        | `NOT NULL`                             | MIME type of the uploaded file                   |
+| `size`     | `integer`                     | `NOT NULL`                             | File size in bytes                               |
+| `purpose`  | `text`                        | `NOT NULL`                             | Upload purpose (e.g. `"avatar"`)                 |
+| `createdAt`| `integer` (mode: `timestamp`) | `NOT NULL`                             | Upload timestamp                                 |
+
 ### Relationships
 
 - `session.userId` -> `user.id` (foreign key)
 - `account.userId` -> `user.id` (foreign key)
+- `upload.userId` -> `user.id` (foreign key, cascade delete)
 
-All four tables are managed by **Better Auth** and follow its expected schema conventions.
+The `user`, `session`, `account`, and `verification` tables are managed by **Better Auth** and follow its expected schema conventions. The `upload` table is application-managed.

@@ -1,6 +1,6 @@
 # Validation Schemas
 
-Zod schemas are defined in `src/shared/schemas/auth.ts` and used by both the frontend (form validation) and backend (request validation).
+Zod schemas are defined in `src/shared/schemas/auth.ts` and used by both the frontend (form validation) and backend (request validation). All schemas are re-exported from the barrel `src/shared/schemas/index.ts`, so you can import from `@/shared/schemas` directly.
 
 ### `loginSchema`
 

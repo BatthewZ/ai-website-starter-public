@@ -7,11 +7,11 @@
     "dev:web": "vite",
     "dev:api": "wrangler dev",
     "build": "vite build",
-    "deploy": "wrangler deploy",
+    "deploy": "vite build && wrangler deploy",
     "db:generate": "drizzle-kit generate",
-    "db:migrate:local": "wrangler d1 migrations apply ai-site-starter-db --local",
-    "db:migrate:remote": "wrangler d1 migrations apply ai-site-starter-db --remote",
-    "typecheck": "tsc --noEmit -p tsconfig.backend.json && tsc --noEmit -p tsconfig.web.json",
+    "db:migrate:local": "wrangler d1 migrations apply ai_site_starter_db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply ai_site_starter_db --remote",
+    "typecheck": "tsc --noEmit -p tsconfig.backend.json && tsc --noEmit -p tsconfig.web.json && eslint src/",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
     "format": "prettier --write ./src",
@@ -24,6 +24,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@floating-ui/react": "^0.27.18",
     "@hono/zod-validator": "^0.7.6",
     "better-auth": "^1.2.0",
     "clsx": "^2.1.1",
@@ -63,6 +64,6 @@
     "typescript-eslint": "^8.55.0",
     "vite": "^6.0.0",
     "vitest": "^4.0.18",
-    "wrangler": "^3.99.0"
+    "wrangler": "4"
   }
 }

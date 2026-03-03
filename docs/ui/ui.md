@@ -14,8 +14,19 @@ Structural components for page composition.
 | [Container](layout.md#container) | Max-width wrapper (`sm`/`md`/`lg`/`xl`) |
 | [Spacer](layout.md#spacer) | Flex spacer                              |
 | [Divider](layout.md#divider) | Horizontal/vertical rule               |
+| [AuthenticatedLayout](layout.md#authenticatedlayout) | Pre-configured AppShell for authenticated pages |
 
 [Layout docs →](layout.md)
+
+## Application Shell
+
+| Component                      | Description                                                              |
+| ------------------------------ | ------------------------------------------------------------------------ |
+| [AppShell](app-shell.md)       | Responsive sidebar + navbar grid layout with mobile drawer               |
+
+The `AppShell` is a compound component (`AppShell.Navbar`, `AppShell.Sidebar`, `AppShell.Main`, etc.) that provides the top-level page structure for authenticated views. See also [`AuthenticatedLayout`](layout.md#authenticatedlayout) which wraps AppShell with sign-out and navigation.
+
+[AppShell docs →](app-shell.md)
 
 ## UI Components
 
@@ -23,7 +34,7 @@ General-purpose interactive and display primitives.
 
 | Component                          | Description                                            |
 | ---------------------------------- | ------------------------------------------------------ |
-| [Button](button.md)                | Variants: primary, secondary, ghost, danger, link      |
+| [Button](button.md)                | Variants: primary, secondary, ghost, ghost-inverse, danger, link |
 | [IconButton](icon-button.md)       | Square icon-only button                                |
 | [Card](card.md)                    | Surface container with padding and shadow              |
 | [Text](text.md)                    | Typography primitive with responsive text scaling      |
@@ -35,9 +46,34 @@ General-purpose interactive and display primitives.
 | [Dialog](dialog.md)                | Modal overlay using native `<dialog>`                  |
 | [Tabs](tabs.md)                    | Animated tab bar (underline, pill, enclosed)            |
 | [Accordion](accordion.md)          | Expand/collapse sections                               |
+| [Breadcrumbs](breadcrumbs.md)      | Navigation trail with collapsible overflow             |
+| [Pagination](pagination.md)        | Page navigation with numbered buttons or compact view  |
+| [EmptyState](empty-state.md)       | Centered placeholder for empty/no-results views        |
 | [Toast](toast.md)                  | Toast notifications via `ToastContext`                  |
 | [ThemeSwitcher](theme-switcher.md) | Theme toggle component                                 |
 | [ErrorBoundary](error-boundary.md) | React error boundary with fallback                     |
+| [Portal](portal.md)               | Renders children into a DOM node via `createPortal`    |
+| [FileUpload](file-upload.md)      | Drag-and-drop file upload dropzone                     |
+| [AvatarUpload](avatar-upload.md)  | Circular avatar upload with optimistic preview         |
+
+## Overlay Components
+
+Floating UI components for contextual actions, information, and navigation. Built on `@floating-ui/react` via the shared [`useFloating`](hooks.md#usefloating) hook.
+
+| Component                              | Description                                                       |
+| -------------------------------------- | ----------------------------------------------------------------- |
+| [Tooltip](tooltip.md)                  | Hover/focus tooltip with configurable delay and placement         |
+| [Popover](popover.md)                  | Click-triggered floating dialog panel with focus trapping         |
+| [DropdownMenu](dropdown-menu.md)       | Menu with keyboard navigation, typeahead, and ARIA menu pattern   |
+
+## Data Components
+
+Structured data display components for tabular content.
+
+| Component                          | Description                                                               |
+| ---------------------------------- | ------------------------------------------------------------------------- |
+| [Table](table.md)                  | Low-level compound table primitive with density, striping, and sort icons |
+| [DataTable](data-table.md)         | High-level typed table with sorting, selection, pagination, and loading   |
 
 ## Display Components
 
@@ -70,6 +106,7 @@ Input primitives and form structure.
 | [Radio](forms.md#radio)            | Styled radio button            |
 | [FieldError](forms.md#fielderror)  | Inline validation error        |
 | [FormActions](forms.md#formactions) | Button row for form submission |
+| [SearchInput](search-input.md)     | Search input with icon, clear button, and Escape-to-clear |
 
 [Form docs →](forms.md)
 
@@ -86,3 +123,22 @@ Behavioral wrappers that control how components appear, move, and transition.
 | [Parallax](animations.md#parallax)              | Scroll-linked depth effect            |
 
 [Animation docs →](animations.md)
+
+## Shared Hooks
+
+Hooks shared across multiple UI components.
+
+| Hook                                                      | Description                                                    |
+| --------------------------------------------------------- | -------------------------------------------------------------- |
+| [useFloating](hooks.md#usefloating)                       | `@floating-ui/react` wrapper with project defaults             |
+| [useClickOutside](hooks.md#useclickoutside)               | Fires a callback on mouse/touch events outside an element      |
+| [useFocusTrap](hooks.md#usefocustrap)                     | Traps Tab/Shift+Tab within a container                         |
+| [useRovingFocus](hooks.md#userovingfocus)                 | Roving tabindex keyboard navigation                            |
+| [useFileUpload](hooks.md#usefileupload)                   | File upload state management with validation                   |
+| [useDocumentTitle](hooks.md#usedocumenttitle)             | Sets document title with app name suffix, restores on unmount  |
+| [usePrefersReducedMotion](hooks.md#useprefersreducedmotion) | Reactively tracks `prefers-reduced-motion` media query       |
+| [useApi](hooks.md#useapi)                                 | GET data-fetching with loading/error state and refetch         |
+| [useTheme](hooks.md#usetheme)                             | Read and switch the active theme, persisted to localStorage    |
+| [useDebounce](hooks.md#usedebounce)                       | Debounces a value with a configurable delay                    |
+
+[Hooks docs →](hooks.md)

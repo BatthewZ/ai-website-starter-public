@@ -2,6 +2,8 @@
    Fonts: Cinzel (headings), Source Serif 4 (body), IBM Plex Mono (mono) */
 
 :root[data-theme="grimdark"] {
+  color-scheme: dark;
+
   /* Fonts — Roman-inscribed headings with a sturdy serif body */
   --DEFAULT-FONT: "Source Serif 4", serif;
   --DEFAULT-MONO-FONT: "IBM Plex Mono", monospace;

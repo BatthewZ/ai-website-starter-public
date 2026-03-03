@@ -28,11 +28,18 @@
 1. User submits their email on `/forgot-password`.
 2. Frontend calls `requestPasswordReset({ email })`.
 3. Better Auth creates a `verification` record and calls the `sendResetPassword` callback with the reset URL.
-4. (In production, this sends an email with the reset link. Currently it logs to console.)
+4. The [email service](../api/email.md) sends a password reset email with the reset link (via Resend in production, or logged to console in development).
 5. User clicks the link, which opens `/reset-password?token=...`.
 6. User submits a new password.
 7. Frontend calls `resetPassword({ newPassword, token })`.
 8. Better Auth verifies the token, updates the password in the `account` table, and deletes the verification record.
+
+### Email Verification
+
+1. User signs up with an email address.
+2. Better Auth calls the `sendVerificationEmail` callback with a verification URL.
+3. The [email service](../api/email.md) sends a verification email with the confirmation link (via Resend in production, or logged to console in development).
+4. User clicks the link, which verifies their email address in the database.
 
 ### Session Management
 

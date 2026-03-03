@@ -6,6 +6,9 @@ export type AppBindings = {
   BETTER_AUTH_URL: string;
   TRUSTED_ORIGINS?: string;
   ASSETS: Fetcher;
+  RESEND_API_KEY?: string;
+  EMAIL_FROM?: string;
+  STORAGE?: R2Bucket;
 };
 
 export type AuthVariables = {

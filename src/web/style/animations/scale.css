@@ -46,7 +46,7 @@
 * ------------
 */
 
-@theme {
+@theme inline {
   --animate-scale-in: scale-in var(--MOTION-DURATION-ENTER) var(--MOTION-EASE-ENTER);
   --animate-scale-out: scale-out var(--MOTION-DURATION-EXIT) var(--MOTION-EASE-EXIT);
 }

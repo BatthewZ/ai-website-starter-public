@@ -8,6 +8,17 @@ The entire design system is re-themeable by overriding `:root` variables. No com
 2. Each theme scopes overrides to a data attribute selector: `:root[data-theme="theme-name"]`.
 3. To activate a theme, set `data-theme` on the root `<html>` element and import the theme CSS file after the token imports.
 4. Themes can override any combination of `--C-*`, `--MOTION-*`, `--OVERLAY-*`, `--MEDIA-*`, `--RADIUS-*`, `--SHADOW-*`, `--DURATION-*`, and font variables.
+5. Each theme declares `color-scheme: light` or `color-scheme: dark` so native browser UI (scrollbars, form controls, selection highlights) matches the theme's palette.
+
+### FOUC prevention
+
+The saved theme is restored before the first paint via a blocking inline `<script>` in the `<head>` of `src/web/index.html`. This script reads `localStorage('theme')` and sets `data-theme` on `<html>` synchronously — before any CSS or module scripts load. This prevents a Flash of Unstyled Content (FOUC) when a non-default theme is active.
+
+> **Keep in sync:** The inline script hardcodes the list of valid theme names. When adding or removing a theme, update the array in the inline script to match the `THEMES` constant in `src/web/hooks/use-theme.ts`.
+
+### Font preconnect
+
+`src/web/index.html` includes `<link rel="preconnect">` hints for `fonts.googleapis.com` and `fonts.gstatic.com` to reduce font loading latency for Google Fonts used by themes.
 
 ### Token categories by "feel"
 
@@ -20,10 +31,14 @@ The entire design system is re-themeable by overriding `:root` variables. No com
 ### Creating a new theme
 
 1. Create a new CSS file in `src/web/style/themes/` (e.g. `my-theme.css`).
-2. Define all overrides under `:root[data-theme="my-theme"]`:
+2. Define all overrides under `:root[data-theme="my-theme"]`, starting with `color-scheme`:
 
 ```css
 :root[data-theme="my-theme"] {
+  /* Color scheme — tells the browser whether this is a light or dark theme.
+     Controls native UI: scrollbars, form controls, selection highlights. */
+  color-scheme: light; /* or "dark" for dark-themed themes */
+
   /* Fonts */
   --DEFAULT-FONT: "Your Body Font", sans-serif;
   --HEADING-FONT: "Your Heading Font", serif;
@@ -82,7 +97,8 @@ The entire design system is re-themeable by overriding `:root` variables. No com
 ```
 
 3. Import the theme file in your app CSS (after token imports).
-4. Set `data-theme="my-theme"` on the `<html>` element.
+4. Add the theme name to the `THEMES` array in `src/web/hooks/use-theme.ts` **and** to the inline script in `src/web/index.html`.
+5. Set `data-theme="my-theme"` on the `<html>` element.
 
 ---
 
@@ -90,7 +106,7 @@ The entire design system is re-themeable by overriding `:root` variables. No com
 
 ### Default (no theme attribute)
 
-The base light theme. Clean, neutral slate/gray palette. Standard border radii and shadows. Moderate animation timing. Suitable for general-purpose applications.
+The base light theme (`color-scheme: light`). Clean, neutral slate/gray palette. Standard border radii and shadows. Moderate animation timing. Suitable for general-purpose applications.
 
 ### Events (`data-theme="events"`)
 
@@ -111,7 +127,7 @@ Warm, editorial, celebratory. Think event ticketing, lifestyle magazines, cultur
 
 **File:** `src/web/style/themes/grimdark.css`
 
-Gothic, oppressive, heavy. Think dark fantasy, tabletop gaming, mature content.
+Gothic, oppressive, heavy (`color-scheme: dark`). Think dark fantasy, tabletop gaming, mature content.
 
 | Aspect | Details |
 | ------ | ------- |
@@ -127,7 +143,7 @@ Gothic, oppressive, heavy. Think dark fantasy, tabletop gaming, mature content.
 
 **File:** `src/web/style/themes/tech.css`
 
-Terminal, precise, futuristic. Think developer tools, SaaS dashboards, cyberpunk interfaces.
+Terminal, precise, futuristic (`color-scheme: dark`). Think developer tools, SaaS dashboards, cyberpunk interfaces.
 
 | Aspect | Details |
 | ------ | ------- |

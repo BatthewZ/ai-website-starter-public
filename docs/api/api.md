@@ -14,3 +14,5 @@ The API is a Hono application running inside a Cloudflare Worker. All API endpoi
 - [Adding Routes](./adding-routes.md) -- step-by-step guide for adding new API routes
 - [Frontend API Client](./client.md) -- typed fetch wrapper for the frontend
 - [CORS](./cors.md) -- CORS configuration and allowed origins
+- [Email Service](./email.md) -- email delivery via Resend (production) or console (development)
+- [File Storage](./storage.md) -- file uploads via Cloudflare R2 with upload endpoints

@@ -299,47 +299,96 @@ import { Divider } from "@/web/components/layout/Divider";
 
 ---
 
-## Composition Examples
+## AuthenticatedLayout
 
-### Page Layout with Header
+A pre-configured [`AppShell`](app-shell.md) layout for authenticated pages. Provides a navbar with branding, theme switcher, and sign-out button, plus a sidebar with navigation links and user info.
 
-A full-page layout using `Stack`, `Row`, `Container`, `Spacer`, and `Divider` together:
+**Source:** `src/web/components/layout/AuthenticatedLayout.tsx`
+
+### Props
+
+| Prop       | Type        | Default | Description   |
+| ---------- | ----------- | ------- | ------------- |
+| `children` | `ReactNode` | --      | Page content  |
+
+### Included Features
+
+- **Navbar:** App brand, `ThemeSwitcher`, sign-out button with loading state
+- **Sidebar:** Links to `/dashboard` and `/settings` with Lucide icons, user name/email display
+- Uses `useSession()` for user data and `signOut()` for authentication
+
+### Usage
+
+All authenticated pages should use this layout instead of building their own navbar/header:
 
 ```tsx
-import { Stack } from "@/web/components/layout/Stack";
-import { Row } from "@/web/components/layout/Row";
-import { Container } from "@/web/components/layout/Container";
-import { Spacer } from "@/web/components/layout/Spacer";
-import { Divider } from "@/web/components/layout/Divider";
+import { AuthenticatedLayout, Container, Stack } from "@/web/components/layout";
 
-function AppLayout({ children }: { children: React.ReactNode }) {
+function Dashboard() {
+  return (
+    <AuthenticatedLayout>
+      <Container size="lg">
+        <Stack gap="r3" className="py-r2">
+          <Text variant="h3">Dashboard</Text>
+          {/* Page content */}
+        </Stack>
+      </Container>
+    </AuthenticatedLayout>
+  );
+}
+```
+
+---
+
+## Composition Examples
+
+### Page Layout with AppShell
+
+For authenticated pages, use [`AuthenticatedLayout`](#authenticatedlayout) which wraps the [`AppShell`](app-shell.md) with navigation and auth controls. Page content goes inside as children:
+
+```tsx
+import { AuthenticatedLayout, Container, Stack } from "@/web/components/layout";
+import { Text } from "@/web/components/ui";
+
+function SettingsPage() {
+  return (
+    <AuthenticatedLayout>
+      <Container size="lg">
+        <Stack gap="r3" className="py-r2">
+          <Text variant="h3">Settings</Text>
+          {/* Settings sections */}
+        </Stack>
+      </Container>
+    </AuthenticatedLayout>
+  );
+}
+```
+
+### Public Page Layout
+
+For public (non-authenticated) pages, compose layout primitives directly:
+
+```tsx
+import { Stack, Row, Container, Spacer, Divider } from "@/web/components/layout";
+
+function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <Stack className="min-h-screen bg-surface-1">
-      {/* Header */}
       <Row className="px-r3 py-r5 bg-surface-0 border-b border-border-default">
         <span className="text-h6 font-bold">App Name</span>
-        <Spacer />
-        <Row gap="r4">
-          <a href="/docs">Docs</a>
-          <a href="/pricing">Pricing</a>
-        </Row>
         <Spacer />
         <button>Sign In</button>
       </Row>
 
-      {/* Main content */}
       <Container size="lg" className="py-r2">
         <Stack gap="r3">{children}</Stack>
       </Container>
 
-      {/* Footer */}
       <Spacer />
       <Divider />
       <Container size="lg" className="py-r3">
         <Row justify="between">
-          <span className="text-body-3 text-text-secondary">
-            &copy; 2025 App Name
-          </span>
+          <span className="text-body-3 text-text-secondary">&copy; 2025 App Name</span>
           <Row gap="r4">
             <a href="/terms">Terms</a>
             <Divider orientation="vertical" />

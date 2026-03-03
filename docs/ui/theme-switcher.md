@@ -28,6 +28,7 @@ A radio-group style control that lets users switch between the available design 
 3. Selecting a theme sets `data-theme` on `<html>` and saves it to `localStorage` under the `"theme"` key.
 4. Selecting "Default" removes the `data-theme` attribute and clears the localStorage entry.
 5. The component renders as a `role="radiogroup"` with individual `role="radio"` buttons, each with `aria-checked` reflecting the active state.
+6. On page load, a blocking inline `<script>` in `src/web/index.html` restores the saved theme before the first paint, preventing FOUC. See [FOUC prevention](../design-system/theming.md#fouc-prevention).
 
 ### CSS Classes
 

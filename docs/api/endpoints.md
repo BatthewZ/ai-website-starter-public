@@ -56,6 +56,42 @@ Returns the authenticated user's data. Requires authentication (uses `requireAut
 { "error": "Unauthorized" }
 ```
 
+### `PUT /api/users/me/avatar`
+
+Uploads a user avatar image. Requires authentication. Rate-limited to 10 requests per minute.
+
+**Request:** `multipart/form-data` with a `file` field (JPEG, PNG, GIF, or WebP, max 2 MB).
+
+**Response** (200):
+
+```json
+{
+  "upload": {
+    "id": "abc123",
+    "url": "/api/uploads/avatar/userId/uuid.jpg",
+    "filename": "photo.jpg",
+    "mimeType": "image/jpeg",
+    "size": 102400
+  }
+}
+```
+
+See [File Storage](./storage.md) for full details and error responses.
+
+### `GET /api/uploads/:purpose/:userId/:filename`
+
+Serves a stored file from R2. No authentication required. Responses are cached with `Cache-Control: public, max-age=31536000, immutable`.
+
+### `DELETE /api/uploads/:id`
+
+Deletes an upload. Requires authentication. Only the file owner can delete.
+
+**Response** (200):
+
+```json
+{ "ok": true }
+```
+
 ### `* /api/*` (404 catch-all)
 
 Any `/api/*` request that does not match a defined route returns a 404:
@@ -73,7 +109,7 @@ Any `/api/*` request that does not match a defined route returns a 404:
 
 ### Requests
 
-- API requests should use `Content-Type: application/json`.
+- API requests should use `Content-Type: application/json` (or `multipart/form-data` for file uploads).
 - Session cookies are included automatically by the browser (`credentials: "include"`).
 - An optional `x-request-id` header can be sent to correlate requests; if omitted, one is generated.
 
