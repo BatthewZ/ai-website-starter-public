@@ -54,9 +54,9 @@ Density controls padding and font size on both `Table.HeaderCell` and `Table.Cel
 
 | Density | Padding | Font Size |
 | --- | --- | --- |
-| `dense` | `4px 12px` | `--BodyText-2` |
-| `comfortable` | `10px 16px` | `--BodyText-1` |
-| `spacious` | `16px 16px` | `--BodyText-1` |
+| `dense` | `0.25rem 0.75rem` | `--BodyText-2` |
+| `comfortable` | `0.625rem 1rem` | `--BodyText-1` |
+| `spacious` | `1rem` | `--BodyText-1` |
 
 ## Sorting
 

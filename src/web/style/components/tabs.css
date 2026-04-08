@@ -7,12 +7,13 @@
   display: flex;
   gap: 0;
   overflow-x: auto;
+  overflow-y: hidden;
   scrollbar-width: thin;
 }
 
 /* Hide scrollbar when not hovering for cleaner appearance */
 .tabs-list::-webkit-scrollbar {
-  height: 3px;
+  height: 0.1875rem;
 }
 
 .tabs-list::-webkit-scrollbar-thumb {

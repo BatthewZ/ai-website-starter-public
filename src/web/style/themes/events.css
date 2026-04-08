@@ -51,10 +51,10 @@
   --C-STATUS-INFO-BG: #f5f3ff;
 
   /* Radius — large and rounded for a playful feel */
-  --RADIUS-SM: 8px;
-  --RADIUS-MD: 14px;
-  --RADIUS-LG: 20px;
-  --RADIUS-XL: 28px;
+  --RADIUS-SM: 0.5rem;
+  --RADIUS-MD: 0.875rem;
+  --RADIUS-LG: 1.25rem;
+  --RADIUS-XL: 1.75rem;
 
   /* Shadows — warmer tones */
   --SHADOW-SM: 0 1px 3px 0 rgb(124 58 237 / 0.06);
@@ -65,8 +65,8 @@
   --Bold-Weight: 800;
   --Semibold-Weight: 600;
 
-  --BodyText-1-line-height: 32px;
-  --BodyText-2-line-height: 26px;
+  --BodyText-1-line-height: 2rem;
+  --BodyText-2-line-height: 1.625rem;
 
   /* Page transitions */
   --MOTION-PAGE-TRANSITION-IN: events-page-in;
@@ -82,9 +82,9 @@
   --MOTION-EASE-EXIT: cubic-bezier(0.55, 0, 1, 0.45);
   --MOTION-EASE-SHIFT: cubic-bezier(0.25, 1, 0.5, 1);
   --MOTION-EASE-BOUNCE: cubic-bezier(0.16, 1, 0.3, 1);
-  --MOTION-DISTANCE-SM: 10px;
-  --MOTION-DISTANCE-MD: 24px;
-  --MOTION-DISTANCE-LG: 48px;
+  --MOTION-DISTANCE-SM: 0.625rem;
+  --MOTION-DISTANCE-MD: 1.5rem;
+  --MOTION-DISTANCE-LG: 3rem;
   --MOTION-STAGGER-DELAY: 60ms;
   --MOTION-SCALE-HOVER: 1.03;
   --MOTION-SCALE-PRESS: 0.97;
@@ -93,12 +93,12 @@
   --OVERLAY-SCRIM-COLOR: rgb(28 25 23 / 0.45);
   --OVERLAY-GRADIENT-START: rgb(28 25 23 / 0);
   --OVERLAY-GRADIENT-END: rgb(28 25 23 / 0.65);
-  --OVERLAY-BLUR: 10px;
-  --OVERLAY-BLUR-HEAVY: 24px;
+  --OVERLAY-BLUR: 0.625rem;
+  --OVERLAY-BLUR-HEAVY: 1.5rem;
 
   /* Media */
   --MEDIA-CARD-HOVER-SCALE: 1.03;
-  --MEDIA-CARD-HOVER-LIFT: -4px;
+  --MEDIA-CARD-HOVER-LIFT: -0.25rem;
 
   /* Transitions */
   --DURATION-FAST: 120ms;
@@ -109,7 +109,7 @@
 @keyframes events-page-in {
   0% {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(1rem);
   }
   100% {
     opacity: 1;
@@ -124,6 +124,6 @@
   }
   100% {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(-0.5rem);
   }
 }

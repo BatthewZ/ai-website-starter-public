@@ -45,7 +45,7 @@
 .stat-card__trend {
   display: inline-flex;
   align-items: center;
-  gap: var(--R-SIZE-1);
+  gap: var(--R-SIZE-6);
   font-size: var(--BodyText-2);
   font-weight: var(--Semibold-Weight);
   line-height: var(--BodyText-2-line-height);

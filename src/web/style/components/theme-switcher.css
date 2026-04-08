@@ -1,7 +1,7 @@
 .theme-switcher {
   display: inline-flex;
-  gap: 2px;
-  padding: 2px;
+  gap: 0.125rem;
+  padding: 0.125rem;
   border-radius: var(--RADIUS-LG);
   background: var(--C-SURFACE-2);
   border: 1px solid var(--C-BORDER-DEFAULT);

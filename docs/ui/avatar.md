@@ -21,7 +21,7 @@ User avatar component that displays an image with automatic fallback to initials
 
 | Size | Class | Dimensions | Initials Text | Status Dot Size |
 | --- | --- | --- | --- | --- |
-| `xs` | `size-6` | 24px | `text-[10px]` | `size-2` |
+| `xs` | `size-6` | 24px | `text-[0.625rem]` | `size-2` |
 | `sm` | `size-8` | 32px | `text-body-3` | `size-2` |
 | `md` | `size-10` | 40px | `text-body-2` | `size-2.5` |
 | `lg` | `size-12` | 48px | `text-body-1` | `size-3` |

@@ -2,6 +2,14 @@
 
 A full-stack website starter built on Cloudflare Workers. Hono API + React SPA served from a single Worker, with Better Auth (email/password), Drizzle ORM on D1 SQLite, a token-driven design system, and an AI agentic workflow powered by [swarm-cli](https://github.com/mj1618/swarm-cli).
 
+## Demo
+
+Check it out, try the theme switches. These are the building blocks to work with, to re-theme or to extend.
+
+[UI Primitives Demo](https://ai-website-starter.benmatthews-it.workers.dev/demo)
+
+[Advanced Components Showcase](https://ai-website-starter.benmatthews-it.workers.dev/showcase)
+
 ## Tech Stack
 
 | Layer       | Technology                                                                  |
@@ -57,13 +65,13 @@ The app runs at `http://localhost:8787` or `http://localhost:5173` for hot modul
 
 ## Documentation
 
-| Topic | Description |
-|---|---|
-| [Architecture](docs/architecture/architecture.md) | Worker architecture, request flow, folder structure, routing |
-| [API](docs/api/api.md) | Endpoints, middleware, error handling, rate limiting, validation |
-| [Auth](docs/auth/auth.md) | Better Auth setup, auth flows, middleware, route guards, schemas |
-| [Database](docs/database/database.md) | D1 + Drizzle ORM setup, schema, migrations, query examples |
-| [Design System](docs/design-system/design-system.md) | Tokens, colors, typography, spacing, theming, motion |
-| [UI Components](docs/ui/ui.md) | Layout, UI primitives, display components, forms, animations |
-| [Deployment](docs/deployment/deployment.md) | Prerequisites, step-by-step guide, environment, custom domains |
-| [Swarm CLI](docs/swarm/swarm.md) | AI agent pipeline, commands, task files, configuration |
+| Topic                                                | Description                                                      |
+| ---------------------------------------------------- | ---------------------------------------------------------------- |
+| [Architecture](docs/architecture/architecture.md)    | Worker architecture, request flow, folder structure, routing     |
+| [API](docs/api/api.md)                               | Endpoints, middleware, error handling, rate limiting, validation |
+| [Auth](docs/auth/auth.md)                            | Better Auth setup, auth flows, middleware, route guards, schemas |
+| [Database](docs/database/database.md)                | D1 + Drizzle ORM setup, schema, migrations, query examples       |
+| [Design System](docs/design-system/design-system.md) | Tokens, colors, typography, spacing, theming, motion             |
+| [UI Components](docs/ui/ui.md)                       | Layout, UI primitives, display components, forms, animations     |
+| [Deployment](docs/deployment/deployment.md)          | Prerequisites, step-by-step guide, environment, custom domains   |
+| [Swarm CLI](docs/swarm/swarm.md)                     | AI agent pipeline, commands, task files, configuration           |

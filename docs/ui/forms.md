@@ -165,7 +165,7 @@ Also accepts all native `textarea` props.
 Same as `Input`, plus:
 
 ```
-min-h-[100px] resize-y
+min-h-[6.25rem] resize-y
 ```
 
 ### Usage

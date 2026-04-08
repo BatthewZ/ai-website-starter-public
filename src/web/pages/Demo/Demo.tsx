@@ -203,7 +203,7 @@ export function Demo() {
                         <div
                           style={{
                             background: "var(--C-PRIMARY)",
-                            padding: "12px",
+                            padding: "0.75rem",
                             borderRadius: "var(--RADIUS-MD)",
                             display: "inline-flex",
                           }}
@@ -1170,7 +1170,7 @@ export function Demo() {
                       alt="Feature 1"
                       style={{
                         background: "linear-gradient(135deg, var(--C-PRIMARY), var(--C-ACCENT))",
-                        minHeight: "200px",
+                        minHeight: "12.5rem",
                       }}
                     />
                     <Spotlight.Content>
@@ -1188,7 +1188,7 @@ export function Demo() {
                       style={{
                         background:
                           "linear-gradient(135deg, var(--C-ACCENT), var(--C-STATUS-INFO))",
-                        minHeight: "200px",
+                        minHeight: "12.5rem",
                       }}
                     />
                     <Spotlight.Content>

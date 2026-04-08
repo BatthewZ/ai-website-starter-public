@@ -24,7 +24,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
         "duration-fast",
         "focus:outline-none focus:ring-2 focus:ring-border-focus focus:ring-offset-0 focus:border-border-focus",
         "disabled:bg-surface-3 disabled:cursor-not-allowed",
-        "min-h-[100px] resize-y",
+        "min-h-[6.25rem] resize-y",
         error && "border-status-error focus:ring-status-error",
         className
       )}

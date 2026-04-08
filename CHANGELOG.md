@@ -4,6 +4,7 @@
 
 ### Changed
 
+- **px → rem units**: All hardcoded `px` values in CSS tokens, responsive utilities, component styles, and Tailwind arbitrary values converted to `rem` for better accessibility and user font-size scaling. Affected: radius, motion, overlay, media, spacing, typography tokens; component styles; theme overrides.
 - **Zod v3 → v4**: Migrated to Zod 4. Frontend validation error access updated from `.error.errors` to `.error.issues`. Validation middleware updated to use `ZodType` instead of `ZodSchema`.
 - **Password hashing**: Auth now uses bcryptjs for explicit password hashing and verification instead of Better Auth's default hasher.
 - **Dependency pinning**: All dependency versions are now pinned (removed `^` ranges) for deterministic installs.

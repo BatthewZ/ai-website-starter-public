@@ -17,7 +17,7 @@ Modal dialog built on the native `<dialog>` HTML element. Uses `showModal()` and
 ### Base Classes
 
 ```
-no-body-scroll bg-surface-0 rounded-lg shadow-lg p-r2 animate-fade-in max-w-[640px] w-full m-auto
+no-body-scroll bg-surface-0 rounded-lg shadow-lg p-r2 animate-fade-in max-w-[40rem] w-full m-auto
 backdrop:bg-black/50
 ```
 
@@ -105,7 +105,7 @@ function EditProfileDialog() {
                   Bio
                 </label>
                 <textarea
-                  className="w-full px-r4 py-r5 text-body-2 bg-surface-0 border border-border-strong rounded-md min-h-[100px] resize-y"
+                  className="w-full px-r4 py-r5 text-body-2 bg-surface-0 border border-border-strong rounded-md min-h-[6.25rem] resize-y"
                   defaultValue="Software engineer and coffee enthusiast."
                 />
               </div>
@@ -129,7 +129,7 @@ function EditProfileDialog() {
 
 ### Custom Width
 
-Override the default `max-w-[640px]` via `className`.
+Override the default `max-w-[40rem]` via `className`.
 
 ```tsx
 <Dialog open={open} onClose={handleClose} className="max-w-sm">

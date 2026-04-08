@@ -182,16 +182,16 @@ Also accepts all `div` props.
 
 | Size   | Max Width |
 | ------ | --------- |
-| `sm`   | 480px     |
-| `md`   | 640px     |
-| `lg`   | 768px     |
-| `xl`   | 1024px    |
+| `sm`   | 30rem     |
+| `md`   | 40rem     |
+| `lg`   | 48rem     |
+| `xl`   | 64rem     |
 | `full` | 100%      |
 
 ### Base Classes
 
 ```
-mx-auto w-full px-r3 max-w-[640px]
+mx-auto w-full px-r3 max-w-[40rem]
 ```
 
 ### Usage
@@ -201,7 +201,7 @@ import { Container } from "@/web/components/layout/Container";
 
 {/* Default medium container */}
 <Container>
-  <p>Content constrained to 640px.</p>
+  <p>Content constrained to 40rem.</p>
 </Container>
 
 {/* Narrow container for auth forms */}
@@ -472,9 +472,9 @@ All `gap` values are responsive tokens that scale at the 640px breakpoint:
 
 | Token | Mobile | Desktop (>=640px) |
 | ----- | ------ | ----------------- |
-| `r1`  | 36px   | 96px              |
-| `r2`  | 20px   | 32px              |
-| `r3`  | 16px   | 24px              |
-| `r4`  | 12px   | 20px              |
-| `r5`  | 8px    | 12px              |
-| `r6`  | 4px    | 4px               |
+| `r1`  | 2.25rem | 6rem             |
+| `r2`  | 1.25rem | 2rem             |
+| `r3`  | 1rem    | 1.5rem           |
+| `r4`  | 0.75rem | 1.25rem          |
+| `r5`  | 0.5rem  | 0.75rem          |
+| `r6`  | 0.25rem | 0.25rem          |
