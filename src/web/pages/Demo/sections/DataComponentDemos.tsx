@@ -454,78 +454,67 @@ function DataTableDemo() {
 
 function FileUploadDemo() {
   const { toast } = useToast();
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-
-  function handleFilesSelected(files: File[]) {
-    const file = files[0];
-    if (!file) return;
-    setSelectedFile(file);
-
-    // Create preview for images
-    if (file.type.startsWith("image/")) {
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
-    } else {
-      setPreviewUrl(null);
-    }
-
-    toast("Upload demo — no server connection", {
-      variant: "info",
-      title: "Demo Mode",
-    });
-  }
-
-  function handleClear() {
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
-    setSelectedFile(null);
-    setPreviewUrl(null);
-  }
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [multiFiles, setMultiFiles] = useState<File[]>([]);
+  const [anyFiles, setAnyFiles] = useState<File[]>([]);
 
   return (
     <Section title="FileUpload">
       <Card>
         <Stack gap="r4">
-          {/* Basic dropzone */}
-          <SubSection label="Basic Dropzone">
+          {/* Single image — large preview */}
+          <SubSection label="Single Image (large preview)">
             <FileUpload
+              accept={["image/png", "image/jpeg", "image/gif", "image/webp"]}
+              maxSize={5 * 1024 * 1024}
+              files={imageFiles}
               onFilesSelected={(files) => {
+                setImageFiles(files);
                 toast("Upload demo — no server connection", {
                   variant: "info",
                   title: "Demo Mode",
                 });
-                if (files[0]) {
-                  toast(`Selected: ${files[0].name} (${(files[0].size / 1024).toFixed(1)} KB)`, {
-                    variant: "success",
-                    title: "File Selected",
-                  });
-                }
               }}
-              hint="Drag & drop any file here, or click to browse"
+              onClear={() => setImageFiles([])}
+              hint="PNG, JPG, GIF, or WebP up to 5 MB"
             />
           </SubSection>
 
-          {/* Image only */}
-          <SubSection label="Images Only (with preview)">
+          {/* Multiple images — grid */}
+          <SubSection label="Multiple Images (grid preview)">
             <FileUpload
               accept={["image/png", "image/jpeg", "image/gif", "image/webp"]}
               maxSize={5 * 1024 * 1024}
-              onFilesSelected={handleFilesSelected}
-              hint="PNG, JPG, GIF, or WebP up to 5 MB"
-              success={selectedFile ? `Selected: ${selectedFile.name}` : undefined}
+              multiple
+              files={multiFiles}
+              onFilesSelected={(files) => {
+                setMultiFiles((prev) => [...prev, ...files]);
+                toast("Upload demo — no server connection", {
+                  variant: "info",
+                  title: "Demo Mode",
+                });
+              }}
+              onRemoveFile={(index) => setMultiFiles((prev) => prev.filter((_, i) => i !== index))}
+              onClear={() => setMultiFiles([])}
+              hint="Select multiple images"
             />
-            {previewUrl && (
-              <Stack gap="r5" className="items-start">
-                <img
-                  src={previewUrl}
-                  alt="Preview"
-                  className="max-h-48 rounded-md border border-border-default object-contain"
-                />
-                <Button size="sm" variant="secondary" onClick={handleClear}>
-                  Clear Selection
-                </Button>
-              </Stack>
-            )}
+          </SubSection>
+
+          {/* Any file — compact mode */}
+          <SubSection label="Any File (compact preview)">
+            <FileUpload
+              previewMode="compact"
+              files={anyFiles}
+              onFilesSelected={(files) => {
+                setAnyFiles(files);
+                toast("Upload demo — no server connection", {
+                  variant: "info",
+                  title: "Demo Mode",
+                });
+              }}
+              onClear={() => setAnyFiles([])}
+              hint="Drag & drop any file here, or click to browse"
+            />
           </SubSection>
 
           {/* Disabled / uploading states */}
