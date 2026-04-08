@@ -69,6 +69,7 @@
 
   --BodyText-1-line-height: 1.75rem;
   --BodyText-2-line-height: 1.375rem;
+  --BodyText-3-line-height: 1.25rem;
 
   /* Page transitions */
   --MOTION-PAGE-TRANSITION-IN: grimdark-page-in;

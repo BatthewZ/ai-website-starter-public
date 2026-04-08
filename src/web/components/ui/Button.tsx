@@ -18,9 +18,9 @@ const variantClassMap: Record<Variant, string> = {
 };
 
 const sizeClassMap: Record<Size, string> = {
-  sm: "text-body-3 px-r5 py-r6 rounded-md",
-  md: "text-body-2 px-r3 py-r5 rounded-md",
-  lg: "text-body-1 px-r3 py-r5 rounded-md",
+  sm: "text-body-3 px-2 py-1 rounded-md",
+  md: "text-body-2 px-3 py-1.5 rounded-md",
+  lg: "text-body-1 px-4 py-2 rounded-md",
 };
 
 type ButtonProps<T extends ElementType = "button"> = {
