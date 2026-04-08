@@ -4,8 +4,11 @@ import { describe, expect, it } from "vitest";
 import { useRovingFocus } from "./use-roving-focus";
 
 function RovingList({
-  orientation = "vertical" as const,
+  orientation = "vertical",
   loop = true,
+}: {
+  orientation?: "horizontal" | "vertical";
+  loop?: boolean;
 }) {
   const { getRovingProps, focusedIndex } = useRovingFocus({
     orientation,

@@ -64,7 +64,7 @@ describe("validateBody", () => {
     });
 
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body: any = await res.json();
     expect(body.ok).toBe(true);
     expect(body.data).toEqual({ name: "Alice", age: 30 });
   });
@@ -78,7 +78,7 @@ describe("validateBody", () => {
     });
 
     expect(res.status).toBe(400);
-    const body = await res.json();
+    const body: any = await res.json();
     expect(body.error).toBe("Validation failed");
     expect(body.details).toBeInstanceOf(Array);
     expect(body.details.length).toBeGreaterThan(0);
@@ -93,7 +93,7 @@ describe("validateBody", () => {
     });
 
     expect(res.status).toBe(400);
-    const body = await res.json();
+    const body: any = await res.json();
 
     for (const detail of body.details) {
       expect(typeof detail.path).toBe("string");
@@ -110,7 +110,7 @@ describe("validateBody", () => {
     });
 
     expect(res.status).toBe(400);
-    const body = await res.json();
+    const body: any = await res.json();
     const cityError = body.details.find(
       (d: { path: string }) => d.path === "user.address.city"
     );
@@ -127,7 +127,7 @@ describe("validateBody", () => {
     });
 
     expect(res.status).toBe(400);
-    const body = await res.json();
+    const body: any = await res.json();
     expect(body.details.length).toBeGreaterThanOrEqual(2);
 
     const paths = body.details.map((d: { path: string }) => d.path);
@@ -142,7 +142,7 @@ describe("validateQuery", () => {
     const res = await app.request("/query?page=1&limit=10");
 
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body: any = await res.json();
     expect(body.ok).toBe(true);
     expect(body.data).toEqual({ page: "1", limit: "10" });
   });
@@ -152,7 +152,7 @@ describe("validateQuery", () => {
     const res = await app.request("/query?page=1");
 
     expect(res.status).toBe(400);
-    const body = await res.json();
+    const body: any = await res.json();
     expect(body.error).toBe("Validation failed");
     expect(body.details).toBeInstanceOf(Array);
     expect(body.details.length).toBeGreaterThan(0);
@@ -163,7 +163,7 @@ describe("validateQuery", () => {
     const res = await app.request("/coerce?page=5&active=true");
 
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body: any = await res.json();
     expect(body.ok).toBe(true);
     expect(body.data.page).toBe(5);
     expect(body.data.active).toBe(true);

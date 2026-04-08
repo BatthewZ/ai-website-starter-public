@@ -6,6 +6,22 @@
   position: relative;
   display: flex;
   gap: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+/* Hide scrollbar when not hovering for cleaner appearance */
+.tabs-list::-webkit-scrollbar {
+  height: 3px;
+}
+
+.tabs-list::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 999px;
+}
+
+.tabs-list:hover::-webkit-scrollbar-thumb {
+  background-color: var(--C-BORDER-DEFAULT);
 }
 
 /* Underline variant */

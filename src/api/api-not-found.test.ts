@@ -5,7 +5,7 @@ import { requestIdMiddleware } from "./middleware/request-id";
 
 describe("API 404 handler", () => {
   function createApp() {
-    const app = new Hono();
+    const app = new Hono<{ Variables: { requestId: string } }>();
     app.use("/api/*", requestIdMiddleware);
     app.get("/api/health", (c) => c.json({ ok: true }));
     app.all("/api/*", (c) => {
@@ -21,7 +21,7 @@ describe("API 404 handler", () => {
 
     expect(res.status).toBe(404);
     expect(res.headers.get("content-type")).toContain("application/json");
-    const body = await res.json();
+    const body: any = await res.json();
     expect(body.error).toBe("Not Found");
     expect(body.requestId).toBeDefined();
   });
@@ -39,7 +39,7 @@ describe("API 404 handler", () => {
     const res = await app.request("/api/nonexistent", { method: "POST" });
 
     expect(res.status).toBe(404);
-    const body = await res.json();
+    const body: any = await res.json();
     expect(body.error).toBe("Not Found");
   });
 });

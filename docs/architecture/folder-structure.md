@@ -21,8 +21,13 @@ src/
 │   ├── middleware/               # Shared middleware
 │   ├── lib/                      # Shared API utilities
 │   │   ├── auth.ts               # Better Auth factory
+│   │   ├── defer.ts              # Deferred work via waitUntil / fire-and-forget
 │   │   ├── email/                # Email service (Resend + console fallback)
-│   │   └── storage.ts            # R2 storage helpers (put, get, delete)
+│   │   ├── error-response.ts     # Standardized JSON error responses
+│   │   ├── pagination.ts         # Cursor-based pagination helpers
+│   │   ├── params.ts             # Path parameter extraction helpers
+│   │   ├── storage.ts            # R2 storage helpers (put, get, delete)
+│   │   └── validated.ts          # Typed accessors for validated request data
 │   └── routes/                   # Domain-grouped route modules
 │       ├── index.ts              # Route aggregator
 │       ├── auth/                 # Auth domain
@@ -68,7 +73,8 @@ src/
         ├── Register/
         ├── ResetPassword/
         ├── Settings/
-        └── Showcase/
+        ├── Showcase/
+        └── ThemeEditor/
 ```
 
 ### Web Conventions

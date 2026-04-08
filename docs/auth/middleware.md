@@ -11,12 +11,19 @@ export const authSessionMiddleware = createMiddleware<{
   Bindings: AppBindings;
   Variables: AuthVariables;
 }>(async (c, next) => {
-  const auth = createAuth(c.env.DB, c.env);
+  const auth = createAuth(c.env);
   const session = await auth.api.getSession({
     headers: c.req.raw.headers,
   });
-  c.set("user", session?.user ?? null);
-  c.set("session", session?.session ?? null);
+
+  if (session) {
+    c.set("user", session.user);
+    c.set("session", session.session);
+  } else {
+    c.set("user", null);
+    c.set("session", null);
+  }
+
   await next();
 });
 ```
@@ -31,7 +38,7 @@ This middleware **blocks unauthenticated requests** by returning a 401 if no use
 export const requireAuth: MiddlewareHandler<AppEnv> = async (c, next) => {
   const user = c.get("user");
   if (!user) {
-    return c.json({ error: "Unauthorized" }, 401);
+    return errorResponse(c, "Unauthorized", 401);
   }
   await next();
 };

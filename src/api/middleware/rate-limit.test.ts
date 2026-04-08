@@ -46,7 +46,7 @@ describe("rateLimit", () => {
     const res = await app.request(req());
     expect(res.status).toBe(429);
 
-    const body = await res.json();
+    const body: any = await res.json();
     expect(body.error).toBe("Too many requests");
     expect(typeof body.retryAfter).toBe("number");
   });

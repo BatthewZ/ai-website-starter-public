@@ -120,7 +120,7 @@ describe("ErrorBoundary", () => {
   it("catches errors from deeply nested components", () => {
     const restore = suppressConsoleError();
 
-    function DeepChild() {
+    function DeepChild(): never {
       throw new Error("Deep error");
     }
 

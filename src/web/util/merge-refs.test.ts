@@ -14,7 +14,7 @@ describe("mergeRefs", () => {
   });
 
   it("sets .current on ref object", () => {
-    const refObject = { current: null };
+    const refObject: { current: HTMLDivElement | null } = { current: null };
     const merged = mergeRefs(refObject);
     const node = document.createElement("div");
 

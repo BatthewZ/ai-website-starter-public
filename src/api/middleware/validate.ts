@@ -1,11 +1,11 @@
 import { zValidator } from "@hono/zod-validator";
 import type { Context } from "hono";
-import type { ZodSchema } from "zod";
+import type { ZodType } from "zod";
 
 function validationHook(
   result: {
     success: boolean;
-    error?: { issues: { path: (string | number)[]; message: string }[] };
+    error?: { issues: { path: PropertyKey[]; message: string }[] };
   },
   c: Context
 ) {
@@ -14,7 +14,7 @@ function validationHook(
       {
         error: "Validation failed",
         details: result.error!.issues.map((i) => ({
-          path: i.path.join("."),
+          path: i.path.map(String).join("."),
           message: i.message,
         })),
       },
@@ -27,13 +27,13 @@ function validationHook(
  * Validates request body against a Zod schema.
  * Returns 400 with { error: "Validation failed", details: [...] } on failure.
  */
-export function validateBody<T extends ZodSchema>(schema: T) {
+export function validateBody<T extends ZodType>(schema: T) {
   return zValidator("json", schema, validationHook);
 }
 
 /**
  * Validates query parameters against a Zod schema.
  */
-export function validateQuery<T extends ZodSchema>(schema: T) {
+export function validateQuery<T extends ZodType>(schema: T) {
   return zValidator("query", schema, validationHook);
 }

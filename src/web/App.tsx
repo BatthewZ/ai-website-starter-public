@@ -18,6 +18,7 @@ const Register = lazy(() => import("./pages/Register/Register"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword/ResetPassword"));
 const Settings = lazy(() => import("./pages/Settings/Settings"));
 const Showcase = lazy(() => import("./pages/Showcase/Showcase"));
+const ThemeEditor = lazy(() => import("./pages/ThemeEditor/ThemeEditor"));
 
 const GUEST_PATHS = ["/login", "/register", "/forgot-password", "/reset-password"];
 
@@ -107,6 +108,7 @@ export function App() {
                   />
                   <Route path="/demo" element={<Demo />} />
                   <Route path="/showcase" element={<Showcase />} />
+                  <Route path="/theme-editor" element={<ThemeEditor />} />
                   <Route path="/" element={<Navigate to="/showcase" replace />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>

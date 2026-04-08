@@ -25,7 +25,7 @@ describe("requireAuth", () => {
     const res = await app.request("/protected");
 
     expect(res.status).toBe(401);
-    const body = await res.json();
+    const body: any = await res.json();
     expect(body.error).toBe("Unauthorized");
   });
 
@@ -37,7 +37,7 @@ describe("requireAuth", () => {
     const res = await app.request("/protected");
 
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body: any = await res.json();
     expect(body.ok).toBe(true);
   });
 
@@ -46,7 +46,7 @@ describe("requireAuth", () => {
     const res = await app.request("/protected");
 
     expect(res.status).toBe(401);
-    const body = await res.json();
+    const body: any = await res.json();
     expect(body.error).toBe("Unauthorized");
   });
 });

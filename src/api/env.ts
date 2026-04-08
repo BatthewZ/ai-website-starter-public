@@ -1,5 +1,7 @@
 import type { Session, User } from "better-auth/types";
 
+import type { Database } from "../db";
+
 export type AppBindings = {
   DB: D1Database;
   BETTER_AUTH_SECRET: string;
@@ -17,6 +19,7 @@ export type AuthVariables = {
 };
 
 export type AppVariables = AuthVariables & {
+  db: Database;
   requestId: string;
 };
 

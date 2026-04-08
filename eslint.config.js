@@ -68,6 +68,10 @@ export default defineConfig([
   {
     files: ["src/**/*.test.{ts,tsx}"],
     ...tseslint.configs.disableTypeChecked,
+    rules: {
+      ...tseslint.configs.disableTypeChecked.rules,
+      "@typescript-eslint/no-explicit-any": "off",
+    },
   },
 
   // Root config files — no type-checked rules

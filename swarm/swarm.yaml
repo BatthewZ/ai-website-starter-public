@@ -6,13 +6,15 @@ tasks:
       # Find an improvement or issue
       Look through the swarm/PLAN.md file and the code base in general and find something to improve - like if a command is missing, or if a feature is not fully completed up to where it could be.
 
-      If everything is looking ok, select one of the phases from swarm/PLAN.md (ie all of Phase 1) that is not yet being implemented, and copy it into a feature/phase file. 
+      If everything is looking ok, select one of the phases from swarm/PLAN.md (ie all of Phase 1) that is not yet being implemented, and copy it into a feature/phase file.
 
       # Write a feature file
 
-      Write out the feature file to ./swarm/todo/{feature-name}.pending.md
+      Consider the dependency graph of the tasks. Can any of these tasks be done concurrently? Which tasks must be done sequentially?
 
-      Encourage the use of spawning subagents where appropriate to do so for parallel work. 
+      Whoever reads this file is going to become an agent orchestrator; someone who can control up to 3-4 subagents at a time.
+
+      Prepare the plan with this in mind and write out the feature file to ./swarm/todo/{feature-name}.pending.md      
 
       # Exit condition
 
@@ -37,6 +39,11 @@ tasks:
       # Implement the task
 
       Then read the file and execute the task to completion, adding tests and testing when you think you need to.
+
+      It's really important that you do good work. This bit is really important. Some items in the task file can be done concurrently. 
+      If the task file encourages concurrency, you will become an orchestrator, spawning subagents to do your work. 
+      Be mindful of which items can be done concurrently, and which ones must be done sequentially.
+
       When done, rename the file to ".completed.md" and add a note about what you did.
       If you can\'t complete the task, rename the file to ".pending.md" and add a note about what went wrong to the file.
 
@@ -93,6 +100,7 @@ tasks:
       - Security issues (unsanitized input, exposed secrets, injection vectors)
       - State management bugs (stale closures, missing dependency arrays, mutation of shared state)
       - Type mismatches or unsafe casts that could cause runtime errors
+      - Run `bun run build`. If there are any circular dependency between chunks warnings, fix them.
 
       # Fix bugs
 
@@ -105,6 +113,47 @@ tasks:
       If the unstaged changes look correct, exit immediately.
 
     depends_on: [refactor]
+
+  documenter:
+    prompt-string: |
+      # 1. Sync Documentation with Code Changes
+
+      Run `git diff` to identify modified files. For every changed file in `src/`, locate its corresponding documentation "Hub" (the nearest related index file in `/docs`).
+
+      Example mapping:
+      - `src/features/auth/*` -> `docs/auth/auth.md` (or index)
+      - `src/ui/*` -> `docs/ui/ui.md` (or index)
+
+      # 2. Sync Sub-Module Documentation
+
+      If the code change introduces a new sub-feature, utility, or logic block:
+      - Locate the specific sub-markdown file referenced in the Hub's index (e.g., `[Feature X](./feature-x.md)`).
+      - Update that file to reflect the new state of the code (parameters, return types, logic flow).
+      - If a new sub-file is created, ensure it follows the project's standard Markdown structure.
+
+      # 3. Maintain the Index/Hub File
+
+      If a new sub-module was added or a structural change occurred:
+      - **Update the Index:** Add the new file link and a brief description to the central Hub file (e.g., `index.md` or `feature.md`).
+      - **Update Tables:** If the Hub contains "Organization" or "Directory" tables, ensure the rows accurately reflect the current `src/` folder structure.
+      - **Verify Links:** Ensure all relative paths (e.g., `./sub-file.md`) are valid and clicking them would lead to existing files.
+
+      # 4. Enforce Standards & "Rules"
+
+      Check the "Rules" or "Standards" section of the relevant documentation Hub:
+      - Does the new code violate any documented architectural rules (e.g., "No external libraries in this folder" or "All functions must be async")?
+      - If the code violates a rule, do NOT update the docs to match the "bad" code. Instead, add a `> [!WARNING]` note to the documentation or the code file indicating the debt.
+
+      # 5. Update CHANGELOG.md
+
+      Update the Changelog if it makes sense to do so, for anything significant and non-superficial. NEVER update it with anything that could be a security risk, EVER. This repo has a public mirror
+      and it could be catastrophic if sensitive is leaked into the CHANGELOG.
+
+      # 6. Exit Condition
+
+      If the documentation accurately represents the current state of the staged/unstaged code,  or the code changes require no documentation updates (e.g., pure refactor or bug fix with no logic change), or after all necessary edits are applied, exit immediately.
+
+    depends_on: [checker]
 
   tester:
     prompt-string: |
@@ -136,9 +185,17 @@ tasks:
 
       If there are no unstaged or staged changes (nothing was modified in this iteration), exit immediately.
 
-    depends_on: [checker]
+    depends_on: [documenter]
 
 pipelines:
-  development:
+  dev:
+    iterations: 15
+    tasks: [planner, coder, refactor, checker, documenter, tester]
+
+  code:
     iterations: 30
-    tasks: [planner, coder, refactor, checker, tester]
+    tasks: [coder, refactor, checker, documenter, tester]
+
+  qa:
+    iterations: 1
+    tasks: [refactor, checker, documenter, tester]

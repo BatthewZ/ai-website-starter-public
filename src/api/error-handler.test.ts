@@ -6,7 +6,7 @@ import { requestIdMiddleware } from "./middleware/request-id";
 
 describe("Global error handler", () => {
   function createApp() {
-    const app = new Hono();
+    const app = new Hono<{ Variables: { requestId: string } }>();
     app.use("*", requestIdMiddleware);
 
     app.onError((err, c) => {
@@ -39,7 +39,7 @@ describe("Global error handler", () => {
     const res = await app.request("/http-exception-403");
 
     expect(res.status).toBe(403);
-    const body = await res.json();
+    const body: any = await res.json();
     expect(body.error).toBe("Forbidden");
   });
 
@@ -48,7 +48,7 @@ describe("Global error handler", () => {
     const res = await app.request("/http-exception-400");
 
     expect(res.status).toBe(400);
-    const body = await res.json();
+    const body: any = await res.json();
     expect(body.error).toBe("Bad Request");
   });
 
@@ -57,7 +57,7 @@ describe("Global error handler", () => {
     const res = await app.request("/unexpected-error");
 
     expect(res.status).toBe(500);
-    const body = await res.json();
+    const body: any = await res.json();
     expect(body.error).toBe("Internal Server Error");
   });
 
@@ -65,7 +65,7 @@ describe("Global error handler", () => {
     const app = createApp();
     const res = await app.request("/http-exception-403");
 
-    const body = await res.json();
+    const body: any = await res.json();
     expect(body.requestId).toBeDefined();
     expect(typeof body.requestId).toBe("string");
   });
@@ -74,7 +74,7 @@ describe("Global error handler", () => {
     const app = createApp();
     const res = await app.request("/unexpected-error");
 
-    const body = await res.json();
+    const body: any = await res.json();
     expect(body.requestId).toBeDefined();
     expect(typeof body.requestId).toBe("string");
   });

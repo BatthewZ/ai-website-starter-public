@@ -91,7 +91,7 @@ describe("Text", () => {
   });
 
   it("forwards ref to the rendered element", () => {
-    const ref = createRef<HTMLElement>();
+    const ref = createRef<HTMLParagraphElement>();
     render(<Text ref={ref}>Ref test</Text>);
     expect(ref.current).toBeInstanceOf(HTMLElement);
     expect(ref.current?.textContent).toBe("Ref test");

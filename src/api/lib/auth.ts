@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
@@ -24,6 +25,10 @@ export function createAuth(env: AppBindings) {
     trustedOrigins: [env.BETTER_AUTH_URL, ...parseTrustedOrigins(env.TRUSTED_ORIGINS)],
     emailAndPassword: {
       enabled: true,
+      password: {
+        hash: (password) => bcrypt.hash(password, 10),
+        verify: ({ hash, password }) => bcrypt.compare(password, hash),
+      },
       sendResetPassword: async ({ user, url }) => {
         try {
           const { subject, html, text } = passwordResetEmail({ url });

@@ -17,10 +17,13 @@ Request
 3. securityHeadersMiddleware -- sets security response headers
   |
   v
-4. CORS                    -- validates origin, sets CORS headers
+4. db middleware            -- creates Drizzle DB instance from D1 binding
   |
   v
-5. authSessionMiddleware   -- extracts user/session from cookies
+5. CORS                    -- validates origin, sets CORS headers
+  |
+  v
+6. authSessionMiddleware   -- extracts user/session from cookies
   |
   v
 Route Handler (or 404 catch-all)
@@ -35,6 +38,7 @@ This is registered in `src/api/index.ts`:
 app.use("/api/*", requestIdMiddleware);
 app.use("/api/*", requestLogger);
 app.use("/api/*", securityHeadersMiddleware);
+app.use("/api/*", async (c, next) => { c.set("db", createDb(c.env.DB)); await next(); });
 app.use("/api/*", cors({ ... }));
 app.use("/api/*", authSessionMiddleware);
 ```
@@ -108,6 +112,7 @@ Sets security-related response headers on all API responses. These headers are a
 | `Referrer-Policy` | `strict-origin-when-cross-origin` | Limits referrer information sent with requests. |
 | `Permissions-Policy` | `camera=(), microphone=(), geolocation=()` | Disables camera, microphone, and geolocation APIs. |
 | `X-XSS-Protection` | `0` | Disables the legacy XSS filter (modern CSP is preferred). |
+| `Strict-Transport-Security` | `max-age=31536000; includeSubDomains` | Enforces HTTPS for one year, including subdomains. |
 | `Content-Security-Policy` | See below | Controls which resources can be loaded. |
 
 **CSP directives**:
@@ -124,10 +129,21 @@ base-uri 'self';
 form-action 'self'
 ```
 
-### 4. CORS
+#### SPA Security Headers
+
+The same security headers and CSP are also applied to **SPA (non-API) responses** via the `withSpaSecurityHeaders` function in `src/api/middleware/security-headers.ts`. This ensures the frontend HTML and assets receive identical protections. Additionally, SPA responses include cache-control headers:
+
+- `/assets/*` paths: `Cache-Control: public, max-age=31536000, immutable` (Vite hashed assets).
+- All other paths: `Cache-Control: no-cache` (HTML shell, etc.).
+
+### 4. Database Middleware (inline in `src/api/index.ts`)
+
+Creates a Drizzle ORM database instance from the D1 binding and stores it on the Hono context as `db`. This makes the database available to all downstream handlers via `c.get("db")`.
+
+### 5. CORS
 
 CORS is configured using Hono's built-in `cors()` middleware. See [CORS](./cors.md) for full details.
 
-### 5. Auth Session (`src/api/middleware/auth.ts`)
+### 6. Auth Session (`src/api/middleware/auth.ts`)
 
 Extracts the user session from cookies on every request. Sets `c.get("user")` and `c.get("session")` -- either with valid session data or `null`. Does not block unauthenticated requests. See the [Auth documentation](../auth/auth.md) for details.

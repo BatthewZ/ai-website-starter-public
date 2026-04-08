@@ -2,12 +2,14 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
 
+import { createDb } from "../db";
 import type { AppBindings, AppEnv } from "./env";
 import { resolveAllowedOrigin } from "./lib/auth";
+import { errorResponse } from "./lib/error-response";
 import { authSessionMiddleware } from "./middleware/auth";
 import { requestLogger } from "./middleware/logger";
 import { requestIdMiddleware } from "./middleware/request-id";
-import { securityHeadersMiddleware } from "./middleware/security-headers";
+import { securityHeadersMiddleware, withSpaSecurityHeaders } from "./middleware/security-headers";
 import routes from "./routes";
 
 const app = new Hono<AppEnv>();
@@ -29,12 +31,17 @@ app.onError((err, c) => {
       requestId,
     })
   );
-  return c.json({ error: "Internal Server Error", requestId }, 500);
+  return errorResponse(c, "Internal Server Error", 500);
 });
 
 app.use("/api/*", requestIdMiddleware);
 app.use("/api/*", requestLogger);
 app.use("/api/*", securityHeadersMiddleware);
+
+app.use("/api/*", async (c, next) => {
+  c.set("db", createDb(c.env.DB));
+  await next();
+});
 
 app.use(
   "/api/*",
@@ -56,10 +63,12 @@ app.get("/api/health", (c) => c.json({ ok: true }));
 app.route("/api", routes);
 
 app.all("/api/*", (c) => {
-  const requestId = c.get("requestId") ?? "unknown";
-  return c.json({ error: "Not Found", requestId }, 404);
+  return errorResponse(c, "Not Found", 404);
 });
 
-app.all("*", (c) => c.env.ASSETS.fetch(c.req.raw));
+app.all("*", async (c) => {
+  const response = await c.env.ASSETS.fetch(c.req.raw);
+  return withSpaSecurityHeaders(response, c.req.path);
+});
 
 export default app;

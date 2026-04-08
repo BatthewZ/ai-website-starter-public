@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { describe, expect, it } from "vitest";
 
 import { requestIdMiddleware } from "./request-id";
-import { securityHeadersMiddleware } from "./security-headers";
+import { securityHeadersMiddleware, withSpaSecurityHeaders } from "./security-headers";
 
 describe("securityHeadersMiddleware", () => {
   const app = new Hono();
@@ -43,6 +43,11 @@ describe("securityHeadersMiddleware", () => {
     expect(csp).toContain("frame-ancestors 'none'");
   });
 
+  it("sets Strict-Transport-Security", async () => {
+    const res = await app.request("/test");
+    expect(res.headers.get("Strict-Transport-Security")).toBe("max-age=31536000; includeSubDomains");
+  });
+
   it("includes all security headers together", async () => {
     const res = await app.request("/test");
     expect(res.status).toBe(200);
@@ -51,12 +56,50 @@ describe("securityHeadersMiddleware", () => {
     expect(res.headers.get("Referrer-Policy")).toBe("strict-origin-when-cross-origin");
     expect(res.headers.get("Permissions-Policy")).toBe("camera=(), microphone=(), geolocation=()");
     expect(res.headers.get("X-XSS-Protection")).toBe("0");
+    expect(res.headers.get("Strict-Transport-Security")).toBe("max-age=31536000; includeSubDomains");
     expect(res.headers.get("Content-Security-Policy")).toContain("default-src 'self'");
   });
 });
 
+describe("withSpaSecurityHeaders", () => {
+  it("sets all shared security headers on the response", () => {
+    const original = new Response("hello", { status: 200 });
+    const wrapped = withSpaSecurityHeaders(original, "/");
+
+    expect(wrapped.headers.get("X-Content-Type-Options")).toBe("nosniff");
+    expect(wrapped.headers.get("X-Frame-Options")).toBe("DENY");
+    expect(wrapped.headers.get("Referrer-Policy")).toBe("strict-origin-when-cross-origin");
+    expect(wrapped.headers.get("Permissions-Policy")).toBe("camera=(), microphone=(), geolocation=()");
+    expect(wrapped.headers.get("X-XSS-Protection")).toBe("0");
+    expect(wrapped.headers.get("Strict-Transport-Security")).toBe("max-age=31536000; includeSubDomains");
+    expect(wrapped.headers.get("Content-Security-Policy")).toContain("default-src 'self'");
+  });
+
+  it("sets Cache-Control to no-cache for non-asset paths", () => {
+    const original = new Response("html", { status: 200 });
+    const wrapped = withSpaSecurityHeaders(original, "/dashboard");
+
+    expect(wrapped.headers.get("Cache-Control")).toBe("no-cache");
+  });
+
+  it("sets immutable cache for /assets/ paths", () => {
+    const original = new Response("js", { status: 200 });
+    const wrapped = withSpaSecurityHeaders(original, "/assets/style.abc123.css");
+
+    expect(wrapped.headers.get("Cache-Control")).toBe("public, max-age=31536000, immutable");
+  });
+
+  it("preserves original response status", () => {
+    const original = new Response("not found", { status: 404, statusText: "Not Found" });
+    const wrapped = withSpaSecurityHeaders(original, "/missing");
+
+    expect(wrapped.status).toBe(404);
+    expect(wrapped.statusText).toBe("Not Found");
+  });
+});
+
 describe("requestIdMiddleware", () => {
-  const app = new Hono();
+  const app = new Hono<{ Variables: { requestId: string } }>();
   app.use("*", requestIdMiddleware);
   app.get("/test", (c) => c.json({ requestId: c.get("requestId") }));
 
@@ -69,7 +112,7 @@ describe("requestIdMiddleware", () => {
 
   it("makes request ID available on the context", async () => {
     const res = await app.request("/test");
-    const body = await res.json();
+    const body: any = await res.json();
     const headerRequestId = res.headers.get("X-Request-Id");
     expect(body.requestId).toBe(headerRequestId);
   });
@@ -81,7 +124,7 @@ describe("requestIdMiddleware", () => {
     });
     const res = await app.request(req);
     expect(res.headers.get("X-Request-Id")).toBe(clientRequestId);
-    const body = await res.json();
+    const body: any = await res.json();
     expect(body.requestId).toBe(clientRequestId);
   });
 
@@ -96,7 +139,7 @@ describe("requestIdMiddleware", () => {
 
 describe("error handler with request ID", () => {
   it("includes request ID in error responses", async () => {
-    const app = new Hono();
+    const app = new Hono<{ Variables: { requestId: string } }>();
     app.use("*", requestIdMiddleware);
     app.onError((err, c) => {
       const requestId = c.get("requestId") ?? "unknown";
@@ -108,7 +151,7 @@ describe("error handler with request ID", () => {
 
     const res = await app.request("/error");
     expect(res.status).toBe(500);
-    const body = await res.json();
+    const body: any = await res.json();
     expect(body.error).toBe("Internal Server Error");
     expect(body.requestId).toBeTruthy();
     expect(body.requestId).toMatch(

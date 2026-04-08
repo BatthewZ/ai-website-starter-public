@@ -18,6 +18,10 @@ export function createAuth(env: AppBindings) {
     }),
     emailAndPassword: {
       enabled: true,
+      password: {
+        hash: (password) => bcrypt.hash(password, 10),
+        verify: ({ hash, password }) => bcrypt.compare(password, hash),
+      },
       sendResetPassword: async ({ user, url }) => {
         try {
           const { subject, html, text } = passwordResetEmail({ url });
@@ -59,6 +63,8 @@ export function createAuth(env: AppBindings) {
 |---|---|---|
 | `database` | Drizzle adapter with D1 + SQLite provider | Stores users, sessions, accounts, and verification tokens in D1. |
 | `emailAndPassword.enabled` | `true` | Enables email/password sign-up and sign-in. |
+| `emailAndPassword.password.hash` | `bcrypt.hash(password, 10)` | Hashes passwords with bcryptjs (10 salt rounds). Overrides Better Auth's default hasher for cross-platform compatibility. |
+| `emailAndPassword.password.verify` | `bcrypt.compare(password, hash)` | Verifies passwords against bcrypt hashes. |
 | `emailAndPassword.sendResetPassword` | Email service (Resend or console fallback) | Sends a password reset email via the configured email service. Failures are caught and logged so they do not crash the auth flow. See [Email Service](../api/email.md). |
 | `emailVerification.sendVerificationEmail` | Email service (Resend or console fallback) | Sends an email verification link after sign-up. Failures are caught and logged so they do not crash the auth flow. See [Email Service](../api/email.md). |
 | `user.deleteUser.enabled` | `true` | Enables the account deletion endpoint. |
