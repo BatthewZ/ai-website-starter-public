@@ -45,12 +45,12 @@
 
 /* Content sits on top of a dark overlay — force light text in all themes */
 .media-card__content {
-  --C-TEXT-PRIMARY: #fff;
-  --C-TEXT-SECONDARY: rgba(255, 255, 255, 0.7);
-  --C-TEXT-MUTED: rgba(255, 255, 255, 0.5);
-  --C-TEXT-INVERSE: #fff;
-  --C-TEXT-ON-PRIMARY: #fff;
-  --C-TEXT-ON-ACCENT: #fff;
+  --C-TEXT-PRIMARY: oklch(1 0 0);
+  --C-TEXT-SECONDARY: oklch(1 0 0 / 0.7);
+  --C-TEXT-MUTED: oklch(1 0 0 / 0.5);
+  --C-TEXT-INVERSE: oklch(1 0 0);
+  --C-TEXT-ON-PRIMARY: oklch(1 0 0);
+  --C-TEXT-ON-ACCENT: oklch(1 0 0);
 }
 
 @media (prefers-reduced-motion: reduce) {

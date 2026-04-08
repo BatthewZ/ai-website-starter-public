@@ -146,7 +146,7 @@
 }
 
 .app-shell-sidebar-link[data-active] {
-  background: color-mix(in srgb, var(--C-ACCENT) 10%, transparent);
+  background: color-mix(in oklch, var(--C-ACCENT) 10%, transparent);
   color: var(--C-ACCENT);
 }
 

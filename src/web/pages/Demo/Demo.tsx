@@ -1287,10 +1287,10 @@ const THEME_LABELS: Record<Theme, string> = {
 };
 
 const THEME_COLORS: Record<Theme, { bg: string; border: string }> = {
-  default: { bg: "#1e293b", border: "#64748b" },
-  events: { bg: "#7c3aed", border: "#f97316" },
-  grimdark: { bg: "#1a1a1a", border: "#b91c1c" },
-  tech: { bg: "#09090b", border: "#00ff88" },
+  default: { bg: "oklch(0.2795 0.0368 260.03)", border: "oklch(0.5544 0.0407 257.42)" },
+  events: { bg: "oklch(0.5413 0.2466 293.01)", border: "oklch(0.7049 0.1867 47.6)" },
+  grimdark: { bg: "oklch(0.2178 0 0)", border: "oklch(0.5054 0.1905 27.52)" },
+  tech: { bg: "oklch(0.1408 0.0044 285.82)", border: "oklch(0.8763 0.2278 152.55)" },
 };
 
 function MobileThemeBubble() {
