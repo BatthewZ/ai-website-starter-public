@@ -48,6 +48,38 @@ html {
   font-family: var(--DEFAULT-MONO-FONT);
 }
 
+/* ------------------------------------------------------------------ */
+/*  Global scrollbars                                                  */
+/* ------------------------------------------------------------------ */
+/* Theme-aware scrollbars across the app. Firefox uses scrollbar-color;
+   WebKit/Blink uses the ::-webkit-scrollbar pseudo-elements.          */
+
+* {
+  scrollbar-color: var(--C-BORDER-DEFAULT) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 0.625rem;
+  height: 0.625rem;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--C-BORDER-DEFAULT);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--C-BORDER-STRONG);
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 body:has(dialog[open].no-body-scroll) {
   overflow: hidden;
 }

@@ -149,6 +149,16 @@ const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsList(
     transform: string;
     width: string;
   }>({ transform: "translateX(0px)", width: "0px" });
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const updateScrollState = useCallback(() => {
+    const list = listRef.current;
+    if (!list) return;
+    const { scrollLeft, scrollWidth, clientWidth } = list;
+    setCanScrollLeft(scrollLeft > 0);
+    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 1);
+  }, []);
 
   const updateIndicator = useCallback(() => {
     const list = listRef.current;
@@ -167,7 +177,8 @@ const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsList(
 
   useLayoutEffect(() => {
     updateIndicator();
-  }, [updateIndicator]);
+    updateScrollState();
+  }, [updateIndicator, updateScrollState]);
 
   useEffect(() => {
     const list = listRef.current;
@@ -175,17 +186,24 @@ const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsList(
 
     const observer = new ResizeObserver(() => {
       updateIndicator();
+      updateScrollState();
     });
     observer.observe(list);
+    list.addEventListener("scroll", updateScrollState, { passive: true });
 
-    return () => observer.disconnect();
-  }, [updateIndicator]);
+    return () => {
+      observer.disconnect();
+      list.removeEventListener("scroll", updateScrollState);
+    };
+  }, [updateIndicator, updateScrollState]);
 
   return (
     <div
       ref={mergeRefs(forwardedRef, listRef)}
       role="tablist"
       className={cn("tabs-list", variantListClass[variant], className)}
+      data-scroll-left={canScrollLeft}
+      data-scroll-right={canScrollRight}
       {...props}
     >
       {children}
