@@ -7,7 +7,7 @@ The project organizes code by **domain** (what it relates to), not by **technica
 ### Core Principles
 
 1. **Co-locate by domain, not by type.** A page's components, hooks, and types live inside that page's folder.
-2. **Promote to shared only when reused.** A component starts in `pages/Dashboard/components/`. Once a second page needs it, move it to `components/ui/` or `components/layout/`.
+2. **Promote to shared only when reused.** A component starts in `pages/Dashboard/components/`. Once a second page needs it, move it to `components/`. Generic, reusable primitives belong in the `@batthewz/response-ui-react-components` package, not here — see [Frontend](../app-frontend.md).
 3. **Flat until it hurts.** Do not create sub-folders pre-emptively.
 4. **Mirror structure between frontend and backend.** Both `api/routes/` and `shared/schemas/` group by domain (e.g., `auth`, `users`, `posts`).
 
@@ -55,14 +55,14 @@ src/
 │   └── types/                    # Shared TypeScript types
 │
 └── web/                          # Frontend (React SPA)
-    ├── App.tsx                   # Root router
+    ├── App.tsx                   # Root router (+ RouterAdapterProvider)
     ├── main.tsx                  # React bootstrap
-    ├── lib/                      # Utilities & clients
-    ├── hooks/                    # Shared hooks
-    ├── components/               # Shared components
-    │   ├── ui/                   # Generic UI primitives
-    │   ├── layout/               # App shell components
-    │   └── guards/               # Route guards
+    ├── style/                    # app.css (imports @batthewz/response-ui-* CSS) + app-only CSS
+    ├── lib/                      # Utilities & clients (auth client, API client)
+    ├── hooks/                    # App-specific hooks (use-api, use-file-upload)
+    ├── components/               # App-specific shared components
+    │   ├── layout/               # AuthenticatedLayout (auth-aware app chrome)
+    │   └── guards/               # Route guards (AuthGuard, GuestGuard)
     └── pages/                    # Route-level page components
         ├── Dashboard/
         ├── Demo/
@@ -84,10 +84,10 @@ src/
 | `pages/{PageName}/` | Route-level entry point | One folder per route. Folder and file share PascalCase name. |
 | `pages/{PageName}/components/` | Page-specific components | Only used by this page. Promote to `components/` if reused. |
 | `pages/{PageName}/hooks/` | Page-specific hooks | Custom hooks scoped to this page's logic. |
-| `components/ui/` | Generic UI primitives | Button, Input, Modal -- no business logic. |
-| `components/layout/` | App shell / layout | Header, Sidebar, Footer, AppLayout. |
-| `components/guards/` | Route guards | AuthGuard, GuestGuard, RoleGuard. |
-| `hooks/` | Shared hooks | Hooks used by 2+ pages. |
+| *(generic UI primitives)* | Provided by the package | Button, Input, Card, etc. come from `@batthewz/response-ui-react-components` — not stored locally. See [Frontend](../app-frontend.md). |
+| `components/layout/` | App-specific layout | `AuthenticatedLayout` (composes the package's `AppShell`). |
+| `components/guards/` | Route guards | `AuthGuard`, `GuestGuard` (Better Auth + react-router). |
+| `hooks/` | App-specific hooks | `use-api`, `use-file-upload`. Generic UI hooks come from the package. |
 | `lib/` | Utilities & clients | Auth client, API client, helper functions. |
 
 ### API Conventions

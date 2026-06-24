@@ -1,11 +1,8 @@
+import { Alert, Button, Card, Center, Field, FieldError, Input, Label, Stack, Text, useDocumentTitle } from "@batthewz/response-ui-react-components";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import { forgotPasswordSchema } from "@/shared/schemas/auth";
-import { Field, FieldError, Input, Label } from "@/web/components/form";
-import { Center, Stack } from "@/web/components/layout";
-import { Alert, Button, Card, Text } from "@/web/components/ui";
-import { useDocumentTitle } from "@/web/hooks/use-document-title";
 import { requestPasswordReset } from "@/web/lib/auth/auth-client";
 
 export function ForgotPassword() {
@@ -15,7 +12,7 @@ export function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
 

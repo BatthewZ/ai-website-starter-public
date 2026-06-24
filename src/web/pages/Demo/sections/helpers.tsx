@@ -1,5 +1,4 @@
-import { Divider, Stack } from "@/web/components/layout";
-import { Text } from "@/web/components/ui";
+import { Divider, Stack, Text } from "@batthewz/response-ui-react-components";
 
 function slugify(text: string): string {
   return text

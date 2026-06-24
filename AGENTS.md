@@ -10,8 +10,7 @@ Study swarm/PLAN.md to learn about the project specifications
 | [API](docs/api/api.md)                                            | Endpoints, middleware, error handling, rate limiting, validation           |
 | [Auth](docs/auth/auth.md)                                         | Better Auth setup, auth flows, middleware, route guards, schemas           |
 | [Database](docs/database/database.md)                             | D1 + Drizzle ORM setup, schema, migrations, query examples                 |
-| [Design System](docs/design-system/design-system.md)              | Tokens, colors, typography, spacing, theming, motion                       |
-| [UI Components](docs/ui/ui.md)                                    | Layout, UI primitives, display components, forms, animations               |
+| [Frontend](docs/app-frontend.md)                                  | UI components, hooks, design-system tokens & themes (from `@batthewz/response-ui-*`) + app-specific frontend |
 | [Deployment](docs/deployment/deployment.md)                       | Prerequisites, step-by-step guide, environment, custom domains             |
 | [Testing](docs/guides/tests.md)                                   | Writing and running tests, important rules, screenshots and visual testing |
 | [Browser](docs/guides/browser.md)                                 | If you need to use a browser, read this                                    |

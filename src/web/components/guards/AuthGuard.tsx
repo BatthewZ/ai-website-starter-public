@@ -1,7 +1,6 @@
+import { Center, Spinner } from "@batthewz/response-ui-react-components";
 import { Navigate } from "react-router-dom";
 
-import { Center } from "@/web/components/layout";
-import { Spinner } from "@/web/components/ui";
 import { useSession } from "@/web/lib/auth/auth-client";
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {

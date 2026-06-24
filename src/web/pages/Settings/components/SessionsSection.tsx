@@ -1,7 +1,6 @@
+import { Alert, Badge, Button, Card, Row, Skeleton, Stack, Text } from "@batthewz/response-ui-react-components";
 import { useCallback, useEffect, useState } from "react";
 
-import { Row, Stack } from "@/web/components/layout";
-import { Alert, Badge, Button, Card, Skeleton, Text } from "@/web/components/ui";
 import {
   listSessions,
   revokeOtherSessions,

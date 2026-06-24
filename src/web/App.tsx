@@ -1,13 +1,31 @@
-import { lazy, Suspense, useEffect } from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import {
+  Center,
+  ErrorBoundary,
+  RouterAdapterProvider,
+  type RouterLinkComponent,
+  type RouterLinkProps,
+  Spinner,
+  ToastProvider,
+  useToast,
+} from "@batthewz/response-ui-react-components";
+import { forwardRef, lazy, Suspense, useEffect } from "react";
+import { BrowserRouter, Link as RouterLink, Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import { AuthGuard } from "./components/guards/AuthGuard";
 import { GuestGuard } from "./components/guards/GuestGuard";
-import { Center } from "./components/layout";
-import { ErrorBoundary } from "./components/ui/ErrorBoundary";
-import { Spinner } from "./components/ui/Spinner";
-import { ToastProvider, useToast } from "./components/ui/ToastContext";
 import { setOnUnauthorized } from "./lib/api/client";
+
+const AdapterLink: RouterLinkComponent = forwardRef<HTMLAnchorElement, RouterLinkProps>(
+  function AdapterLink({ to, replace, children, ...rest }, ref) {
+    return (
+      <RouterLink ref={ref} to={to} replace={replace} {...rest}>
+        {children}
+      </RouterLink>
+    );
+  }
+);
+
+const routerAdapter = { Link: AdapterLink, usePathname: () => useLocation().pathname };
 
 const Dashboard = lazy(() => import("./pages/Dashboard/Dashboard"));
 const Demo = lazy(() => import("./pages/Demo/Demo"));
@@ -40,13 +58,14 @@ function UnauthorizedRedirect() {
 export function App() {
   return (
     <BrowserRouter>
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:bg-surface-0 focus:px-4 focus:py-2 focus:rounded-md focus:shadow-md focus:text-fg-primary"
-      >
-        Skip to content
-      </a>
-      <ToastProvider>
+      <RouterAdapterProvider value={routerAdapter}>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:bg-surface-0 focus:px-4 focus:py-2 focus:rounded-md focus:shadow-md focus:text-fg-primary"
+        >
+          Skip to content
+        </a>
+        <ToastProvider>
         <UnauthorizedRedirect />
         <ErrorBoundary>
           <Suspense
@@ -116,6 +135,7 @@ export function App() {
           </Suspense>
         </ErrorBoundary>
       </ToastProvider>
+      </RouterAdapterProvider>
     </BrowserRouter>
   );
 }

@@ -15,6 +15,9 @@ export const TOC_SECTIONS: TocEntry[] = [
   { id: "dialog", title: "Dialog", group: "Core" },
   { id: "spinner", title: "Spinner", group: "Core" },
   { id: "dividers", title: "Dividers", group: "Core" },
+  { id: "codeblock", title: "Code Block", group: "Core" },
+  { id: "copybutton", title: "Copy Button", group: "Core" },
+  { id: "kbd", title: "Kbd", group: "Core" },
 
   // Layout
   { id: "layout-stack-row", title: "Stack & Row", group: "Layout" },
@@ -25,16 +28,39 @@ export const TOC_SECTIONS: TocEntry[] = [
   { id: "form-components", title: "Form Components", group: "Forms" },
   { id: "search-input", title: "Search Input", group: "Forms" },
   { id: "form-states", title: "Form States", group: "Forms" },
+  { id: "combobox", title: "Combobox", group: "Forms" },
+  { id: "multiselect", title: "Multi-Select", group: "Forms" },
+  { id: "colorpicker", title: "Color Picker", group: "Forms" },
+  { id: "numberinput", title: "Number Input", group: "Forms" },
+  { id: "otpinput", title: "OTP Input", group: "Forms" },
+  { id: "slider", title: "Slider", group: "Forms" },
+  { id: "rangeslider", title: "Range Slider", group: "Forms" },
+  { id: "switch", title: "Switch", group: "Forms" },
+  { id: "taginput", title: "Tag Input", group: "Forms" },
+  { id: "validated-form", title: "Validated Form", group: "Forms" },
+
+  // Dates
+  { id: "calendar", title: "Calendar", group: "Dates" },
+  { id: "rangecalendar", title: "Range Calendar", group: "Dates" },
+  { id: "datepicker", title: "Date Picker", group: "Dates" },
+  { id: "daterangepicker", title: "Date Range Picker", group: "Dates" },
 
   // Data Display
   { id: "color-palette", title: "Color Palette", group: "Data Display" },
   { id: "avatars", title: "Avatars", group: "Data Display" },
   { id: "progress-bars", title: "Progress Bars", group: "Data Display" },
   { id: "stat-cards", title: "Stat Cards", group: "Data Display" },
+  { id: "sparkline", title: "Sparkline", group: "Data Display" },
+  { id: "progressring", title: "Progress Ring", group: "Data Display" },
+  { id: "meter", title: "Meter", group: "Data Display" },
+  { id: "rating", title: "Rating", group: "Data Display" },
+  { id: "descriptionlist", title: "Description List", group: "Data Display" },
+  { id: "activityfeed", title: "Activity Feed", group: "Data Display" },
 
   // Navigation
   { id: "tabs", title: "Tabs", group: "Navigation" },
   { id: "accordion", title: "Accordion", group: "Navigation" },
+  { id: "collapsible", title: "Collapsible", group: "Navigation" },
 
   // Media
   { id: "media-cards", title: "Media Cards", group: "Media" },
@@ -55,17 +81,24 @@ export const TOC_SECTIONS: TocEntry[] = [
   { id: "breadcrumbs", title: "Breadcrumbs", group: "Patterns" },
   { id: "pagination", title: "Pagination", group: "Patterns" },
   { id: "skeleton", title: "Skeleton", group: "Patterns" },
+  { id: "stepper", title: "Stepper", group: "Patterns" },
+  { id: "wizard", title: "Wizard", group: "Patterns" },
 
   // Overlays
   { id: "tooltip", title: "Tooltip", group: "Overlays" },
   { id: "popover", title: "Popover", group: "Overlays" },
   { id: "dropdown-menu", title: "Dropdown Menu", group: "Overlays" },
+  { id: "drawer", title: "Drawer", group: "Overlays" },
+  { id: "contextmenu", title: "Context Menu", group: "Overlays" },
+  { id: "hovercard", title: "Hover Card", group: "Overlays" },
+  { id: "commandpalette", title: "Command Palette", group: "Overlays" },
 
   // Data
   { id: "table", title: "Table", group: "Data" },
   { id: "datatable", title: "DataTable", group: "Data" },
   { id: "fileupload", title: "FileUpload", group: "Data" },
   { id: "avatarupload", title: "AvatarUpload", group: "Data" },
+  { id: "virtualizeddatatable", title: "Virtualized Table", group: "Data" },
 ];
 
 export function groupedToc(): { group: string; items: TocEntry[] }[] {

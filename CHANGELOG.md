@@ -4,6 +4,7 @@
 
 ### Changed
 
+- **Frontend extracted to packages**: UI components, layout primitives, form controls, animations, shared UI hooks, and design-system tokens/themes are now consumed from the published `@batthewz/response-ui-react-components`, `@batthewz/response-ui-css`, and `@batthewz/response-ui-tw-merge` packages instead of being maintained locally. App-specific frontend (`AuthenticatedLayout`, route guards, `useApi`, `useFileUpload`, the ThemeEditor page) remains in-repo. The per-component `docs/ui/` and `docs/design-system/` references were consolidated into [`docs/app-frontend.md`](docs/app-frontend.md).
 - **px → rem units**: All hardcoded `px` values in CSS tokens, responsive utilities, component styles, and Tailwind arbitrary values converted to `rem` for better accessibility and user font-size scaling. Affected: radius, motion, overlay, media, spacing, typography tokens; component styles; theme overrides.
 - **Zod v3 → v4**: Migrated to Zod 4. Frontend validation error access updated from `.error.errors` to `.error.issues`. Validation middleware updated to use `ZodType` instead of `ZodSchema`.
 - **Password hashing**: Auth now uses bcryptjs for explicit password hashing and verification instead of Better Auth's default hasher.

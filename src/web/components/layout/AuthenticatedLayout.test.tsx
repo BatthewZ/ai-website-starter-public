@@ -16,11 +16,10 @@ vi.mock("@/web/lib/auth/auth-client", () => ({
   signOut: (...args: unknown[]) => mockSignOut(...args),
 }));
 
-vi.mock("@/web/components/ui/ThemeSwitcher", () => ({
-  ThemeSwitcher: () => <div data-testid="theme-switcher">ThemeSwitcher</div>,
-}));
-
-vi.mock("@/web/components/ui/AppShell", () => {
+// AuthenticatedLayout now consumes AppShell/Button/Text/ThemeSwitcher from the
+// npm package. Mock the WHOLE module path once with every export the component
+// uses (vitest honors only the last vi.mock per module path).
+vi.mock("@batthewz/response-ui-react-components", () => {
   const AppShell = ({ children, ...props }: Record<string, unknown>) => (
     <div data-testid="app-shell" {...props}>
       {children as React.ReactNode}
@@ -61,7 +60,14 @@ vi.mock("@/web/components/ui/AppShell", () => {
   AppShell.Main = ({ children }: { children: React.ReactNode }) => (
     <main>{children}</main>
   );
-  return { AppShell };
+  const Button = ({ children, onClick, disabled }: Record<string, unknown>) => (
+    <button onClick={onClick as React.MouseEventHandler} disabled={disabled as boolean}>
+      {children as React.ReactNode}
+    </button>
+  );
+  const Text = ({ children }: { children: React.ReactNode }) => <span>{children}</span>;
+  const ThemeSwitcher = () => <div data-testid="theme-switcher">ThemeSwitcher</div>;
+  return { AppShell, Button, Text, ThemeSwitcher };
 });
 
 import { AuthenticatedLayout } from "./AuthenticatedLayout";

@@ -1,11 +1,8 @@
+import { Button, Card, Center, Field, FieldError, Input, Label, Stack, Text, useDocumentTitle } from "@batthewz/response-ui-react-components";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { registerSchema } from "@/shared/schemas/auth";
-import { Field, FieldError, Input, Label } from "@/web/components/form";
-import { Center, Stack } from "@/web/components/layout";
-import { Button, Card, Text } from "@/web/components/ui";
-import { useDocumentTitle } from "@/web/hooks/use-document-title";
 import { signUp } from "@/web/lib/auth/auth-client";
 
 export function Register() {
@@ -17,7 +14,7 @@ export function Register() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
 

@@ -1,9 +1,9 @@
+import { Alert, AvatarUpload, Button, Card, Field, Input, Label, Stack, Text } from "@batthewz/response-ui-react-components";
 import { useState } from "react";
 
+import { ALLOWED_IMAGE_TYPES, MAX_AVATAR_SIZE } from "@/shared/schemas/upload";
 import { updateProfileSchema } from "@/shared/schemas/user";
-import { Field, Input, Label } from "@/web/components/form";
-import { Stack } from "@/web/components/layout";
-import { Alert, AvatarUpload, Button, Card, Text } from "@/web/components/ui";
+import { api } from "@/web/lib/api/client";
 import { updateUser, useSession } from "@/web/lib/auth/auth-client";
 
 export function ProfileSection() {
@@ -13,7 +13,7 @@ export function ProfileSection() {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -48,6 +48,17 @@ export function ProfileSection() {
           src={session?.user?.image}
           name={session?.user?.name ?? ""}
           size="xl"
+          accept={ALLOWED_IMAGE_TYPES}
+          maxSize={MAX_AVATAR_SIZE}
+          onUpload={async (file) => {
+            const formData = new FormData();
+            formData.append("file", file);
+            const result = await api.put<{ upload: { url: string } }>(
+              "/api/users/me/avatar",
+              formData
+            );
+            return { url: result.upload.url };
+          }}
         />
 
         <form onSubmit={(e) => void handleSubmit(e)}>

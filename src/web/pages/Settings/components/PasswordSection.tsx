@@ -1,9 +1,7 @@
+import { Alert, Button, Card, Field, FieldError, Input, Label, Stack, Text } from "@batthewz/response-ui-react-components";
 import { useState } from "react";
 
 import { changePasswordSchema } from "@/shared/schemas/user";
-import { Field, FieldError, Input, Label } from "@/web/components/form";
-import { Stack } from "@/web/components/layout";
-import { Alert, Button, Card, Text } from "@/web/components/ui";
 import { changePassword } from "@/web/lib/auth/auth-client";
 
 export function PasswordSection() {
@@ -15,7 +13,7 @@ export function PasswordSection() {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
     setFieldErrors({});

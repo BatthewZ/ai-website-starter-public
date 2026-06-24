@@ -71,7 +71,6 @@ The app runs at `http://localhost:8787` or `http://localhost:5173` for hot modul
 | [API](docs/api/api.md)                               | Endpoints, middleware, error handling, rate limiting, validation |
 | [Auth](docs/auth/auth.md)                            | Better Auth setup, auth flows, middleware, route guards, schemas |
 | [Database](docs/database/database.md)                | D1 + Drizzle ORM setup, schema, migrations, query examples       |
-| [Design System](docs/design-system/design-system.md) | Tokens, colors, typography, spacing, theming, motion             |
-| [UI Components](docs/ui/ui.md)                       | Layout, UI primitives, display components, forms, animations     |
+| [Frontend](docs/app-frontend.md)                     | UI components, hooks, layout, animations, design-system tokens & themes — from the `@batthewz/response-ui-*` packages (+ app-specific frontend) |
 | [Deployment](docs/deployment/deployment.md)          | Prerequisites, step-by-step guide, environment, custom domains   |
 | [Swarm CLI](docs/swarm/swarm.md)                     | AI agent pipeline, commands, task files, configuration           |

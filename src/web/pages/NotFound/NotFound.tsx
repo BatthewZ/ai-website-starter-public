@@ -1,8 +1,5 @@
+import { Button, Center, Stack, Text, useDocumentTitle } from "@batthewz/response-ui-react-components";
 import { useNavigate } from "react-router-dom";
-
-import { Center, Stack } from "@/web/components/layout";
-import { Button, Text } from "@/web/components/ui";
-import { useDocumentTitle } from "@/web/hooks/use-document-title";
 
 export function NotFound() {
   useDocumentTitle("Page Not Found");

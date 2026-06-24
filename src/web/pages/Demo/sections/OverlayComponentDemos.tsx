@@ -1,4 +1,17 @@
 import {
+  Button,
+  Card,
+  DropdownMenu,
+  IconButton,
+  Input,
+  Popover,
+  Row,
+  Stack,
+  Text,
+  Tooltip,
+  useToast,
+} from "@batthewz/response-ui-react-components";
+import {
   Bell,
   ChevronDown,
   Copy,
@@ -11,19 +24,6 @@ import {
   User,
 } from "lucide-react";
 import { useState } from "react";
-
-import { Input } from "@/web/components/form";
-import { Row, Stack } from "@/web/components/layout";
-import {
-  Button,
-  Card,
-  DropdownMenu,
-  IconButton,
-  Popover,
-  Text,
-  Tooltip,
-  useToast,
-} from "@/web/components/ui";
 
 import { Section, SubSection } from "./helpers";
 

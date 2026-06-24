@@ -1,13 +1,8 @@
+import { Popover, useActiveSection } from "@batthewz/response-ui-react-components";
 import { List } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
-
-import { Popover } from "@/web/components/ui";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { groupedToc, TOC_SECTIONS } from "./toc";
-
-interface TocProps {
-  activeId: string | null;
-}
 
 function scrollToSection(id: string) {
   const el = document.getElementById(id);
@@ -16,9 +11,20 @@ function scrollToSection(id: string) {
   }
 }
 
+/**
+ * Scroll-spy lives here, inside the TOC components, rather than at the Demo
+ * root. Keeping it local means the IntersectionObserver's frequent updates only
+ * re-render the small TOC, not the entire (very large) demo content tree.
+ */
+function useTocActiveId() {
+  const sectionIds = useMemo(() => TOC_SECTIONS.map((s) => s.id), []);
+  return useActiveSection(sectionIds);
+}
+
 /* ── Desktop Sidebar ── */
 
-export function DemoTableOfContents({ activeId }: TocProps) {
+export function DemoTableOfContents() {
+  const activeId = useTocActiveId();
   const activeRef = useRef<HTMLAnchorElement | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
 
@@ -66,7 +72,8 @@ export function DemoTableOfContents({ activeId }: TocProps) {
 
 /* ── Mobile Floating Bubble ── */
 
-export function DemoTocMobile({ activeId }: TocProps) {
+export function DemoTocMobile() {
+  const activeId = useTocActiveId();
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement | null>(null);
 

@@ -1,22 +1,27 @@
-import { Clipboard, Download, Pipette, RotateCcw } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
-
-import { Field, Input, Label, Select } from "@/web/components/form";
-import { Container, Divider, Row, Stack } from "@/web/components/layout";
 import {
   Alert,
   Badge,
   Button,
   Card,
+  cn,
+  Container,
+  Divider,
+  Field,
   IconButton,
+  Input,
+  Label,
   ProgressBar,
+  Row,
+  Select,
+  Stack,
   Tabs,
   Text,
+  THEMES,
+  useDocumentTitle,
   useToast,
-} from "@/web/components/ui";
-import { useDocumentTitle } from "@/web/hooks/use-document-title";
-import { THEMES } from "@/web/hooks/use-theme";
-import { cn } from "@/web/util/style/style";
+} from "@batthewz/response-ui-react-components";
+import { Clipboard, Download, Pipette, RotateCcw } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 /* ------------------------------------------------------------------ */
 /*  Token definitions                                                  */

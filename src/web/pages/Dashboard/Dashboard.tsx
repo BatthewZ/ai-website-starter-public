@@ -1,7 +1,7 @@
-import { AuthenticatedLayout, Container, Divider, Row, Stack } from "@/web/components/layout";
-import { Alert, Badge, Card, Skeleton, Text } from "@/web/components/ui";
+import { Alert, Badge, Card, Container, Divider, Row, Skeleton, Stack, Text, useDocumentTitle } from "@batthewz/response-ui-react-components";
+
+import { AuthenticatedLayout } from "@/web/components/layout";
 import { useApi } from "@/web/hooks/use-api";
-import { useDocumentTitle } from "@/web/hooks/use-document-title";
 import { useSession } from "@/web/lib/auth/auth-client";
 
 interface MeResponse {

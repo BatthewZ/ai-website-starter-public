@@ -1,21 +1,3 @@
-import { Check, Clock, EllipsisVertical, Settings, TrendingUp, Users, X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-
-import { ScrollReveal, Stagger } from "@/web/components/animation";
-import {
-  Checkbox,
-  Field,
-  FieldError,
-  FormActions,
-  Input,
-  Label,
-  Radio,
-  SearchInput,
-  Select,
-  Textarea,
-} from "@/web/components/form";
-import { Center, Container, Divider, Row, Spacer, Stack } from "@/web/components/layout";
 import {
   Accordion,
   Alert,
@@ -25,43 +7,89 @@ import {
   Button,
   Card,
   Carousel,
+  Center,
+  Checkbox,
+  Container,
   Dialog,
+  Divider,
+  Field,
+  FieldError,
+  FormActions,
   Hero,
   IconButton,
+  Input,
+  Label,
   MasonryGrid,
   MediaCard,
   Popover,
   ProgressBar,
+  Radio,
+  Row,
+  ScrollReveal,
+  SearchInput,
+  Select,
+  Spacer,
   Spinner,
   Spotlight,
+  Stack,
+  Stagger,
   StatCard,
   Swimlane,
   Tabs,
   Text,
+  Textarea,
+  type Theme,
   ThemeSwitcher,
   Timeline,
+  useDocumentTitle,
+  useTheme,
   useToast,
-} from "@/web/components/ui";
-import { useActiveSection } from "@/web/hooks/use-active-section";
-import { useDocumentTitle } from "@/web/hooks/use-document-title";
-import { type Theme, useTheme } from "@/web/hooks/use-theme";
+} from "@batthewz/response-ui-react-components";
+import { Check, Clock, EllipsisVertical, Settings, TrendingUp, Users, X } from "lucide-react";
+import { memo, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { DemoTableOfContents, DemoTocMobile } from "./DemoTableOfContents";
-import { AnimationDemos } from "./sections/AnimationDemos";
-import { AppShellDemo } from "./sections/AppShellDemo";
-import { DataComponentDemos } from "./sections/DataComponentDemos";
+import { AnimationDemos as AnimationDemosImpl } from "./sections/AnimationDemos";
+import { AppShellDemo as AppShellDemoImpl } from "./sections/AppShellDemo";
+import { CoreExtraDemos as CoreExtraDemosImpl } from "./sections/CoreExtraDemos";
+import { DataComponentDemos as DataComponentDemosImpl } from "./sections/DataComponentDemos";
+import { DataDisplayDemos as DataDisplayDemosImpl } from "./sections/DataDisplayDemos";
+import { DateComponentDemos as DateComponentDemosImpl } from "./sections/DateComponentDemos";
+import { FormComponentDemos as FormComponentDemosImpl } from "./sections/FormComponentDemos";
 import { Section, SubSection } from "./sections/helpers";
-import { OverlayComponentDemos } from "./sections/OverlayComponentDemos";
-import { SimpleComponentDemos } from "./sections/SimpleComponentDemos";
-import { TOC_SECTIONS } from "./toc";
+import { NavigationExtraDemos as NavigationExtraDemosImpl } from "./sections/NavigationExtraDemos";
+import { OverlayComponentDemos as OverlayComponentDemosImpl } from "./sections/OverlayComponentDemos";
+import { OverlayExtraDemos as OverlayExtraDemosImpl } from "./sections/OverlayExtraDemos";
+import { PatternExtraDemos as PatternExtraDemosImpl } from "./sections/PatternExtraDemos";
+import { SimpleComponentDemos as SimpleComponentDemosImpl } from "./sections/SimpleComponentDemos";
+import { VirtualizedTableDemo as VirtualizedTableDemoImpl } from "./sections/VirtualizedTableDemo";
+
+/**
+ * Heavy demo sections wrapped in React.memo. Demo still subscribes to a few
+ * contexts (e.g. ToastContext, whose value identity changes on every toast
+ * show/dismiss), so it can re-render even after the scroll-spy was pushed down.
+ * memo() — with no props passed — stops those parent re-renders from cascading
+ * into these large subtrees. Each section keeps its own local state internally.
+ */
+const AnimationDemos = memo(AnimationDemosImpl);
+const AppShellDemo = memo(AppShellDemoImpl);
+const CoreExtraDemos = memo(CoreExtraDemosImpl);
+const DataComponentDemos = memo(DataComponentDemosImpl);
+const DataDisplayDemos = memo(DataDisplayDemosImpl);
+const DateComponentDemos = memo(DateComponentDemosImpl);
+const FormComponentDemos = memo(FormComponentDemosImpl);
+const NavigationExtraDemos = memo(NavigationExtraDemosImpl);
+const OverlayComponentDemos = memo(OverlayComponentDemosImpl);
+const OverlayExtraDemos = memo(OverlayExtraDemosImpl);
+const PatternExtraDemos = memo(PatternExtraDemosImpl);
+const SimpleComponentDemos = memo(SimpleComponentDemosImpl);
+const VirtualizedTableDemo = memo(VirtualizedTableDemoImpl);
 
 export function Demo() {
   useDocumentTitle("Component Demo");
   const navigate = useNavigate();
   const { toast } = useToast();
-
-  const sectionIds = useMemo(() => TOC_SECTIONS.map((s) => s.id), []);
-  const activeId = useActiveSection(sectionIds);
 
   // Handle initial hash navigation on mount
   useEffect(() => {
@@ -74,35 +102,6 @@ export function Demo() {
       });
     }
   }, []);
-
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [formName, setFormName] = useState("");
-  const [formEmail, setFormEmail] = useState("");
-  const [formBio, setFormBio] = useState("");
-  const [formRole, setFormRole] = useState("");
-  const [formAgree, setFormAgree] = useState(false);
-  const [formPlan, setFormPlan] = useState("free");
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
-  const [demoSearch, setDemoSearch] = useState("");
-  const [demoSearchSm, setDemoSearchSm] = useState("");
-
-  function handleFormSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const errors: Record<string, string> = {};
-    if (!formName.trim()) errors.name = "Name is required";
-    if (!formEmail.trim()) errors.email = "Email is required";
-    else if (!formEmail.includes("@")) errors.email = "Invalid email address";
-    if (!formRole) errors.role = "Please select a role";
-    if (!formAgree) errors.agree = "You must agree to continue";
-
-    setFormErrors(errors);
-    if (Object.keys(errors).length === 0) {
-      toast("Form submitted successfully!", {
-        variant: "success",
-        title: "Success",
-      });
-    }
-  }
 
   return (
     <Stack className="min-h-screen bg-surface-1">
@@ -138,7 +137,7 @@ export function Demo() {
 
       <div className="demo-layout">
         <aside className="demo-toc">
-          <DemoTableOfContents activeId={activeId} />
+          <DemoTableOfContents />
         </aside>
         <div>
           <Container size="xl">
@@ -373,47 +372,7 @@ export function Demo() {
               </Section>
 
               {/* ── Dialog ── */}
-              <Section title="Dialog">
-                <Card>
-                  <Stack gap="r4">
-                    <Text variant="body-2" color="secondary">
-                      A modal dialog built on the native HTML dialog element with backdrop and
-                      escape-to-close.
-                    </Text>
-                    <div>
-                      <Button variant="secondary" onClick={() => setDialogOpen(true)}>
-                        Open Dialog
-                      </Button>
-                    </div>
-                  </Stack>
-                </Card>
-                <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-                  <Stack gap="r4">
-                    <Text variant="h5">Confirm Action</Text>
-                    <Divider />
-                    <Text variant="body-2" color="secondary">
-                      Are you sure you want to proceed? This is a demo dialog — no actual action
-                      will be taken.
-                    </Text>
-                    <FormActions>
-                      <Button variant="ghost" onClick={() => setDialogOpen(false)}>
-                        Cancel
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          setDialogOpen(false);
-                          toast("Action confirmed!", {
-                            variant: "success",
-                            title: "Done",
-                          });
-                        }}
-                      >
-                        Confirm
-                      </Button>
-                    </FormActions>
-                  </Stack>
-                </Dialog>
-              </Section>
+              <DialogDemo />
 
               {/* ── Spinner ── */}
               <Section title="Spinner">
@@ -466,6 +425,8 @@ export function Demo() {
                   </Stack>
                 </Card>
               </Section>
+
+              <CoreExtraDemos />
 
               {/* ── Layout: Stack & Row ── */}
               <Section title="Layout — Stack & Row">
@@ -561,161 +522,10 @@ export function Demo() {
               </Section>
 
               {/* ── Form Components ── */}
-              <Section title="Form Components">
-                <Card>
-                  <form onSubmit={handleFormSubmit}>
-                    <Stack gap="r4">
-                      <Text variant="h5">Sample Form</Text>
-                      <Divider />
-
-                      <Field>
-                        <Label htmlFor="demo-name">Name</Label>
-                        <Input
-                          id="demo-name"
-                          placeholder="Enter your name"
-                          value={formName}
-                          onChange={(e) => setFormName(e.target.value)}
-                          error={!!formErrors.name}
-                        />
-                        <FieldError>{formErrors.name}</FieldError>
-                      </Field>
-
-                      <Field>
-                        <Label htmlFor="demo-email">Email</Label>
-                        <Input
-                          id="demo-email"
-                          type="email"
-                          placeholder="you@example.com"
-                          value={formEmail}
-                          onChange={(e) => setFormEmail(e.target.value)}
-                          error={!!formErrors.email}
-                        />
-                        <FieldError>{formErrors.email}</FieldError>
-                      </Field>
-
-                      <Field>
-                        <Label htmlFor="demo-bio">Bio</Label>
-                        <Textarea
-                          id="demo-bio"
-                          placeholder="Tell us about yourself..."
-                          value={formBio}
-                          onChange={(e) => setFormBio(e.target.value)}
-                        />
-                      </Field>
-
-                      <Field>
-                        <Label htmlFor="demo-role">Role</Label>
-                        <Select
-                          id="demo-role"
-                          value={formRole}
-                          onChange={(e) => setFormRole(e.target.value)}
-                          error={!!formErrors.role}
-                        >
-                          <option value="">Select a role...</option>
-                          <option value="developer">Developer</option>
-                          <option value="designer">Designer</option>
-                          <option value="manager">Manager</option>
-                          <option value="other">Other</option>
-                        </Select>
-                        <FieldError>{formErrors.role}</FieldError>
-                      </Field>
-
-                      <Field>
-                        <Label>Plan</Label>
-                        <Stack gap="r5">
-                          <Label className="flex items-center gap-r5 cursor-pointer font-normal">
-                            <Radio
-                              name="plan"
-                              value="free"
-                              checked={formPlan === "free"}
-                              onChange={() => setFormPlan("free")}
-                            />
-                            Free
-                          </Label>
-                          <Label className="flex items-center gap-r5 cursor-pointer font-normal">
-                            <Radio
-                              name="plan"
-                              value="pro"
-                              checked={formPlan === "pro"}
-                              onChange={() => setFormPlan("pro")}
-                            />
-                            Pro
-                          </Label>
-                          <Label className="flex items-center gap-r5 cursor-pointer font-normal">
-                            <Radio
-                              name="plan"
-                              value="enterprise"
-                              checked={formPlan === "enterprise"}
-                              onChange={() => setFormPlan("enterprise")}
-                            />
-                            Enterprise
-                          </Label>
-                        </Stack>
-                      </Field>
-
-                      <Field>
-                        <Label className="flex items-center gap-r5 cursor-pointer">
-                          <Checkbox
-                            checked={formAgree}
-                            onChange={(e) => setFormAgree(e.target.checked)}
-                          />
-                          I agree to the terms and conditions
-                        </Label>
-                        <FieldError>{formErrors.agree}</FieldError>
-                      </Field>
-
-                      <FormActions>
-                        <Button
-                          variant="ghost"
-                          type="button"
-                          onClick={() => {
-                            setFormName("");
-                            setFormEmail("");
-                            setFormBio("");
-                            setFormRole("");
-                            setFormPlan("free");
-                            setFormAgree(false);
-                            setFormErrors({});
-                          }}
-                        >
-                          Reset
-                        </Button>
-                        <Button type="submit">Submit</Button>
-                      </FormActions>
-                    </Stack>
-                  </form>
-                </Card>
-              </Section>
+              <SampleForm />
 
               {/* ── Search Input ── */}
-              <Section title="Search Input">
-                <Card>
-                  <Stack gap="r4">
-                    <Text variant="h5">Default (md)</Text>
-                    <SearchInput
-                      value={demoSearch}
-                      onChange={setDemoSearch}
-                      placeholder="Search components..."
-                    />
-                    <Text variant="body-3" color="muted">
-                      Current value: &quot;{demoSearch}&quot;
-                    </Text>
-
-                    <Divider />
-
-                    <Text variant="h5">Small (sm)</Text>
-                    <SearchInput
-                      value={demoSearchSm}
-                      onChange={setDemoSearchSm}
-                      placeholder="Quick search..."
-                      size="sm"
-                    />
-                    <Text variant="body-3" color="muted">
-                      Current value: &quot;{demoSearchSm}&quot;
-                    </Text>
-                  </Stack>
-                </Card>
-              </Section>
+              <SearchInputDemo />
 
               {/* ── Form States ── */}
               <Section title="Form States">
@@ -761,6 +571,9 @@ export function Demo() {
                   </Stack>
                 </Card>
               </Section>
+
+              <FormComponentDemos />
+              <DateComponentDemos />
 
               {/* ── Color Palette ── */}
               <Section title="Color Palette">
@@ -918,6 +731,8 @@ export function Demo() {
                 </ScrollReveal>
               </Section>
 
+              <DataDisplayDemos />
+
               {/* ── Tabs ── */}
               <Section title="Tabs">
                 <Card>
@@ -1054,6 +869,8 @@ export function Demo() {
                   </Stack>
                 </Card>
               </Section>
+
+              <NavigationExtraDemos />
 
               {/* ── Media Cards ── */}
               <Section title="Media Cards">
@@ -1262,8 +1079,11 @@ export function Demo() {
               </Text>
               <AppShellDemo />
               <SimpleComponentDemos />
+              <PatternExtraDemos />
               <OverlayComponentDemos />
+              <OverlayExtraDemos />
               <DataComponentDemos />
+              <VirtualizedTableDemo />
 
               {/* Footer spacer */}
               <div className="py-r3" />
@@ -1273,9 +1093,254 @@ export function Demo() {
       </div>
 
       {/* ── Mobile Floating Bubbles ── */}
-      <DemoTocMobile activeId={activeId} />
+      <DemoTocMobile />
       <MobileThemeBubble />
     </Stack>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Self-contained demo sections                                       */
+/*  Each owns its own local state so typing / toggling re-renders only */
+/*  the section, never the whole Demo page.                            */
+/* ------------------------------------------------------------------ */
+
+function DialogDemo() {
+  const { toast } = useToast();
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  return (
+    <Section title="Dialog">
+      <Card>
+        <Stack gap="r4">
+          <Text variant="body-2" color="secondary">
+            A modal dialog built on the native HTML dialog element with backdrop and
+            escape-to-close.
+          </Text>
+          <div>
+            <Button variant="secondary" onClick={() => setDialogOpen(true)}>
+              Open Dialog
+            </Button>
+          </div>
+        </Stack>
+      </Card>
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+        <Stack gap="r4">
+          <Text variant="h5">Confirm Action</Text>
+          <Divider />
+          <Text variant="body-2" color="secondary">
+            Are you sure you want to proceed? This is a demo dialog — no actual action will be
+            taken.
+          </Text>
+          <FormActions>
+            <Button variant="ghost" onClick={() => setDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                setDialogOpen(false);
+                toast("Action confirmed!", {
+                  variant: "success",
+                  title: "Done",
+                });
+              }}
+            >
+              Confirm
+            </Button>
+          </FormActions>
+        </Stack>
+      </Dialog>
+    </Section>
+  );
+}
+
+function SampleForm() {
+  const { toast } = useToast();
+  const [formName, setFormName] = useState("");
+  const [formEmail, setFormEmail] = useState("");
+  const [formBio, setFormBio] = useState("");
+  const [formRole, setFormRole] = useState("");
+  const [formAgree, setFormAgree] = useState(false);
+  const [formPlan, setFormPlan] = useState("free");
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
+  function handleFormSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const errors: Record<string, string> = {};
+    if (!formName.trim()) errors.name = "Name is required";
+    if (!formEmail.trim()) errors.email = "Email is required";
+    else if (!formEmail.includes("@")) errors.email = "Invalid email address";
+    if (!formRole) errors.role = "Please select a role";
+    if (!formAgree) errors.agree = "You must agree to continue";
+
+    setFormErrors(errors);
+    if (Object.keys(errors).length === 0) {
+      toast("Form submitted successfully!", {
+        variant: "success",
+        title: "Success",
+      });
+    }
+  }
+
+  return (
+    <Section title="Form Components">
+      <Card>
+        <form onSubmit={handleFormSubmit}>
+          <Stack gap="r4">
+            <Text variant="h5">Sample Form</Text>
+            <Divider />
+
+            <Field>
+              <Label htmlFor="demo-name">Name</Label>
+              <Input
+                id="demo-name"
+                placeholder="Enter your name"
+                value={formName}
+                onChange={(e) => setFormName(e.target.value)}
+                error={!!formErrors.name}
+              />
+              <FieldError>{formErrors.name}</FieldError>
+            </Field>
+
+            <Field>
+              <Label htmlFor="demo-email">Email</Label>
+              <Input
+                id="demo-email"
+                type="email"
+                placeholder="you@example.com"
+                value={formEmail}
+                onChange={(e) => setFormEmail(e.target.value)}
+                error={!!formErrors.email}
+              />
+              <FieldError>{formErrors.email}</FieldError>
+            </Field>
+
+            <Field>
+              <Label htmlFor="demo-bio">Bio</Label>
+              <Textarea
+                id="demo-bio"
+                placeholder="Tell us about yourself..."
+                value={formBio}
+                onChange={(e) => setFormBio(e.target.value)}
+              />
+            </Field>
+
+            <Field>
+              <Label htmlFor="demo-role">Role</Label>
+              <Select
+                id="demo-role"
+                value={formRole}
+                onChange={(e) => setFormRole(e.target.value)}
+                error={!!formErrors.role}
+              >
+                <option value="">Select a role...</option>
+                <option value="developer">Developer</option>
+                <option value="designer">Designer</option>
+                <option value="manager">Manager</option>
+                <option value="other">Other</option>
+              </Select>
+              <FieldError>{formErrors.role}</FieldError>
+            </Field>
+
+            <Field>
+              <Label>Plan</Label>
+              <Stack gap="r5">
+                <Label className="flex items-center gap-r5 cursor-pointer font-normal">
+                  <Radio
+                    name="plan"
+                    value="free"
+                    checked={formPlan === "free"}
+                    onChange={() => setFormPlan("free")}
+                  />
+                  Free
+                </Label>
+                <Label className="flex items-center gap-r5 cursor-pointer font-normal">
+                  <Radio
+                    name="plan"
+                    value="pro"
+                    checked={formPlan === "pro"}
+                    onChange={() => setFormPlan("pro")}
+                  />
+                  Pro
+                </Label>
+                <Label className="flex items-center gap-r5 cursor-pointer font-normal">
+                  <Radio
+                    name="plan"
+                    value="enterprise"
+                    checked={formPlan === "enterprise"}
+                    onChange={() => setFormPlan("enterprise")}
+                  />
+                  Enterprise
+                </Label>
+              </Stack>
+            </Field>
+
+            <Field>
+              <Label className="flex items-center gap-r5 cursor-pointer">
+                <Checkbox checked={formAgree} onChange={(e) => setFormAgree(e.target.checked)} />
+                I agree to the terms and conditions
+              </Label>
+              <FieldError>{formErrors.agree}</FieldError>
+            </Field>
+
+            <FormActions>
+              <Button
+                variant="ghost"
+                type="button"
+                onClick={() => {
+                  setFormName("");
+                  setFormEmail("");
+                  setFormBio("");
+                  setFormRole("");
+                  setFormPlan("free");
+                  setFormAgree(false);
+                  setFormErrors({});
+                }}
+              >
+                Reset
+              </Button>
+              <Button type="submit">Submit</Button>
+            </FormActions>
+          </Stack>
+        </form>
+      </Card>
+    </Section>
+  );
+}
+
+function SearchInputDemo() {
+  const [demoSearch, setDemoSearch] = useState("");
+  const [demoSearchSm, setDemoSearchSm] = useState("");
+
+  return (
+    <Section title="Search Input">
+      <Card>
+        <Stack gap="r4">
+          <Text variant="h5">Default (md)</Text>
+          <SearchInput
+            value={demoSearch}
+            onChange={setDemoSearch}
+            placeholder="Search components..."
+          />
+          <Text variant="body-3" color="muted">
+            Current value: &quot;{demoSearch}&quot;
+          </Text>
+
+          <Divider />
+
+          <Text variant="h5">Small (sm)</Text>
+          <SearchInput
+            value={demoSearchSm}
+            onChange={setDemoSearchSm}
+            placeholder="Quick search..."
+            size="sm"
+          />
+          <Text variant="body-3" color="muted">
+            Current value: &quot;{demoSearchSm}&quot;
+          </Text>
+        </Stack>
+      </Card>
+    </Section>
   );
 }
 

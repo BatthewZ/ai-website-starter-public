@@ -1,7 +1,3 @@
-import { Database } from "lucide-react";
-import { useMemo, useState } from "react";
-
-import { Row, Stack } from "@/web/components/layout";
 import {
   AvatarUpload,
   Badge,
@@ -10,10 +6,14 @@ import {
   type ColumnDef,
   DataTable,
   FileUpload,
+  Row,
+  Stack,
   Table,
   Text,
   useToast,
-} from "@/web/components/ui";
+} from "@batthewz/response-ui-react-components";
+import { Database } from "lucide-react";
+import { useMemo, useState } from "react";
 
 import { Section, SubSection } from "./helpers";
 

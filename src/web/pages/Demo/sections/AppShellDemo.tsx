@@ -1,7 +1,5 @@
+import { AppShell, Button, Card, Stack, Text } from "@batthewz/response-ui-react-components";
 import { Home, LayoutDashboard, Settings, Users } from "lucide-react";
-
-import { Stack } from "@/web/components/layout";
-import { AppShell, Button, Card, Text } from "@/web/components/ui";
 
 import { Section, SubSection } from "./helpers";
 

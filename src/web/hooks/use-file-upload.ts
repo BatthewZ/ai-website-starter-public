@@ -1,7 +1,7 @@
+import { formatBytes } from "@batthewz/response-ui-react-components";
 import { useCallback, useRef, useState } from "react";
 
 import { api, ApiError } from "@/web/lib/api/client";
-import { formatBytes } from "@/web/util/format";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */

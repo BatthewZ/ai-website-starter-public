@@ -1,11 +1,8 @@
+import { AppShell, Button, Text, ThemeSwitcher } from "@batthewz/response-ui-react-components";
 import { LayoutDashboard, Settings } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { AppShell } from "@/web/components/ui/AppShell";
-import { Button } from "@/web/components/ui/Button";
-import { Text } from "@/web/components/ui/Text";
-import { ThemeSwitcher } from "@/web/components/ui/ThemeSwitcher";
 import { signOut, useSession } from "@/web/lib/auth/auth-client";
 
 const APP_NAME = "App Name";

@@ -1,9 +1,7 @@
+import { Alert, Button, Card, Dialog, Field, Input, Label, Row, Stack, Text } from "@batthewz/response-ui-react-components";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Field, Input, Label } from "@/web/components/form";
-import { Row, Stack } from "@/web/components/layout";
-import { Alert, Button, Card, Dialog, Text } from "@/web/components/ui";
 import { deleteUser } from "@/web/lib/auth/auth-client";
 
 export function DangerZoneSection() {

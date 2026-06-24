@@ -1,7 +1,3 @@
-import { ChevronRight, FileX, Inbox, Search } from "lucide-react";
-import { useState } from "react";
-
-import { Row, Stack } from "@/web/components/layout";
 import {
   Breadcrumbs,
   Button,
@@ -12,9 +8,13 @@ import {
   EmptyStateIcon,
   EmptyStateTitle,
   Pagination,
+  Row,
   Skeleton,
+  Stack,
   Text,
-} from "@/web/components/ui";
+} from "@batthewz/response-ui-react-components";
+import { ChevronRight, FileX, Inbox, Search } from "lucide-react";
+import { useState } from "react";
 
 import { Section, SubSection } from "./helpers";
 

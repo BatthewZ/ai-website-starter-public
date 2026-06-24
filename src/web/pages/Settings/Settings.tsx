@@ -1,6 +1,6 @@
-import { AuthenticatedLayout, Container, Divider, Stack } from "@/web/components/layout";
-import { Text } from "@/web/components/ui";
-import { useDocumentTitle } from "@/web/hooks/use-document-title";
+import { Container, Divider, Stack, Text, useDocumentTitle } from "@batthewz/response-ui-react-components";
+
+import { AuthenticatedLayout } from "@/web/components/layout";
 
 import { DangerZoneSection } from "./components/DangerZoneSection";
 import { PasswordSection } from "./components/PasswordSection";

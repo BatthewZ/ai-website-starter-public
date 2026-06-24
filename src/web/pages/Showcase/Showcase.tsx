@@ -1,11 +1,3 @@
-import { Award, Briefcase, Code2, Film, Filter, Heart, Palette, Search, Users } from "lucide-react";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-
-import { Parallax, ScrollReveal, Stagger } from "@/web/components/animation";
-import { SearchInput } from "@/web/components/form";
-import { Container, Row, Stack } from "@/web/components/layout";
-import type { ColumnDef } from "@/web/components/ui";
 import {
   Accordion,
   Avatar,
@@ -15,6 +7,8 @@ import {
   Button,
   Card,
   Carousel,
+  type ColumnDef,
+  Container,
   DataTable,
   DropdownMenu,
   EmptyState,
@@ -25,9 +19,15 @@ import {
   Hero,
   MasonryGrid,
   MediaCard,
+  Parallax,
   Popover,
   ProgressBar,
+  Row,
+  ScrollReveal,
+  SearchInput,
   Spotlight,
+  Stack,
+  Stagger,
   StatCard,
   Swimlane,
   Table,
@@ -36,9 +36,12 @@ import {
   ThemeSwitcher,
   Timeline,
   Tooltip,
-} from "@/web/components/ui";
-import { useDebounce } from "@/web/hooks/use-debounce";
-import { useDocumentTitle } from "@/web/hooks/use-document-title";
+  useDebounce,
+  useDocumentTitle,
+} from "@batthewz/response-ui-react-components";
+import { Award, Briefcase, Code2, Film, Filter, Heart, Palette, Search, Users } from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 /* ------------------------------------------------------------------ */
 /*  Constants                                                          */

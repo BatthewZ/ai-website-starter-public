@@ -1,8 +1,5 @@
+import { AnimatePresence, Button, Card, Stack, Text, ViewTransition } from "@batthewz/response-ui-react-components";
 import { useCallback, useState } from "react";
-
-import { AnimatePresence, ViewTransition } from "@/web/components/animation";
-import { Stack } from "@/web/components/layout";
-import { Button, Card, Text } from "@/web/components/ui";
 
 import { Section, SubSection } from "./helpers";
 
