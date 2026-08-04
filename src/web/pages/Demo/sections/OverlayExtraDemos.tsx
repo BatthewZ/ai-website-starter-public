@@ -3,8 +3,8 @@ import {
   Badge,
   Button,
   Card,
-  type CommandItem,
   CommandPalette,
+  type CommandPaletteItem,
   ContextMenu,
   Divider,
   Drawer,
@@ -87,7 +87,7 @@ function ContextMenuDemo() {
             </Card>
           </ContextMenu.Trigger>
           <ContextMenu.Content>
-            <ContextMenu.Label>Actions</ContextMenu.Label>
+            <ContextMenu.GroupHeader>Actions</ContextMenu.GroupHeader>
             <ContextMenu.Item index={0} icon={<Pencil size={16} />}>
               Rename
             </ContextMenu.Item>
@@ -183,7 +183,7 @@ function CommandPaletteDemo() {
     setOpen(false);
   };
 
-  const items: CommandItem[] = [
+  const items: CommandPaletteItem[] = [
     {
       id: "dashboard",
       label: "Go to Dashboard",

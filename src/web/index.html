@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script>
       // Restore theme immediately to prevent FOUC
-      // Must run before any CSS paints the page
-      // Keep theme list in sync with THEMES in src/web/hooks/use-theme.ts
+      // Must run before any CSS paints the page.
+      // This list must stay in sync with APP_THEMES in src/web/lib/themes.ts.
+      // It cannot import it: this runs before any module loads, which is the
+      // whole point of it. `default` is omitted deliberately — it IS :root, so
+      // there is no attribute to set for it.
       try {
         var t = localStorage.getItem('theme');
         if (t && t !== 'default' && ['events','grimdark','tech'].includes(t)) {

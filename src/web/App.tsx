@@ -71,7 +71,13 @@ export function App() {
           <Suspense
               fallback={
                 <Center className="min-h-screen">
-                  <Spinner size="lg" />
+                  {/*
+                    Children make this the status region — a bare <Spinner /> is
+                    aria-hidden decoration as of 0.15.0. This is the route-level
+                    Suspense fallback, so it is the only thing on screen while a
+                    lazy page chunk loads and it should say so.
+                  */}
+                  <Spinner size="lg">Loading page…</Spinner>
                 </Center>
               }
             >

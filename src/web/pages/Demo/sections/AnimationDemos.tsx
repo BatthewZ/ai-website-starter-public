@@ -1,4 +1,13 @@
-import { AnimatePresence, Button, Card, Stack, Text, ViewTransition } from "@batthewz/response-ui-react-components";
+import {
+  AnimatePresence,
+  Button,
+  Card,
+  Center,
+  Parallax,
+  Stack,
+  Text,
+  ViewTransition,
+} from "@batthewz/response-ui-react-components";
 import { useCallback, useState } from "react";
 
 import { Section, SubSection } from "./helpers";
@@ -119,6 +128,54 @@ function ViewTransitionDemo() {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Parallax Demo                                                      */
+/*                                                                     */
+/*  The TOC has always listed a "parallax" entry, but no section ever   */
+/*  rendered that id — the link scrolled nowhere. This section is that  */
+/*  missing target, so the anchor resolves.                            */
+/*                                                                     */
+/*  Two layers at different rates is the demo that actually shows the   */
+/*  effect: parallax is only legible as *relative* motion, so a single  */
+/*  drifting layer reads as a rendering glitch rather than as depth.    */
+/*  Both are clamped — an unclamped rate on a long page shoves a layer  */
+/*  well outside its box, and this section sits in the middle of a very */
+/*  long page.                                                          */
+/* ------------------------------------------------------------------ */
+
+function ParallaxDemo() {
+  return (
+    <Section title="Parallax">
+      <Card>
+        <Stack gap="r4">
+          <Text variant="body-3" color="muted">
+            Translates its children vertically as the page scrolls, throttled with
+            requestAnimationFrame. A positive rate moves the layer ahead of the page, a negative
+            rate makes it lag. clamp bounds the drift. Scroll the page to see the two bands
+            separate — and note it stands perfectly still under prefers-reduced-motion.
+          </Text>
+          <div className="relative overflow-hidden rounded-lg bg-surface-2" style={{ height: 220 }}>
+            <Parallax rate={-0.15} clamp={40} className="absolute inset-x-0 top-1/2">
+              <Center>
+                <Text variant="h4" color="muted">
+                  lagging layer · rate -0.15
+                </Text>
+              </Center>
+            </Parallax>
+            <Parallax rate={0.25} clamp={60} className="absolute inset-x-0 top-1/2">
+              <Center>
+                <Card padding="r4" shadow="md">
+                  <Text variant="body-2">leading layer · rate 0.25</Text>
+                </Card>
+              </Center>
+            </Parallax>
+          </div>
+        </Stack>
+      </Card>
+    </Section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /*  Main Export                                                        */
 /* ------------------------------------------------------------------ */
 
@@ -127,6 +184,7 @@ export function AnimationDemos() {
     <>
       <AnimatePresenceDemo />
       <ViewTransitionDemo />
+      <ParallaxDemo />
     </>
   );
 }

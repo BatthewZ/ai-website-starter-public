@@ -4,6 +4,7 @@ import { type ReactNode, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { signOut, useSession } from "@/web/lib/auth/auth-client";
+import { APP_THEMES, THEME_LABELS } from "@/web/lib/themes";
 
 const APP_NAME = "App Name";
 
@@ -34,7 +35,8 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
           <Text variant="h6">{APP_NAME}</Text>
         </AppShell.Brand>
         <AppShell.NavbarActions>
-          <ThemeSwitcher />
+          {/* Without `themes` the switcher offers only `default` — see src/web/lib/themes.ts. */}
+          <ThemeSwitcher themes={APP_THEMES} labels={THEME_LABELS} />
           <Button
             variant="ghost"
             size="sm"

@@ -11,6 +11,8 @@ import {
   Checkbox,
   Container,
   Dialog,
+  DialogBody,
+  DialogHeader,
   Divider,
   Field,
   FieldError,
@@ -38,9 +40,7 @@ import {
   Tabs,
   Text,
   Textarea,
-  type Theme,
   ThemeSwitcher,
-  Timeline,
   useDocumentTitle,
   useTheme,
   useToast,
@@ -48,6 +48,9 @@ import {
 import { Check, Clock, EllipsisVertical, Settings, TrendingUp, Users, X } from "lucide-react";
 import { memo, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+import { TRANSPARENT_PX } from "@/web/lib/placeholder-image";
+import { APP_THEMES, THEME_COLORS, THEME_LABELS } from "@/web/lib/themes";
 
 import { DemoTableOfContents, DemoTocMobile } from "./DemoTableOfContents";
 import { AnimationDemos as AnimationDemosImpl } from "./sections/AnimationDemos";
@@ -58,11 +61,13 @@ import { DataDisplayDemos as DataDisplayDemosImpl } from "./sections/DataDisplay
 import { DateComponentDemos as DateComponentDemosImpl } from "./sections/DateComponentDemos";
 import { FormComponentDemos as FormComponentDemosImpl } from "./sections/FormComponentDemos";
 import { Section, SubSection } from "./sections/helpers";
+import { MarkdownDemos as MarkdownDemosImpl } from "./sections/MarkdownDemo";
 import { NavigationExtraDemos as NavigationExtraDemosImpl } from "./sections/NavigationExtraDemos";
 import { OverlayComponentDemos as OverlayComponentDemosImpl } from "./sections/OverlayComponentDemos";
 import { OverlayExtraDemos as OverlayExtraDemosImpl } from "./sections/OverlayExtraDemos";
 import { PatternExtraDemos as PatternExtraDemosImpl } from "./sections/PatternExtraDemos";
 import { SimpleComponentDemos as SimpleComponentDemosImpl } from "./sections/SimpleComponentDemos";
+import { TimelineDemo as TimelineDemoImpl } from "./sections/TimelineDemo";
 import { VirtualizedTableDemo as VirtualizedTableDemoImpl } from "./sections/VirtualizedTableDemo";
 
 /**
@@ -79,11 +84,13 @@ const DataComponentDemos = memo(DataComponentDemosImpl);
 const DataDisplayDemos = memo(DataDisplayDemosImpl);
 const DateComponentDemos = memo(DateComponentDemosImpl);
 const FormComponentDemos = memo(FormComponentDemosImpl);
+const MarkdownDemos = memo(MarkdownDemosImpl);
 const NavigationExtraDemos = memo(NavigationExtraDemosImpl);
 const OverlayComponentDemos = memo(OverlayComponentDemosImpl);
 const OverlayExtraDemos = memo(OverlayExtraDemosImpl);
 const PatternExtraDemos = memo(PatternExtraDemosImpl);
 const SimpleComponentDemos = memo(SimpleComponentDemosImpl);
+const TimelineDemo = memo(TimelineDemoImpl);
 const VirtualizedTableDemo = memo(VirtualizedTableDemoImpl);
 
 export function Demo() {
@@ -145,7 +152,15 @@ export function Demo() {
               {/* ── Theme Switcher (desktop only) ── */}
               <div className="sticky top-0 z-50 hidden xl:block">
                 <Card padding="r4" className="bg-surface-0/80 backdrop-blur-md flex justify-center">
-                  <ThemeSwitcher />
+                  {/*
+                    `themes` is effectively required. Omitted, ThemeSwitcher
+                    offers only `default` — the package does not know our themes
+                    and will not guess — which silently reduced this switcher to
+                    a single option after the 0.15.0 upgrade. APP_THEMES is a
+                    module-scope const, which the hook needs: it memoises its
+                    snapshot reader on the array's identity.
+                  */}
+                  <ThemeSwitcher themes={APP_THEMES} labels={THEME_LABELS} />
                 </Card>
               </div>
 
@@ -377,26 +392,42 @@ export function Demo() {
               {/* ── Spinner ── */}
               <Section title="Spinner">
                 <Card>
-                  <Row gap="r3" align="end">
-                    <Stack gap="r5" className="items-center">
-                      <Spinner size="sm" />
+                  <Stack gap="r4">
+                    <SubSection label="Sizes">
+                      <Row gap="r3" align="end">
+                        <Stack gap="r5" className="items-center">
+                          <Spinner size="sm" />
+                          <Text variant="body-3" color="muted">
+                            Small
+                          </Text>
+                        </Stack>
+                        <Stack gap="r5" className="items-center">
+                          <Spinner size="md" />
+                          <Text variant="body-3" color="muted">
+                            Medium
+                          </Text>
+                        </Stack>
+                        <Stack gap="r5" className="items-center">
+                          <Spinner size="lg" />
+                          <Text variant="body-3" color="muted">
+                            Large
+                          </Text>
+                        </Stack>
+                      </Row>
+                    </SubSection>
+
+                    <SubSection label="Announcing vs decorative">
                       <Text variant="body-3" color="muted">
-                        Small
+                        A bare Spinner is decoration — aria-hidden, no role — because N spinners on
+                        a page would otherwise be N role=&quot;status&quot; live regions, each
+                        already holding the word &quot;Loading&quot; the moment it is inserted,
+                        which is the one shape screen readers do not announce. The three above are
+                        decorative on purpose. Pass children to make one spinner the status for
+                        what it is waiting on, in your own language:
                       </Text>
-                    </Stack>
-                    <Stack gap="r5" className="items-center">
-                      <Spinner size="md" />
-                      <Text variant="body-3" color="muted">
-                        Medium
-                      </Text>
-                    </Stack>
-                    <Stack gap="r5" className="items-center">
-                      <Spinner size="lg" />
-                      <Text variant="body-3" color="muted">
-                        Large
-                      </Text>
-                    </Stack>
-                  </Row>
+                      <Spinner size="md">Loading your invoices…</Spinner>
+                    </SubSection>
+                  </Stack>
                 </Card>
               </Section>
 
@@ -427,6 +458,9 @@ export function Demo() {
               </Section>
 
               <CoreExtraDemos />
+
+              {/* ── Markdown ── */}
+              <MarkdownDemos />
 
               {/* ── Layout: Stack & Row ── */}
               <Section title="Layout — Stack & Row">
@@ -649,33 +683,56 @@ export function Demo() {
                   <Stack gap="r4">
                     <SubSection label="Variants">
                       <Stack gap="r5">
-                        <ProgressBar value={65} />
-                        <ProgressBar value={45} variant="gradient" />
-                        <ProgressBar value={80} variant="striped" />
+                        <ProgressBar value={65} aria-label="Default variant example" />
+                        <ProgressBar
+                          value={45}
+                          variant="gradient"
+                          aria-label="Gradient variant example"
+                        />
+                        <ProgressBar
+                          value={80}
+                          variant="striped"
+                          aria-label="Striped variant example"
+                        />
                       </Stack>
                     </SubSection>
                     <SubSection label="Colors">
                       <Stack gap="r5">
-                        <ProgressBar value={75} color="accent" />
-                        <ProgressBar value={100} color="success" />
-                        <ProgressBar value={40} color="warning" />
-                        <ProgressBar value={25} color="error" />
+                        <ProgressBar value={75} color="accent" aria-label="Accent color example" />
+                        <ProgressBar
+                          value={100}
+                          color="success"
+                          aria-label="Success color example"
+                        />
+                        <ProgressBar
+                          value={40}
+                          color="warning"
+                          aria-label="Warning color example"
+                        />
+                        <ProgressBar value={25} color="error" aria-label="Error color example" />
                       </Stack>
                     </SubSection>
                     <SubSection label="Sizes">
                       <Stack gap="r5">
-                        <ProgressBar value={60} size="sm" />
-                        <ProgressBar value={60} size="md" />
-                        <ProgressBar value={60} size="lg" />
+                        <ProgressBar value={60} size="sm" aria-label="Small size example" />
+                        <ProgressBar value={60} size="md" aria-label="Medium size example" />
+                        <ProgressBar value={60} size="lg" aria-label="Large size example" />
                       </Stack>
                     </SubSection>
                     <SubSection label="With Label">
                       <Stack gap="r5">
                         <Row justify="between">
-                          <ProgressBar.Label>Uploading files...</ProgressBar.Label>
+                          <ProgressBar.Label id="demo-upload-progress-label">
+                            Uploading files...
+                          </ProgressBar.Label>
                           <ProgressBar.Value>72%</ProgressBar.Value>
                         </Row>
-                        <ProgressBar value={72} variant="gradient" animate />
+                        <ProgressBar
+                          value={72}
+                          variant="gradient"
+                          animate
+                          aria-labelledby="demo-upload-progress-label"
+                        />
                       </Stack>
                     </SubSection>
                   </Stack>
@@ -983,8 +1040,8 @@ export function Demo() {
                 <Spotlight animate>
                   <Spotlight.Item>
                     <Spotlight.Image
-                      src=""
-                      alt="Feature 1"
+                      src={TRANSPARENT_PX}
+                      alt="Theme-agnostic design"
                       style={{
                         background: "linear-gradient(135deg, var(--C-PRIMARY), var(--C-ACCENT))",
                         minHeight: "12.5rem",
@@ -1000,8 +1057,8 @@ export function Demo() {
                   </Spotlight.Item>
                   <Spotlight.Item>
                     <Spotlight.Image
-                      src=""
-                      alt="Feature 2"
+                      src={TRANSPARENT_PX}
+                      alt="Zero-dependency animations"
                       style={{
                         background:
                           "linear-gradient(135deg, var(--C-ACCENT), var(--C-STATUS-INFO))",
@@ -1020,32 +1077,7 @@ export function Demo() {
               </Section>
 
               {/* ── Timeline ── */}
-              <Section title="Timeline">
-                <Card>
-                  <Timeline animate>
-                    <Timeline.Item date="Jan 2026" title="Project Kickoff">
-                      <Text variant="body-2" color="secondary">
-                        Initial project setup with Cloudflare Workers, Hono, and React.
-                      </Text>
-                    </Timeline.Item>
-                    <Timeline.Item date="Feb 2026" title="Auth & Database">
-                      <Text variant="body-2" color="secondary">
-                        Added Better Auth, Drizzle ORM on D1, and Zod validation.
-                      </Text>
-                    </Timeline.Item>
-                    <Timeline.Item date="Mar 2026" title="Component Library">
-                      <Text variant="body-2" color="secondary">
-                        Built animation primitives and display components with full theming support.
-                      </Text>
-                    </Timeline.Item>
-                    <Timeline.Item date="Apr 2026" title="Launch">
-                      <Text variant="body-2" color="secondary">
-                        Production deployment with themes, accessibility, and documentation.
-                      </Text>
-                    </Timeline.Item>
-                  </Timeline>
-                </Card>
-              </Section>
+              <TimelineDemo />
 
               {/* ── Masonry Grid ── */}
               <Section title="Masonry Grid">
@@ -1105,9 +1137,29 @@ export function Demo() {
 /*  the section, never the whole Demo page.                            */
 /* ------------------------------------------------------------------ */
 
+/**
+ * Dialog, including the two parts added in
+ * `@batthewz/response-ui-react-components` 0.15.0.
+ *
+ * `DialogHeader` / `DialogBody` exist for the one piece of structure that
+ * cannot be assembled correctly from outside the component: a panel whose
+ * middle scrolls while its title and its actions stay put. Rolling it by hand
+ * is the common way to get it wrong — the UA rule
+ * `dialog:modal { max-height: calc(100% - 6px - 2em) }` scrolls the *whole*
+ * panel, taking the title and every dismiss control off screen with it, which
+ * on a phone is the difference between a dismissal you can reach and one you
+ * have to go and find. `DialogBody` carries the load-bearing `min-h-0`.
+ *
+ * `lightDismiss` (also 0.15.0) is demoed on the scrolling panel rather than on
+ * the confirmation below, and that split is the point: a destructive confirm
+ * is exactly the dialog a misplaced press must not be able to throw away, so
+ * it stays opt-out. See the third demo for the contrast.
+ */
 function DialogDemo() {
   const { toast } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [scrollingOpen, setScrollingOpen] = useState(false);
+  const [lightDismissOpen, setLightDismissOpen] = useState(false);
 
   return (
     <Section title="Dialog">
@@ -1117,11 +1169,22 @@ function DialogDemo() {
             A modal dialog built on the native HTML dialog element with backdrop and
             escape-to-close.
           </Text>
-          <div>
+          <Row gap="r5" className="flex-wrap">
             <Button variant="secondary" onClick={() => setDialogOpen(true)}>
               Open Dialog
             </Button>
-          </div>
+            <Button variant="secondary" onClick={() => setScrollingOpen(true)}>
+              Scrolling Body (DialogHeader / DialogBody)
+            </Button>
+            <Button variant="secondary" onClick={() => setLightDismissOpen(true)}>
+              Light Dismiss
+            </Button>
+          </Row>
+          <Text variant="body-3" color="muted">
+            DialogHeader and DialogBody keep the title and the button row fixed while only the
+            middle scrolls. lightDismiss closes on a press that both begins and ends outside the
+            panel — off by default, and deliberately not used on the destructive confirm.
+          </Text>
         </Stack>
       </Card>
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
@@ -1150,9 +1213,84 @@ function DialogDemo() {
           </FormActions>
         </Stack>
       </Dialog>
+
+      {/* Scrolling panel — header and actions hold their places, body gives. */}
+      <Dialog
+        open={scrollingOpen}
+        onClose={() => setScrollingOpen(false)}
+        aria-labelledby="demo-terms-title"
+      >
+        <DialogHeader onClose={() => setScrollingOpen(false)}>
+          <Text variant="h5" id="demo-terms-title">
+            Terms of service
+          </Text>
+        </DialogHeader>
+        <DialogBody>
+          <Stack gap="r5">
+            {TERMS_PARAGRAPHS.map((paragraph, index) => (
+              <Text key={index} variant="body-2" color="secondary">
+                {paragraph}
+              </Text>
+            ))}
+          </Stack>
+        </DialogBody>
+        <FormActions>
+          <Button variant="ghost" onClick={() => setScrollingOpen(false)}>
+            Decline
+          </Button>
+          <Button
+            onClick={() => {
+              setScrollingOpen(false);
+              toast("Terms accepted.", { variant: "success", title: "Done" });
+            }}
+          >
+            Accept terms
+          </Button>
+        </FormActions>
+      </Dialog>
+
+      {/* lightDismiss — safe here because nothing is being edited or destroyed. */}
+      <Dialog
+        open={lightDismissOpen}
+        onClose={() => setLightDismissOpen(false)}
+        lightDismiss
+        aria-labelledby="demo-lightdismiss-title"
+      >
+        <Stack gap="r4">
+          <Text variant="h5" id="demo-lightdismiss-title">
+            Click outside to close
+          </Text>
+          <Divider />
+          <Text variant="body-2" color="secondary">
+            This panel takes lightDismiss, so a press that both begins and ends outside it closes
+            it. Selecting this text and dragging past the edge does not — both ends of the press
+            have to land outside, which is what stops a drag-select from throwing away a
+            half-finished form.
+          </Text>
+          <FormActions>
+            <Button variant="ghost" onClick={() => setLightDismissOpen(false)}>
+              Close
+            </Button>
+          </FormActions>
+        </Stack>
+      </Dialog>
     </Section>
   );
 }
+
+/**
+ * Enough copy to overflow the panel on a laptop, so the scroll actually
+ * happens in the demo rather than being described and not shown.
+ */
+const TERMS_PARAGRAPHS = [
+  "Acme Marketing processes your deploy logs to render the activity feed. Logs are retained for 90 days, then deleted from primary and backup storage.",
+  "You keep ownership of everything you upload. We claim no licence beyond what is needed to serve it back to you and the people you share it with.",
+  "Rate limits apply per project, not per user. Bursting above the limit queues rather than fails, up to a ceiling documented in the API reference.",
+  "Support is best-effort on the free plan and contractual on paid plans. Response targets are listed on the pricing page and are not restated here.",
+  "We notify you of material changes to these terms at least 30 days before they take effect, by email to the account owner and in the dashboard.",
+  "Either party may terminate at any time. On termination we export your data on request for 30 days, then delete it on the schedule above.",
+  "Scroll to the end and notice that the title above and the buttons below never moved — only this region did.",
+];
 
 function SampleForm() {
   const { toast } = useToast();
@@ -1344,22 +1482,8 @@ function SearchInputDemo() {
   );
 }
 
-const THEME_LABELS: Record<Theme, string> = {
-  default: "Default",
-  events: "Events",
-  grimdark: "Grimdark",
-  tech: "Tech",
-};
-
-const THEME_COLORS: Record<Theme, { bg: string; border: string }> = {
-  default: { bg: "oklch(0.2795 0.0368 260.03)", border: "oklch(0.5544 0.0407 257.42)" },
-  events: { bg: "oklch(0.5413 0.2466 293.01)", border: "oklch(0.7049 0.1867 47.6)" },
-  grimdark: { bg: "oklch(0.2178 0 0)", border: "oklch(0.5054 0.1905 27.52)" },
-  tech: { bg: "oklch(0.1408 0.0044 285.82)", border: "oklch(0.8763 0.2278 152.55)" },
-};
-
 function MobileThemeBubble() {
-  const { theme, setTheme, themes } = useTheme();
+  const { theme, setTheme, themes } = useTheme({ themes: APP_THEMES });
 
   return (
     <div className="theme-bubble">

@@ -9,7 +9,12 @@ export function GuestGuard({ children }: { children: React.ReactNode }) {
   if (isPending) {
     return (
       <Center className="min-h-screen">
-        <Spinner size="lg" />
+        {/*
+          Children make this spinner announce — see AuthGuard for the reasoning.
+          A bare <Spinner /> has been decoration since 0.15.0, and this one is
+          the entire screen while the session resolves.
+        */}
+        <Spinner size="lg">Checking your session…</Spinner>
       </Center>
     );
   }

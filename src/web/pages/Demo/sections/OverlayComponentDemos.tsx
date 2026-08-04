@@ -260,7 +260,7 @@ function DropdownMenuDemos() {
                 </Button>
               </DropdownMenu.Trigger>
               <DropdownMenu.Content>
-                <DropdownMenu.Label>Account</DropdownMenu.Label>
+                <DropdownMenu.GroupHeader>Account</DropdownMenu.GroupHeader>
                 <DropdownMenu.Item index={0} icon={<User size={16} />}>
                   Profile
                 </DropdownMenu.Item>
@@ -268,7 +268,7 @@ function DropdownMenuDemos() {
                   Settings
                 </DropdownMenu.Item>
                 <DropdownMenu.Divider />
-                <DropdownMenu.Label>Notifications</DropdownMenu.Label>
+                <DropdownMenu.GroupHeader>Notifications</DropdownMenu.GroupHeader>
                 <DropdownMenu.Item index={2} icon={<Bell size={16} />}>
                   Preferences
                 </DropdownMenu.Item>

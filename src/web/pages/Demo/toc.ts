@@ -18,6 +18,7 @@ export const TOC_SECTIONS: TocEntry[] = [
   { id: "codeblock", title: "Code Block", group: "Core" },
   { id: "copybutton", title: "Copy Button", group: "Core" },
   { id: "kbd", title: "Kbd", group: "Core" },
+  { id: "markdown", title: "Markdown", group: "Core" },
 
   // Layout
   { id: "layout-stack-row", title: "Stack & Row", group: "Layout" },

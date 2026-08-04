@@ -10,7 +10,7 @@ import {
   Input,
   Label,
   MultiSelect,
-  type MultiSelectOption,
+  type MultiSelectItem,
   NumberInput,
   OTPInput,
   RangeSlider,
@@ -92,7 +92,7 @@ function ComboboxDemo() {
 /*  MultiSelect                                                        */
 /* ------------------------------------------------------------------ */
 
-const SKILL_OPTIONS: MultiSelectOption[] = [
+const SKILL_OPTIONS: MultiSelectItem[] = [
   { value: "react", label: "React" },
   { value: "ts", label: "TypeScript" },
   { value: "node", label: "Node.js" },

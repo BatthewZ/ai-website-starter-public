@@ -9,7 +9,15 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   if (isPending) {
     return (
       <Center className="min-h-screen">
-        <Spinner size="lg" />
+        {/*
+          The children are what make this spinner announce. As of
+          @batthewz/response-ui-react-components 0.15.0 a bare <Spinner /> is
+          decoration — aria-hidden, no role — because N spinners on a page would
+          otherwise be N role="status" live regions. This is the whole screen's
+          only content while the session resolves, so it is exactly the case
+          that should be the status region, in our own words.
+        */}
+        <Spinner size="lg">Checking your session…</Spinner>
       </Center>
     );
   }

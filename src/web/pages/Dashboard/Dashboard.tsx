@@ -43,7 +43,7 @@ export function Dashboard() {
                 <Text variant="body-2" color="secondary">
                   User ID
                 </Text>
-                <Text variant="body-2">{apiLoading ? <Skeleton variant="text" width="10ch" /> : (me?.user?.id ?? "—")}</Text>
+                <Text variant="body-2">{apiLoading ? <Skeleton variant="text" className="w-[10ch]" /> : (me?.user?.id ?? "—")}</Text>
               </Row>
               <Row justify="between">
                 <Text variant="body-2" color="secondary">
@@ -51,7 +51,7 @@ export function Dashboard() {
                 </Text>
                 <Text variant="body-2">
                   {apiLoading
-                    ? <Skeleton variant="text" width="10ch" />
+                    ? <Skeleton variant="text" className="w-[10ch]" />
                     : me?.user?.createdAt
                       ? new Date(me.user.createdAt).toLocaleDateString()
                       : "—"}

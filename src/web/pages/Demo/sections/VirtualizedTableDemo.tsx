@@ -81,11 +81,24 @@ function VirtualizedDataTableDemo() {
   return (
     <Section title="Virtualized Data Table" id="virtualizeddatatable">
       <SubSection label="10,000 rows, windowed — only the visible slice mounts. Click headers to sort.">
+        {/*
+          `rowHeight` must equal what a row really measures. The component
+          divides scrollTop by it and sizes the spacers above and below the
+          window from it, so the whole illusion rests on the number being true;
+          the docs are explicit that it "is not a hint". `density="comfortable"`
+          is 0.625rem of cell padding top and bottom plus a line of body text,
+          which measures 53px — this was declared 48, drifting 5px per row and
+          ~50,000px across 10,000 rows.
+
+          The scrollport also needs `position: relative` or this table grows the
+          document by half a million pixels; that is fixed for every table at
+          once in src/web/style/app.css rather than per call site.
+        */}
         <VirtualizedDataTable<Member>
           data={data}
           columns={columns}
           rowKey={(row) => row.id}
-          rowHeight={48}
+          rowHeight={53}
           height={440}
           striped
           density="comfortable"

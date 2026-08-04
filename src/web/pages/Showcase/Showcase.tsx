@@ -43,12 +43,12 @@ import { Award, Briefcase, Code2, Film, Filter, Heart, Palette, Search, Users } 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { TRANSPARENT_PX } from "@/web/lib/placeholder-image";
+import { APP_THEMES, THEME_LABELS } from "@/web/lib/themes";
+
 /* ------------------------------------------------------------------ */
 /*  Constants                                                          */
 /* ------------------------------------------------------------------ */
-
-const TRANSPARENT_PX =
-  "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
 /** Theme-adaptive gradients using CSS custom properties. */
 const G = {
@@ -531,7 +531,8 @@ export function Showcase() {
         <div className="sticky top-0 z-50 py-r5">
           <Container size="xl">
             <Card padding="r4" className="bg-surface-0/80 backdrop-blur-md flex justify-center">
-              <ThemeSwitcher />
+              {/* Without `themes` the switcher offers only `default` — see src/web/lib/themes.ts. */}
+              <ThemeSwitcher themes={APP_THEMES} labels={THEME_LABELS} />
             </Card>
           </Container>
         </div>
@@ -686,7 +687,7 @@ export function Showcase() {
                     </Button>
                   </DropdownMenu.Trigger>
                   <DropdownMenu.Content>
-                    <DropdownMenu.Label>Filter by Type</DropdownMenu.Label>
+                    <DropdownMenu.GroupHeader>Filter by Type</DropdownMenu.GroupHeader>
                     <DropdownMenu.Item index={0} onSelect={() => setGalleryFilter(null)}>
                       All Work
                     </DropdownMenu.Item>
@@ -774,10 +775,17 @@ export function Showcase() {
                         {i === 1 && (
                           <Stack gap="r6">
                             <Row justify="between">
-                              <ProgressBar.Label>Design completion</ProgressBar.Label>
+                              <ProgressBar.Label id="spotlight-design-completion-label">
+                                Design completion
+                              </ProgressBar.Label>
                               <ProgressBar.Value>92%</ProgressBar.Value>
                             </Row>
-                            <ProgressBar value={92} variant="gradient" color="accent" />
+                            <ProgressBar
+                              value={92}
+                              variant="gradient"
+                              color="accent"
+                              aria-labelledby="spotlight-design-completion-label"
+                            />
                           </Stack>
                         )}
                       </Stack>
@@ -900,19 +908,25 @@ export function Showcase() {
                 {EXPERTISE_TABS.map((tab) => (
                   <Tabs.Panel key={tab.value} value={tab.value}>
                     <Stack gap="r4" className="mt-r4 max-w-2xl mx-auto">
-                      {EXPERTISE[tab.value].map((skill) => (
-                        <Stack key={skill.label} gap="r6">
-                          <Row justify="between">
-                            <ProgressBar.Label>{skill.label}</ProgressBar.Label>
-                            <ProgressBar.Value>{skill.value}%</ProgressBar.Value>
-                          </Row>
-                          <ProgressBar
-                            value={skill.value}
-                            variant={skill.variant}
-                            color={skill.color}
-                          />
-                        </Stack>
-                      ))}
+                      {EXPERTISE[tab.value].map((skill, skillIndex) => {
+                        // Every panel is in the DOM at once, so the id has to be
+                        // scoped by tab as well as by row to stay unique.
+                        const skillLabelId = `expertise-${tab.value}-skill-${skillIndex}-label`;
+                        return (
+                          <Stack key={skill.label} gap="r6">
+                            <Row justify="between">
+                              <ProgressBar.Label id={skillLabelId}>{skill.label}</ProgressBar.Label>
+                              <ProgressBar.Value>{skill.value}%</ProgressBar.Value>
+                            </Row>
+                            <ProgressBar
+                              value={skill.value}
+                              variant={skill.variant}
+                              color={skill.color}
+                              aria-labelledby={skillLabelId}
+                            />
+                          </Stack>
+                        );
+                      })}
                     </Stack>
                   </Tabs.Panel>
                 ))}

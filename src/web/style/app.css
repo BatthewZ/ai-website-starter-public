@@ -1,16 +1,50 @@
 /* ------------------------------------------------------------------ */
 /*  Foundation — from the response-ui npm packages                     */
 /* ------------------------------------------------------------------ */
-/* 1. Tailwind v4 + Google Fonts + design tokens + themes + responsive
+/* 0. Typefaces for the three example themes. These MUST precede every other
+      import, and that is a hard CSS constraint rather than a style rule: CSS
+      requires every @import to come before all other rules in the *flattened*
+      stylesheet. Put them lower — including at the top of a theme file, which
+      is the obvious-looking spot — and the bundler silently drops them. The
+      palette still applies and the typeface never changes, with no error
+      anywhere to say why.
+
+      As of @batthewz/response-ui-css 0.13.0 (we came from 0.8.x) the example
+      themes are no longer carried by the package's public entry: `default` is
+      the only theme it defines, because `default` *is* `:root`. events,
+      grimdark and tech are worked demonstrations of the theme contract and are
+      now opt-in, one line per theme actually used. Without these imports the
+      ThemeSwitcher still offers all four names and three of them render
+      unthemed — which is the demo's headline feature, so we opt in to all
+      three. Anything under the packages' `examples/` is sample code and
+      explicitly outside semver. */
+@import "@batthewz/response-ui-css/examples/themes/events-fonts";
+@import "@batthewz/response-ui-css/examples/themes/grimdark-fonts";
+@import "@batthewz/response-ui-css/examples/themes/tech-fonts";
+
+/* 1. Tailwind v4 + the default theme's fonts + design tokens + responsive
       scales + animations + base styles (html bg, :root fonts, scrollbars,
       dialog body-lock). */
 @import "@batthewz/response-ui-css";
 
-/* 2. Per-component CSS + this package's domain tokens (trend/chart/media).
+/* 2. The example theme palettes themselves — after the foundation, so they
+      override the :root default. Previously implicit in the import above. */
+@import "@batthewz/response-ui-css/examples/themes/events";
+@import "@batthewz/response-ui-css/examples/themes/grimdark";
+@import "@batthewz/response-ui-css/examples/themes/tech";
+
+/* 3. Per-component CSS + this package's domain tokens (trend/chart/media).
       Also registers a Tailwind v4 @source so the utility classes used inside
       the components are generated automatically. Must come AFTER the css
       package so it can read its var(--…) tokens. */
 @import "@batthewz/response-ui-react-components/styles";
+
+/* 4. Chart/MediaCard ramps tuned for the three example themes. Opt-in for the
+      same reason the themes are: the --C-CHART-* values moved out of the
+      component tokens in 0.13.0. We render Sparkline, StatCard trends and
+      MediaCard against these themes, so without this their ramps stay pinned
+      to the default theme's palette and stop tracking the theme. */
+@import "@batthewz/response-ui-react-components/examples/theme-tuning";
 
 /* ------------------------------------------------------------------ */
 /*  App / demo-only CSS — no equivalent in the npm packages            */

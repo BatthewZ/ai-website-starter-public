@@ -66,9 +66,29 @@ vi.mock("@batthewz/response-ui-react-components", () => {
     </button>
   );
   const Text = ({ children }: { children: React.ReactNode }) => <span>{children}</span>;
-  const ThemeSwitcher = () => <div data-testid="theme-switcher">ThemeSwitcher</div>;
-  return { AppShell, Button, Text, ThemeSwitcher };
+  /**
+   * The mock renders the themes it was handed, rather than swallowing props.
+   * That is the point of it: the real ThemeSwitcher offers *only* `default`
+   * when `themes` is omitted — "this package does not know your themes and
+   * will not guess" — so a switcher that silently lost its list still renders
+   * fine and still passes any test that only checks it exists. Exposing the
+   * count is what makes that failure visible here.
+   */
+  const ThemeSwitcher = ({ themes }: { themes?: readonly string[] }) => (
+    <div data-testid="theme-switcher" data-theme-count={themes?.length ?? 0}>
+      ThemeSwitcher
+    </div>
+  );
+  /**
+   * Re-exported because src/web/lib/themes.ts builds APP_THEMES from it, and
+   * AuthenticatedLayout imports that module. A partial mock of a barrel breaks
+   * every transitive importer, not just the file under test.
+   */
+  const EXAMPLE_THEMES = ["default", "events", "grimdark", "tech"] as const;
+  return { AppShell, Button, Text, ThemeSwitcher, EXAMPLE_THEMES };
 });
+
+import { APP_THEMES } from "@/web/lib/themes";
 
 import { AuthenticatedLayout } from "./AuthenticatedLayout";
 
@@ -84,6 +104,22 @@ describe("AuthenticatedLayout", () => {
   it("renders the app name", () => {
     render(<AuthenticatedLayout>Content</AuthenticatedLayout>);
     expect(screen.getByText("App Name")).toBeInTheDocument();
+  });
+
+  /**
+   * Guards a real regression rather than a hypothetical one. The
+   * @batthewz/response-ui-* 0.15.0 upgrade made `themes` effectively required:
+   * omitted, ThemeSwitcher offers only `default`, so the navbar switcher went
+   * from four themes to one while still rendering perfectly and still passing
+   * a presence-only assertion. Asserting the *count* is what distinguishes a
+   * working switcher from a switcher-shaped div.
+   */
+  it("hands the theme switcher every app theme, not just the default", () => {
+    render(<AuthenticatedLayout>Content</AuthenticatedLayout>);
+    const switcher = screen.getByTestId("theme-switcher");
+    expect(switcher).toBeInTheDocument();
+    expect(Number(switcher.getAttribute("data-theme-count"))).toBe(APP_THEMES.length);
+    expect(APP_THEMES.length).toBeGreaterThan(1);
   });
 
   it("renders Dashboard and Settings navigation links", () => {

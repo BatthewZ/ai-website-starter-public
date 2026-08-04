@@ -223,9 +223,9 @@ function SkeletonDemo() {
       <SubSection label="Text placeholders">
         <Card>
           <Stack gap="r5">
-            <Skeleton variant="text" width="100%" height={16} />
-            <Skeleton variant="text" width="80%" height={16} />
-            <Skeleton variant="text" width="60%" height={16} />
+            <Skeleton variant="text" className="w-full h-4" />
+            <Skeleton variant="text" className="w-4/5 h-4" />
+            <Skeleton variant="text" className="w-3/5 h-4" />
           </Stack>
         </Card>
       </SubSection>
@@ -233,10 +233,10 @@ function SkeletonDemo() {
       <SubSection label="Avatar placeholder">
         <Card>
           <Row gap="r4" align="center">
-            <Skeleton variant="circular" width={48} height={48} />
+            <Skeleton variant="circular" className="w-12 h-12" />
             <Stack gap="r6">
-              <Skeleton variant="text" width={120} height={14} />
-              <Skeleton variant="text" width={180} height={12} />
+              <Skeleton variant="text" className="w-30 h-3.5" />
+              <Skeleton variant="text" className="w-45 h-3" />
             </Stack>
           </Row>
         </Card>
@@ -245,12 +245,12 @@ function SkeletonDemo() {
       <SubSection label="Card composition">
         <Card>
           <Stack gap="r4">
-            <Skeleton variant="rounded" width="100%" height={180} />
-            <Skeleton variant="text" width="70%" height={20} />
+            <Skeleton variant="rounded" className="w-full h-45" />
+            <Skeleton variant="text" className="w-[70%] h-5" />
             <Stack gap="r6">
-              <Skeleton variant="text" width="100%" height={14} />
-              <Skeleton variant="text" width="100%" height={14} />
-              <Skeleton variant="text" width="40%" height={14} />
+              <Skeleton variant="text" className="w-full h-3.5" />
+              <Skeleton variant="text" className="w-full h-3.5" />
+              <Skeleton variant="text" className="w-2/5 h-3.5" />
             </Stack>
           </Stack>
         </Card>

@@ -27,8 +27,8 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@batthewz/response-ui-css": "^0.8.0",
-    "@batthewz/response-ui-react-components": "^0.8.2",
+    "@batthewz/response-ui-css": "^0.14.0",
+    "@batthewz/response-ui-react-components": "^0.17.0",
     "@floating-ui/react": "0.27.19",
     "@hono/zod-validator": "0.7.6",
     "bcryptjs": "3.0.3",

@@ -6,6 +6,7 @@ import {
   cn,
   Container,
   Divider,
+  EXAMPLE_THEMES,
   Field,
   IconButton,
   Input,
@@ -16,7 +17,6 @@ import {
   Stack,
   Tabs,
   Text,
-  THEMES,
   useDocumentTitle,
   useToast,
 } from "@batthewz/response-ui-react-components";
@@ -456,8 +456,18 @@ function LivePreview() {
 
         {/* Progress */}
         <Stack gap="r6">
-          <ProgressBar value={65} color="accent" size="md" />
-          <ProgressBar value={40} color="success" size="sm" />
+          <ProgressBar
+            value={65}
+            color="accent"
+            size="md"
+            aria-label="Accent color progress bar preview"
+          />
+          <ProgressBar
+            value={40}
+            color="success"
+            size="sm"
+            aria-label="Success color progress bar preview"
+          />
         </Stack>
 
         <Divider />
@@ -633,7 +643,7 @@ export function ThemeEditor() {
                   className="!w-auto !py-1.5 !text-body-3"
                   onChange={(e) => handleLoadTheme(e.target.value)}
                 >
-                  {THEMES.map((t) => (
+                  {EXAMPLE_THEMES.map((t) => (
                     <option key={t} value={t}>
                       {t.charAt(0).toUpperCase() + t.slice(1)}
                     </option>

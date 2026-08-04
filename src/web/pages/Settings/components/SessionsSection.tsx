@@ -130,8 +130,8 @@ export function SessionsSection() {
                 className="items-center rounded-md border border-border-default px-r4 py-r4"
               >
                 <Stack gap="r6" className="min-w-0 flex-1">
-                  <Skeleton variant="text" width="14ch" />
-                  <Skeleton variant="text" width="20ch" height="0.75em" />
+                  <Skeleton variant="text" className="w-[14ch]" />
+                  <Skeleton variant="text" className="w-[20ch] h-[0.75em]" />
                 </Stack>
               </Row>
             ))}
