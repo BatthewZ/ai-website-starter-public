@@ -35,7 +35,12 @@ export function Login() {
       try {
         const { error } = await signIn.email(values);
         if (error) {
-          setErrors({ "": authErrorMessage(error, "Invalid email or password.") });
+          // Wrong credentials arrive WITH Better Auth's message; a message-less
+          // error is something else (a server fault), so the fallback must not
+          // blame the password.
+          setErrors({
+            "": authErrorMessage(error, "We couldn't sign you in. Please try again in a moment."),
+          });
           return;
         }
         void navigate(postSignInPath(location.state), { replace: true });

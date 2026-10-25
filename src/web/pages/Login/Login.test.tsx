@@ -72,12 +72,27 @@ describe("Login", () => {
     expect(screen.getByTestId("location")).toHaveTextContent("/login");
   });
 
-  it("falls back to a readable message when the server sends none", async () => {
+  /**
+   * A server fault (our 500s carry no Better Auth `message`) must not be
+   * reported as a wrong password: that sent a user hunting for a typo when
+   * the server was the problem.
+   */
+  it("does not blame the password when the server fails without a message", async () => {
     signInEmail.mockResolvedValue({ data: null, error: { message: "", status: 500 } });
     renderWithRouter(<Login />, { route: "/login", path: "/login" });
     await fillAndSubmit("ada@example.com", "whatever1");
 
-    expect(await screen.findByRole("alert")).toHaveTextContent("Invalid email or password.");
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent("We couldn't sign you in");
+    expect(alert).not.toHaveTextContent(/password/i);
+  });
+
+  it("says to wait when sign-in is rate-limited", async () => {
+    signInEmail.mockResolvedValue({ data: null, error: { status: 429 } });
+    renderWithRouter(<Login />, { route: "/login", path: "/login" });
+    await fillAndSubmit("ada@example.com", "whatever1");
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Too many attempts");
   });
 
   it("reports a network failure instead of hanging", async () => {

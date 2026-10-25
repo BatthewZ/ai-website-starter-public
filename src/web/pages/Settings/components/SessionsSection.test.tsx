@@ -91,7 +91,7 @@ describe("SessionsSection", () => {
     });
     renderWithRouter(<SessionsSection refreshKey={0} />);
 
-    expect(await screen.findByText("Too many requests")).toBeInTheDocument();
+    expect(await screen.findByText(/Too many attempts/)).toBeInTheDocument();
     await userEvent.setup().click(screen.getByRole("button", { name: "Try again" }));
 
     expect(await screen.findByText("Safari on iOS")).toBeInTheDocument();
