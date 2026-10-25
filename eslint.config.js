@@ -43,34 +43,16 @@ export default defineConfig([
     },
   },
 
-  // Compound component files export multiple components from one file by design,
-  // which triggers react-refresh warnings that don't apply here.
+  // Test files and the web test harness — no type-checked rules (excluded from
+  // production tsconfigs). The harness exports helpers next to components,
+  // which react-refresh would flag; it is never hot-reloaded.
   {
-    files: [
-      "src/web/components/ui/Accordion.tsx",
-      "src/web/components/ui/Carousel.tsx",
-      "src/web/components/ui/Hero.tsx",
-      "src/web/components/ui/MasonryGrid.tsx",
-      "src/web/components/ui/MediaCard.tsx",
-      "src/web/components/ui/ProgressBar.tsx",
-      "src/web/components/ui/Spotlight.tsx",
-      "src/web/components/ui/StatCard.tsx",
-      "src/web/components/ui/Tabs.tsx",
-      "src/web/components/ui/Timeline.tsx",
-      "src/web/components/ui/ToastContext.tsx",
-    ],
-    rules: {
-      "react-refresh/only-export-components": "off",
-    },
-  },
-
-  // Test files — no type-checked rules (excluded from production tsconfigs)
-  {
-    files: ["src/**/*.test.{ts,tsx}"],
+    files: ["src/**/*.test.{ts,tsx}", "src/web/test-utils.tsx"],
     ...tseslint.configs.disableTypeChecked,
     rules: {
       ...tseslint.configs.disableTypeChecked.rules,
       "@typescript-eslint/no-explicit-any": "off",
+      "react-refresh/only-export-components": "off",
     },
   },
 

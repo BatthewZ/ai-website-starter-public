@@ -24,7 +24,7 @@ The `AppEnv` type (defined in `src/api/env.ts`) wires everything together:
 
 ```ts
 export type AppBindings = {
-  DB: D1Database;              // D1 binding from wrangler.toml
+  DB: D1Database; // D1 binding from wrangler.toml
   BETTER_AUTH_SECRET: string;
   BETTER_AUTH_URL: string;
   TRUSTED_ORIGINS?: string;

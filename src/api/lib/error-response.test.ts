@@ -24,9 +24,7 @@ describe("errorResponse", () => {
   it("spreads extra fields into the response body", async () => {
     const app = new Hono<AppEnv>();
     app.use("*", requestIdMiddleware);
-    app.get("/conflict", (c) =>
-      errorResponse(c, "Conflict", 409, { field: "slug" }),
-    );
+    app.get("/conflict", (c) => errorResponse(c, "Conflict", 409, { field: "slug" }));
 
     const res = await app.request("/conflict");
 
@@ -53,7 +51,7 @@ describe("errorResponse", () => {
 describe("throwWithContext", () => {
   it("prepends context to an Error message", () => {
     expect(() => throwWithContext(new Error("fail"), "createUser")).toThrowError(
-      "[createUser] fail",
+      "[createUser] fail"
     );
   });
 

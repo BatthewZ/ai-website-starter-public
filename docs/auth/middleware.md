@@ -48,6 +48,6 @@ Usage example (from `src/api/routes/users/users.routes.ts`):
 
 ```ts
 const app = new Hono<AppEnv>();
-app.use("/*", requireAuth);  // All routes in this module require auth
+app.use("/*", requireAuth); // All routes in this module require auth
 app.get("/me", getMe);
 ```

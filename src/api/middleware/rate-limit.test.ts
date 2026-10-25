@@ -11,10 +11,7 @@ function createApp(options: Parameters<typeof rateLimit>[0]) {
   return app;
 }
 
-function req(
-  path = "/test",
-  headers: Record<string, string> = {}
-): Request {
+function req(path = "/test", headers: Record<string, string> = {}): Request {
   return new Request(`http://localhost${path}`, { headers });
 }
 
@@ -108,36 +105,26 @@ describe("rateLimit", () => {
   it("isolates by client IP", async () => {
     const app = createApp({ max: 1, windowSeconds: 60 });
 
-    const res1 = await app.request(
-      req("/test", { "cf-connecting-ip": "1.1.1.1" })
-    );
+    const res1 = await app.request(req("/test", { "cf-connecting-ip": "1.1.1.1" }));
     expect(res1.status).toBe(200);
 
     // Same IP should be blocked
-    const res2 = await app.request(
-      req("/test", { "cf-connecting-ip": "1.1.1.1" })
-    );
+    const res2 = await app.request(req("/test", { "cf-connecting-ip": "1.1.1.1" }));
     expect(res2.status).toBe(429);
 
     // Different IP should be allowed
-    const res3 = await app.request(
-      req("/test", { "cf-connecting-ip": "2.2.2.2" })
-    );
+    const res3 = await app.request(req("/test", { "cf-connecting-ip": "2.2.2.2" }));
     expect(res3.status).toBe(200);
   });
 
   it("falls back to x-forwarded-for when cf-connecting-ip is missing", async () => {
     const app = createApp({ max: 1, windowSeconds: 60 });
 
-    const res1 = await app.request(
-      req("/test", { "x-forwarded-for": "3.3.3.3, 4.4.4.4" })
-    );
+    const res1 = await app.request(req("/test", { "x-forwarded-for": "3.3.3.3, 4.4.4.4" }));
     expect(res1.status).toBe(200);
 
     // Same first IP in x-forwarded-for chain should be blocked
-    const res2 = await app.request(
-      req("/test", { "x-forwarded-for": "3.3.3.3" })
-    );
+    const res2 = await app.request(req("/test", { "x-forwarded-for": "3.3.3.3" }));
     expect(res2.status).toBe(429);
   });
 
@@ -148,21 +135,15 @@ describe("rateLimit", () => {
       keyFn: (c) => c.req.header("x-api-key") ?? "anon",
     });
 
-    const res1 = await app.request(
-      req("/test", { "x-api-key": "key-a" })
-    );
+    const res1 = await app.request(req("/test", { "x-api-key": "key-a" }));
     expect(res1.status).toBe(200);
 
     // Same key should be blocked
-    const res2 = await app.request(
-      req("/test", { "x-api-key": "key-a" })
-    );
+    const res2 = await app.request(req("/test", { "x-api-key": "key-a" }));
     expect(res2.status).toBe(429);
 
     // Different key should be allowed
-    const res3 = await app.request(
-      req("/test", { "x-api-key": "key-b" })
-    );
+    const res3 = await app.request(req("/test", { "x-api-key": "key-b" }));
     expect(res3.status).toBe(200);
   });
 

@@ -9,12 +9,12 @@ function extractValid(c: Context, target: "json" | "query"): unknown {
 
 export function validJson<T extends ZodType>(c: Context, schema: T): z.output<T> {
   void schema;
-   
+
   return extractValid(c, "json") as z.output<T>;
 }
 
 export function validQuery<T extends ZodType>(c: Context, schema: T): z.output<T> {
   void schema;
-   
+
   return extractValid(c, "query") as z.output<T>;
 }

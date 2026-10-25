@@ -28,25 +28,25 @@ export default defineConfig({
 });
 ```
 
-| Option    | Value              | Purpose                                          |
-| --------- | ------------------ | ------------------------------------------------ |
-| `dialect`  | `"sqlite"`         | D1 is SQLite-based                               |
-| `schema`  | `"./src/db/schema"` | Directory containing Drizzle table definitions   |
-| `out`     | `"./migrations"`   | Where generated SQL migration files are written  |
+| Option    | Value               | Purpose                                         |
+| --------- | ------------------- | ----------------------------------------------- |
+| `dialect` | `"sqlite"`          | D1 is SQLite-based                              |
+| `schema`  | `"./src/db/schema"` | Directory containing Drizzle table definitions  |
+| `out`     | `"./migrations"`    | Where generated SQL migration files are written |
 
 ### `wrangler.toml` (D1 section)
 
 ```toml
 [[d1_databases]]
 binding = "DB"
-database_name = "ai-site-starter-db"
+database_name = "ai_site_starter_db"
 database_id = "placeholder"
 ```
 
-| Field           | Purpose                                                              |
-| --------------- | -------------------------------------------------------------------- |
-| `binding`       | The name used to access the database in Workers (`env.DB`)           |
-| `database_name` | The human-readable D1 database name (used in migration commands)     |
+| Field           | Purpose                                                                                                          |
+| --------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `binding`       | The name used to access the database in Workers (`env.DB`)                                                       |
+| `database_name` | The human-readable D1 database name (used in migration commands)                                                 |
 | `database_id`   | The UUID of the D1 database in your Cloudflare account (replace `"placeholder"` with the real ID after creation) |
 
 ---

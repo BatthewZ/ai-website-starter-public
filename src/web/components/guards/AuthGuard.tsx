@@ -1,30 +1,36 @@
-import { Center, Spinner } from "@batthewz/response-ui-react-components";
-import { Navigate } from "react-router-dom";
+import { RequireAuth } from "@batthewz/r-ui-react-components";
+import type { ReactNode } from "react";
+import { useLocation, useNavigate } from "react-router";
 
 import { useSession } from "@/web/lib/auth/auth-client";
+import { signInRedirectState } from "@/web/lib/auth/redirect";
+import { sessionStatus } from "@/web/lib/auth/session";
 
-export function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { data: session, isPending } = useSession();
+/**
+ * Renders a page only for a signed-in user.
+ *
+ * r-ui's `RequireAuth` owns the states (it never renders `children` while the
+ * session is loading, so protected content cannot flash), and this binds it to
+ * Better Auth and the router: signed out, it replaces the history entry with
+ * /login and records where the user was going, so sign-in returns them there
+ * (see `postSignInPath`). The fallback with a sign-in link still renders for
+ * the moment before the redirect lands, so the page is never blank.
+ */
+export function AuthGuard({ children }: { children: ReactNode }) {
+  const session = useSession();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  if (isPending) {
-    return (
-      <Center className="min-h-screen">
-        {/*
-          The children are what make this spinner announce. As of
-          @batthewz/response-ui-react-components 0.15.0 a bare <Spinner /> is
-          decoration — aria-hidden, no role — because N spinners on a page would
-          otherwise be N role="status" live regions. This is the whole screen's
-          only content while the session resolves, so it is exactly the case
-          that should be the status region, in our own words.
-        */}
-        <Spinner size="lg">Checking your session…</Spinner>
-      </Center>
-    );
-  }
-
-  if (!session) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return <>{children}</>;
+  return (
+    <RequireAuth
+      status={sessionStatus(session)}
+      signInHref="/login"
+      onUnauthenticated={() =>
+        void navigate("/login", { replace: true, state: signInRedirectState(location) })
+      }
+      className="min-h-dvh content-center"
+    >
+      {children}
+    </RequireAuth>
+  );
 }

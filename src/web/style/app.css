@@ -1,54 +1,21 @@
-/* ------------------------------------------------------------------ */
-/*  Foundation — from the response-ui npm packages                     */
-/* ------------------------------------------------------------------ */
-/* 0. Typefaces for the three example themes. These MUST precede every other
-      import, and that is a hard CSS constraint rather than a style rule: CSS
-      requires every @import to come before all other rules in the *flattened*
-      stylesheet. Put them lower — including at the top of a theme file, which
-      is the obvious-looking spot — and the bundler silently drops them. The
-      palette still applies and the typeface never changes, with no error
-      anywhere to say why.
+/* The app's one CSS entry. Order is load-bearing:
 
-      As of @batthewz/response-ui-css 0.13.0 (we came from 0.8.x) the example
-      themes are no longer carried by the package's public entry: `default` is
-      the only theme it defines, because `default` *is* `:root`. events,
-      grimdark and tech are worked demonstrations of the theme contract and are
-      now opt-in, one line per theme actually used. Without these imports the
-      ThemeSwitcher still offers all four names and three of them render
-      unthemed — which is the demo's headline feature, so we opt in to all
-      three. Anything under the packages' `examples/` is sample code and
-      explicitly outside semver. */
-@import "@batthewz/response-ui-css/examples/themes/events-fonts";
-@import "@batthewz/response-ui-css/examples/themes/grimdark-fonts";
-@import "@batthewz/response-ui-css/examples/themes/tech-fonts";
+   1. r-ui-css: Tailwind v4, the token contract (colour, type, space, shape,
+      motion), base styles and prose. It REMOVES Tailwind's default scales
+      (`text-sm`, `bg-blue-500`, `rounded`, `shadow-xl`…), so those classes
+      generate nothing here: use the tokens (`text-body-2`, `bg-surface-0`,
+      `p-r3`, `rounded-md`). See docs/app-frontend.md.
+   2. r-ui-react-components styles: component CSS in `layer(components)` (so a
+      `className` utility always beats a component rule) plus the package's
+      domain tokens, and the `@source` that tells Tailwind where the
+      components' own class names live. It reads the contract's tokens, so it
+      must come after (1).
+   3. The app's own themes, after both, so they override the `:root` palette.
+      Harbour is the one a first visit opens in (INITIAL_THEME). Every file
+      here must also be listed in src/web/lib/themes.ts; the themes test fails
+      if the two drift apart. */
+@import "@batthewz/r-ui-css";
+@import "@batthewz/r-ui-react-components/styles";
 
-/* 1. Tailwind v4 + the default theme's fonts + design tokens + responsive
-      scales + animations + base styles (html bg, :root fonts, scrollbars,
-      dialog body-lock). */
-@import "@batthewz/response-ui-css";
-
-/* 2. The example theme palettes themselves — after the foundation, so they
-      override the :root default. Previously implicit in the import above. */
-@import "@batthewz/response-ui-css/examples/themes/events";
-@import "@batthewz/response-ui-css/examples/themes/grimdark";
-@import "@batthewz/response-ui-css/examples/themes/tech";
-
-/* 3. Per-component CSS + this package's domain tokens (trend/chart/media).
-      Also registers a Tailwind v4 @source so the utility classes used inside
-      the components are generated automatically. Must come AFTER the css
-      package so it can read its var(--…) tokens. */
-@import "@batthewz/response-ui-react-components/styles";
-
-/* 4. Chart/MediaCard ramps tuned for the three example themes. Opt-in for the
-      same reason the themes are: the --C-CHART-* values moved out of the
-      component tokens in 0.13.0. We render Sparkline, StatCard trends and
-      MediaCard against these themes, so without this their ramps stay pinned
-      to the default theme's palette and stop tracking the theme. */
-@import "@batthewz/response-ui-react-components/examples/theme-tuning";
-
-/* ------------------------------------------------------------------ */
-/*  App / demo-only CSS — no equivalent in the npm packages            */
-/* ------------------------------------------------------------------ */
-@import "./components/demo-toc.css"; /* Demo page TOC sidebar + mobile bubble */
-@import "./components/theme-bubble.css"; /* mobile theme-switcher FAB */
-@import "./components/link.css"; /* .link utility */
+@import "./themes/harbour.css";
+@import "./themes/dark.css";

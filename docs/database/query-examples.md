@@ -12,18 +12,13 @@ const allUsers = await db.select().from(user);
 ```ts
 import { eq } from "drizzle-orm";
 
-const result = await db
-  .select()
-  .from(user)
-  .where(eq(user.email, "test@example.com"));
+const result = await db.select().from(user).where(eq(user.email, "test@example.com"));
 ```
 
 ### Select specific columns
 
 ```ts
-const names = await db
-  .select({ id: user.id, name: user.name })
-  .from(user);
+const names = await db.select({ id: user.id, name: user.name }).from(user);
 ```
 
 ### Insert a row

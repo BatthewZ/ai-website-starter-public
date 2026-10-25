@@ -57,4 +57,22 @@ describe("ConsoleEmailService", () => {
     expect(loggedMessage).toContain("(no text content)");
     logSpy.mockRestore();
   });
+
+  /**
+   * Local dev has no other way to receive these emails, so the link must
+   * survive intact. A 200-character preview used to cut verification and
+   * reset links (which carry long signed tokens) in half.
+   */
+  it("prints the full text body, so long links stay clickable", async () => {
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    const link = `http://localhost:8787/api/auth/verify-email?token=${"a".repeat(400)}&callbackURL=%2Fdashboard`;
+    await new ConsoleEmailService().send({
+      to: "test@example.com",
+      subject: "Verify",
+      html: "<p>Hi</p>",
+      text: `Verify your email: ${link}`,
+    });
+    expect(logSpy.mock.calls[0]![0] as string).toContain(link);
+    logSpy.mockRestore();
+  });
 });

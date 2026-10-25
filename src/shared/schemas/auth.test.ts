@@ -1,11 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  forgotPasswordSchema,
-  loginSchema,
-  registerSchema,
-  resetPasswordSchema,
-} from "./auth";
+import { forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema } from "./auth";
 
 describe("loginSchema", () => {
   it("accepts valid email and password", () => {
@@ -24,14 +19,25 @@ describe("loginSchema", () => {
     expect(result.success).toBe(false);
   });
 
-  it("rejects short password", () => {
+  // Sign-in must not re-apply the sign-up length rule: a short password is a
+  // wrong password (answered by the server), not a form error, and accounts
+  // created under an older policy must still be able to sign in.
+  it("accepts a password shorter than the sign-up minimum", () => {
     const result = loginSchema.safeParse({
       email: "user@example.com",
       password: "short",
     });
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects an empty password", () => {
+    const result = loginSchema.safeParse({
+      email: "user@example.com",
+      password: "",
+    });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0].message).toBe("Password must be at least 8 characters");
+      expect(result.error.issues[0].message).toBe("Enter your password");
     }
   });
 
@@ -53,6 +59,15 @@ describe("registerSchema", () => {
 
   it("rejects missing name", () => {
     const result = registerSchema.safeParse({
+      email: "user@example.com",
+      password: "password123",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects a whitespace-only name", () => {
+    const result = registerSchema.safeParse({
+      name: "   ",
       email: "user@example.com",
       password: "password123",
     });
@@ -104,7 +119,7 @@ describe("forgotPasswordSchema", () => {
     });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0].message).toBe("Please enter a valid email address");
+      expect(result.error.issues[0].message).toBe("Enter a valid email address");
     }
   });
 

@@ -1,116 +1,122 @@
-import { Alert, Button, Card, Field, FieldError, Input, Label, Stack, Text } from "@batthewz/response-ui-react-components";
-import { useState } from "react";
+import {
+  Card,
+  Checkbox,
+  Field,
+  Form,
+  FormActions,
+  PasswordInput,
+  Stack,
+  useForm,
+  useToast,
+} from "@batthewz/r-ui-react-components";
 
 import { changePasswordSchema } from "@/shared/schemas/user";
+import { FormAlert } from "@/web/components/forms/FormAlert";
+import { UsernameHint } from "@/web/components/forms/UsernameHint";
 import { changePassword } from "@/web/lib/auth/auth-client";
+import { authErrorMessage, NETWORK_ERROR_MESSAGE } from "@/web/lib/auth/errors";
 
-export function PasswordSection() {
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [success, setSuccess] = useState("");
-  const [loading, setLoading] = useState(false);
+interface PasswordSectionProps {
+  /** Called after a change that signed other devices out, so the session list can reload. */
+  onOtherSessionsRevoked: () => void;
+}
 
-  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError("");
-    setFieldErrors({});
-    setSuccess("");
+const DEFAULTS = {
+  currentPassword: "",
+  newPassword: "",
+  confirmPassword: "",
+  revokeOtherSessions: true,
+};
 
-    const result = changePasswordSchema.safeParse({
-      currentPassword,
-      newPassword,
-      confirmPassword,
-    });
-    if (!result.success) {
-      const errors: Record<string, string> = {};
-      for (const issue of result.error.issues) {
-        const key = issue.path[0]?.toString();
-        if (key) errors[key] = issue.message;
+/**
+ * Changes the password. "Sign out of other devices" is on by default: the most
+ * common reason to change a password is suspecting someone else has it, and
+ * then leaving their session alive defeats the point.
+ *
+ * Better Auth's INVALID_PASSWORD is shown on the current-password field (it is
+ * the only field it can be about), every other failure on the form.
+ */
+export function PasswordSection({ onOtherSessionsRevoked }: PasswordSectionProps) {
+  const { toast } = useToast();
+
+  const form = useForm({
+    schema: changePasswordSchema,
+    defaultValues: DEFAULTS,
+    onSubmit: async (
+      { currentPassword, newPassword, revokeOtherSessions },
+      { setErrors, reset }
+    ) => {
+      try {
+        const { error } = await changePassword({
+          currentPassword,
+          newPassword,
+          revokeOtherSessions,
+        });
+        if (error) {
+          if (error.code === "INVALID_PASSWORD") {
+            setErrors({ currentPassword: "That isn't your current password." });
+          } else {
+            setErrors({
+              "": authErrorMessage(error, "We couldn't change your password. Please try again."),
+            });
+          }
+          return;
+        }
+        reset(DEFAULTS);
+        toast({
+          title: "Password changed",
+          description: revokeOtherSessions ? "Your other devices have been signed out." : undefined,
+          tone: "success",
+        });
+        if (revokeOtherSessions) onOtherSessionsRevoked();
+      } catch {
+        setErrors({ "": NETWORK_ERROR_MESSAGE });
       }
-      setFieldErrors(errors);
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const { error: changeError } = await changePassword({
-        currentPassword,
-        newPassword,
-        revokeOtherSessions: false,
-      });
-      if (changeError) {
-        setError(changeError.message ?? "Failed to change password");
-        return;
-      }
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-      setSuccess("Password changed successfully.");
-    } catch {
-      setError("Network error. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }
+    },
+  });
 
   return (
     <Card>
-      <Stack gap="r4">
-        <Text variant="h5">Change Password</Text>
+      <Card.Header>
+        <Card.Title as="h2">Password</Card.Title>
+        <Card.Description>
+          Use at least 8 characters. A passphrase is easier to remember.
+        </Card.Description>
+      </Card.Header>
+      <Card.Body>
+        <Form form={form}>
+          <Stack gap="r3">
+            <FormAlert form={form} />
+            <UsernameHint />
 
-        <form onSubmit={(e) => void handleSubmit(e)}>
-          <Stack gap="r4">
-            <Field>
-              <Label htmlFor="currentPassword">Current Password</Label>
-              <Input
-                id="currentPassword"
-                type="password"
-                autoComplete="current-password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                error={!!fieldErrors.currentPassword}
-              />
-              <FieldError>{fieldErrors.currentPassword}</FieldError>
+            <Field name="currentPassword" required>
+              <Field.Label>Current password</Field.Label>
+              <PasswordInput autoComplete="current-password" />
+              <Field.Error />
             </Field>
 
-            <Field>
-              <Label htmlFor="newPassword">New Password</Label>
-              <Input
-                id="newPassword"
-                type="password"
-                autoComplete="new-password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                error={!!fieldErrors.newPassword}
-              />
-              <FieldError>{fieldErrors.newPassword}</FieldError>
+            <Field name="newPassword" required>
+              <Field.Label>New password</Field.Label>
+              <PasswordInput autoComplete="new-password" strength />
+              <Field.Error />
             </Field>
 
-            <Field>
-              <Label htmlFor="confirmPassword">Confirm New Password</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                autoComplete="new-password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                error={!!fieldErrors.confirmPassword}
-              />
-              <FieldError>{fieldErrors.confirmPassword}</FieldError>
+            <Field name="confirmPassword" required>
+              <Field.Label>Confirm new password</Field.Label>
+              <PasswordInput autoComplete="new-password" />
+              <Field.Error />
             </Field>
 
-            {error && <Alert variant="error">{error}</Alert>}
-            {success && <Alert variant="success">{success}</Alert>}
+            <Field name="revokeOtherSessions">
+              <Checkbox>Sign out of other devices</Checkbox>
+            </Field>
 
-            <Button type="submit" variant="primary" size="md" disabled={loading}>
-              {loading ? "Changing..." : "Change Password"}
-            </Button>
+            <FormActions>
+              <FormActions.Submit>Change password</FormActions.Submit>
+            </FormActions>
           </Stack>
-        </form>
-      </Stack>
+        </Form>
+      </Card.Body>
     </Card>
   );
 }

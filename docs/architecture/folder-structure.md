@@ -7,7 +7,7 @@ The project organizes code by **domain** (what it relates to), not by **technica
 ### Core Principles
 
 1. **Co-locate by domain, not by type.** A page's components, hooks, and types live inside that page's folder.
-2. **Promote to shared only when reused.** A component starts in `pages/Dashboard/components/`. Once a second page needs it, move it to `components/`. Generic, reusable primitives belong in the `@batthewz/response-ui-react-components` package, not here — see [Frontend](../app-frontend.md).
+2. **Promote to shared only when reused.** A component starts in `pages/Dashboard/components/`. Once a second page needs it, move it to `components/`. Generic, reusable primitives belong in the `@batthewz/r-ui-react-components` package, not here — see [Frontend](../app-frontend.md).
 3. **Flat until it hurts.** Do not create sub-folders pre-emptively.
 4. **Mirror structure between frontend and backend.** Both `api/routes/` and `shared/schemas/` group by domain (e.g., `auth`, `users`, `posts`).
 
@@ -47,55 +47,71 @@ src/
 │       └── index.ts              # Re-exports all schemas
 │
 ├── shared/                       # Shared (frontend + backend)
-│   ├── schemas/                  # Zod schemas grouped by domain
-│   │   ├── index.ts              # Re-exports all schemas
-│   │   ├── auth.ts               # Auth validation schemas (login, register, etc.)
-│   │   ├── upload.ts             # Upload validation constants & schemas
-│   │   └── user.ts               # User profile & password schemas
-│   └── types/                    # Shared TypeScript types
+│   └── schemas/                  # Zod schemas grouped by domain
+│       ├── index.ts              # Re-exports all schemas
+│       ├── auth.ts               # Auth form schemas (login, register, reset)
+│       ├── upload.ts             # Upload validation constants & schemas
+│       └── user.ts               # Profile, change-password, delete-account schemas
 │
 └── web/                          # Frontend (React SPA)
-    ├── App.tsx                   # Root router (+ RouterAdapterProvider)
-    ├── main.tsx                  # React bootstrap
-    ├── style/                    # app.css (imports @batthewz/response-ui-* CSS) + app-only CSS
-    ├── lib/                      # Utilities & clients (auth client, API client)
-    ├── hooks/                    # App-specific hooks (use-api, use-file-upload)
+    ├── App.tsx                   # Providers (router adapter, titles, toasts) + route table
+    ├── main.tsx                  # React bootstrap, imports style/app.css
+    ├── index.html                # Shell; vite.config.ts injects the pre-paint script
+    ├── vite-env.d.ts             # Vite client types (CSS side-effect imports)
+    ├── test-utils.tsx            # renderWithRouter, LocationProbe
+    ├── style/
+    │   ├── app.css               # The one CSS entry: r-ui-css, component styles, themes
+    │   └── themes/               # App-owned themes, one file per data-theme (harbour.css, dark.css)
+    ├── lib/                      # Utilities & clients
+    │   ├── api/client.ts         # api, apiUpload, ApiError, setOnUnauthorized
+    │   ├── auth/                 # auth-client, redirect, session, errors
+    │   ├── app.ts                # APP_NAME
+    │   ├── navigation.ts         # NAV_ITEMS (sidebar + bottom nav)
+    │   ├── themes.ts             # THEMES / THEME_NAMES
+    │   ├── user-agent.ts         # Session device labels
+    │   └── relative-time.ts      # "3 days ago"
+    ├── hooks/                    # App-specific hooks (use-api)
     ├── components/               # App-specific shared components
-    │   ├── layout/               # AuthenticatedLayout (auth-aware app chrome)
-    │   └── guards/               # Route guards (AuthGuard, GuestGuard)
+    │   ├── brand/                # BrandMark
+    │   ├── forms/                # FormAlert, UsernameHint
+    │   ├── guards/               # Route guards (AuthGuard, GuestGuard)
+    │   └── layout/               # AuthLayout, AuthenticatedLayout
     └── pages/                    # Route-level page components
         ├── Dashboard/
-        ├── Demo/
-        │   └── sections/         # Demo page section components
         ├── ForgotPassword/
         ├── Login/
         ├── NotFound/
         ├── Register/
         ├── ResetPassword/
-        ├── Settings/
-        ├── Showcase/
-        └── ThemeEditor/
+        └── Settings/
+            └── components/       # ProfileSection, PasswordSection, SessionsSection, DangerZoneSection
+
+scripts/
+└── check-themes.ts               # bun run check:themes (r-ui contrast + theme rules)
 ```
 
 ### Web Conventions
 
-| Folder | Purpose | Rule |
-|---|---|---|
-| `pages/{PageName}/` | Route-level entry point | One folder per route. Folder and file share PascalCase name. |
-| `pages/{PageName}/components/` | Page-specific components | Only used by this page. Promote to `components/` if reused. |
-| `pages/{PageName}/hooks/` | Page-specific hooks | Custom hooks scoped to this page's logic. |
-| *(generic UI primitives)* | Provided by the package | Button, Input, Card, etc. come from `@batthewz/response-ui-react-components` — not stored locally. See [Frontend](../app-frontend.md). |
-| `components/layout/` | App-specific layout | `AuthenticatedLayout` (composes the package's `AppShell`). |
-| `components/guards/` | Route guards | `AuthGuard`, `GuestGuard` (Better Auth + react-router). |
-| `hooks/` | App-specific hooks | `use-api`, `use-file-upload`. Generic UI hooks come from the package. |
-| `lib/` | Utilities & clients | Auth client, API client, helper functions. |
+| Folder                         | Purpose                  | Rule                                                                                                                                                                                                                            |
+| ------------------------------ | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pages/{PageName}/`            | Route-level entry point  | One folder per route. Folder and file share PascalCase name.                                                                                                                                                                    |
+| `pages/{PageName}/components/` | Page-specific components | Only used by this page. Promote to `components/` if reused.                                                                                                                                                                     |
+| `pages/{PageName}/hooks/`      | Page-specific hooks      | Custom hooks scoped to this page's logic.                                                                                                                                                                                       |
+| _(generic UI primitives)_      | Provided by the package  | Button, Input, Card, AppShell, forms, toasts, etc. come from `@batthewz/r-ui-react-components` — not stored locally. Browse the [r-ui showcase](https://batthewz.github.io/r-ui/showcase/). See [Frontend](../app-frontend.md). |
+| `components/layout/`           | App-specific layout      | `AuthLayout` (signed-out card page), `AuthenticatedLayout` (composes the package's `AppShell`).                                                                                                                                 |
+| `components/forms/`            | Form helpers             | `FormAlert` (form-level server error), `UsernameHint` (password-manager hint).                                                                                                                                                  |
+| `components/brand/`            | Product mark             | `BrandMark`; swap for your logo.                                                                                                                                                                                                |
+| `components/guards/`           | Route guards             | `AuthGuard` (r-ui `RequireAuth`), `GuestGuard` (Better Auth + react-router).                                                                                                                                                    |
+| `hooks/`                       | App-specific hooks       | `use-api`. Generic UI hooks come from the package.                                                                                                                                                                              |
+| `lib/`                         | Utilities & clients      | Auth client and redirect rules, API client, app name, nav items, theme list, helpers.                                                                                                                                           |
+| `style/themes/`                | App themes               | One `<name>.css` per `data-theme`, also listed in `lib/themes.ts` (a test keeps them in sync).                                                                                                                                  |
 
 ### API Conventions
 
-| Folder | Purpose | Rule |
-|---|---|---|
-| `routes/{domain}/` | Domain route module | Contains `{domain}.routes.ts` and `{domain}.handlers.ts`. |
-| `routes/index.ts` | Route aggregator | Imports and mounts all domain routes. |
-| `middleware/` | Shared middleware | Cross-cutting concerns: auth, CORS, logging, rate limiting. |
-| `lib/` | Shared utilities | Auth factory, error helpers, response formatters. |
-| `env.ts` | Environment types | Bindings, variables, and Hono env type. |
+| Folder             | Purpose             | Rule                                                        |
+| ------------------ | ------------------- | ----------------------------------------------------------- |
+| `routes/{domain}/` | Domain route module | Contains `{domain}.routes.ts` and `{domain}.handlers.ts`.   |
+| `routes/index.ts`  | Route aggregator    | Imports and mounts all domain routes.                       |
+| `middleware/`      | Shared middleware   | Cross-cutting concerns: auth, CORS, logging, rate limiting. |
+| `lib/`             | Shared utilities    | Auth factory, error helpers, response formatters.           |
+| `env.ts`           | Environment types   | Bindings, variables, and Hono env type.                     |

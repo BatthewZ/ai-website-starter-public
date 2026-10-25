@@ -1,29 +1,27 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!--
+      The saved theme / density / input preference is restored by a script
+      vite.config.ts injects at the very top of <head> (r-ui's themeScript),
+      generated from src/web/lib/themes.ts. Do not add a hand-written copy here.
+      The Worker's CSP allows the inline scripts of this (built) file by hash.
+      The html element's data-theme is also set at build time, to INITIAL_THEME (the app's
+      default theme); do not hard-code it here.
+    -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script>
-      // Restore theme immediately to prevent FOUC
-      // Must run before any CSS paints the page.
-      // This list must stay in sync with APP_THEMES in src/web/lib/themes.ts.
-      // It cannot import it: this runs before any module loads, which is the
-      // whole point of it. `default` is omitted deliberately — it IS :root, so
-      // there is no attribute to set for it.
-      try {
-        var t = localStorage.getItem('theme');
-        if (t && t !== 'default' && ['events','grimdark','tech'].includes(t)) {
-          document.documentElement.setAttribute('data-theme', t);
-        }
-      } catch(e) {}
-    </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>AI Site Starter</title>
-    <meta name="description" content="Full-stack starter kit with Cloudflare Workers, React, and Better Auth." />
+    <meta
+      name="description"
+      content="Full-stack starter kit with Cloudflare Workers, React, and Better Auth."
+    />
     <meta property="og:title" content="AI Site Starter" />
-    <meta property="og:description" content="Full-stack starter kit with Cloudflare Workers, React, and Better Auth." />
+    <meta
+      property="og:description"
+      content="Full-stack starter kit with Cloudflare Workers, React, and Better Auth."
+    />
     <meta property="og:type" content="website" />
   </head>
   <body>

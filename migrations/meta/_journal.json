@@ -15,6 +15,13 @@
       "when": 1772035244540,
       "tag": "0001_acoustic_dragon_man",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1792885281370,
+      "tag": "0002_smart_omega_sentinel",
+      "breakpoints": true
     }
   ]
 }

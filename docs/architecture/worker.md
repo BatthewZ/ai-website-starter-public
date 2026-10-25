@@ -22,8 +22,13 @@ app.all("/api/*", (c) => {
 });
 
 // Everything else -> serve the SPA
-app.all("*", (c) => c.env.ASSETS.fetch(c.req.raw));
+app.all("*", async (c) => {
+  const response = await c.env.ASSETS.fetch(spaAssetRequest(c.req.raw, c.req.path));
+  return await withSpaSecurityHeaders(response, c.req.path);
+});
 ```
+
+`spaAssetRequest` and `withSpaSecurityHeaders` (`src/api/middleware/security-headers.ts`) add the security headers and a CSP that allows `index.html`'s inline pre-paint script by hash, and make sure the HTML is always served in full so there is a body to hash. See [Security Headers](../api/middleware.md#spa-security-headers).
 
 ---
 
@@ -43,7 +48,7 @@ run_worker_first = true
 
 By default, Cloudflare Workers with an assets binding check the static assets directory first. If a file matches the request path (e.g., `/assets/index-abc123.js`), it is served directly without invoking the Worker. The Worker only runs for paths that do not match a static file.
 
-Setting `run_worker_first = true` reverses this: **the Worker always runs first** for every request. The Worker then decides whether to handle the request itself or forward it to the assets binding via `c.env.ASSETS.fetch(c.req.raw)`.
+Setting `run_worker_first = true` reverses this: **the Worker always runs first** for every request. The Worker then decides whether to handle the request itself or forward it to the assets binding via `c.env.ASSETS.fetch(...)`.
 
 This is necessary because:
 

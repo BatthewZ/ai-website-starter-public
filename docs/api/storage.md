@@ -44,10 +44,12 @@ Uploads a user avatar image. Requires authentication. Rate-limited to 10 request
 **Request:** `multipart/form-data` with a `file` field.
 
 **Constraints:**
+
 - Allowed types: JPEG, PNG, GIF, WebP
 - Maximum size: 2 MB
 
 **Behavior:**
+
 1. Validates the file type and size.
 2. Looks up the user's previous avatar (if any) but does **not** delete it yet.
 3. Uploads the new file to R2 under `avatar/{userId}/{uuid}{ext}`. If the R2 upload fails, returns 500 and the old avatar remains intact.
@@ -70,13 +72,43 @@ Uploads a user avatar image. Requires authentication. Rate-limited to 10 request
 
 **Error responses:**
 
-| Status | Condition |
-| --- | --- |
-| 400 | No file provided, invalid file type, or file too large |
-| 401 | Not authenticated |
-| 429 | Rate limit exceeded |
-| 500 | R2 upload failed or database write failed (with automatic cleanup) |
-| 503 | R2 storage binding not configured |
+| Status | Condition                                                          |
+| ------ | ------------------------------------------------------------------ |
+| 400    | No file provided, invalid file type, or file too large             |
+| 401    | Not authenticated                                                  |
+| 429    | Rate limit exceeded                                                |
+| 500    | R2 upload failed or database write failed (with automatic cleanup) |
+| 503    | R2 storage binding not configured                                  |
+
+### `DELETE /api/users/me/avatar`
+
+Removes the signed-in user's avatar. Requires authentication; rate-limited to 10 requests per minute (prefix `avatar-remove`). Handler: `removeAvatar` in
+`src/api/routes/uploads/uploads.handlers.ts`.
+
+**Behavior:**
+
+1. Looks up every `upload` row for the user with `purpose = "avatar"`.
+2. Sets `user.image` to `null` (and bumps `updatedAt`).
+3. For each avatar, deletes the R2 object, then its `upload` row. A failed R2 delete is logged and skipped; the request still succeeds.
+
+The user row is cleared **first** on purpose: if the R2 delete fails, the user still sees
+the change and only an unreferenced object is left behind (logged). The reverse order could
+leave the user pointing at an image that no longer exists.
+
+Idempotent: with no avatar it returns the same 200, so a double-click or a retry is harmless.
+
+**Response** (200):
+
+```json
+{ "ok": true }
+```
+
+**Error responses:**
+
+| Status | Condition                         |
+| ------ | --------------------------------- |
+| 401    | Not authenticated                 |
+| 503    | R2 storage binding not configured |
 
 ### `GET /api/uploads/:purpose/:userId/:filename`
 
@@ -84,10 +116,10 @@ Serves a stored file. No authentication required. Returns the file with `Cache-C
 
 **Error responses:**
 
-| Status | Condition |
-| --- | --- |
-| 404 | File not found in R2 |
-| 503 | R2 storage binding not configured |
+| Status | Condition                         |
+| ------ | --------------------------------- |
+| 404    | File not found in R2              |
+| 503    | R2 storage binding not configured |
 
 ### `DELETE /api/uploads/:id`
 
@@ -101,24 +133,24 @@ Deletes an upload. Requires authentication. Only the file owner can delete.
 
 **Error responses:**
 
-| Status | Condition |
-| --- | --- |
-| 401 | Not authenticated |
-| 403 | Not the file owner |
-| 404 | Upload record not found |
-| 503 | R2 storage binding not configured |
+| Status | Condition                         |
+| ------ | --------------------------------- |
+| 401    | Not authenticated                 |
+| 403    | Not the file owner                |
+| 404    | Upload record not found           |
+| 503    | R2 storage binding not configured |
 
 ## Validation Schemas
 
 **Source:** `src/shared/schemas/upload.ts`
 
-| Export | Description |
-| --- | --- |
-| `ALLOWED_IMAGE_TYPES` | `["image/jpeg", "image/png", "image/gif", "image/webp"]` |
-| `MAX_AVATAR_SIZE` | `2 * 1024 * 1024` (2 MB) |
-| `MAX_UPLOAD_SIZE` | `5 * 1024 * 1024` (5 MB) |
-| `avatarUploadSchema` | Zod schema validating a `File` against `ALLOWED_IMAGE_TYPES` and `MAX_AVATAR_SIZE` |
-| `uploadSchema` | Zod schema validating a `File` against `MAX_UPLOAD_SIZE` |
+| Export                | Description                                                                        |
+| --------------------- | ---------------------------------------------------------------------------------- |
+| `ALLOWED_IMAGE_TYPES` | `["image/jpeg", "image/png", "image/gif", "image/webp"]`                           |
+| `MAX_AVATAR_SIZE`     | `2 * 1024 * 1024` (2 MB)                                                           |
+| `MAX_UPLOAD_SIZE`     | `5 * 1024 * 1024` (5 MB)                                                           |
+| `avatarUploadSchema`  | Zod schema validating a `File` against `ALLOWED_IMAGE_TYPES` and `MAX_AVATAR_SIZE` |
+| `uploadSchema`        | Zod schema validating a `File` against `MAX_UPLOAD_SIZE`                           |
 
 ## Environment
 

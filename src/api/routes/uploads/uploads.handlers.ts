@@ -22,10 +22,7 @@ export async function uploadAvatar(c: Context<AppEnv>) {
   }
 
   if (!(ALLOWED_IMAGE_TYPES as readonly string[]).includes(file.type)) {
-    return c.json(
-      { error: "Invalid file type. Allowed: JPEG, PNG, GIF, WebP" },
-      400,
-    );
+    return c.json({ error: "Invalid file type. Allowed: JPEG, PNG, GIF, WebP" }, 400);
   }
 
   if (file.size > MAX_AVATAR_SIZE) {
@@ -80,7 +77,10 @@ export async function uploadAvatar(c: Context<AppEnv>) {
   } catch (error) {
     // Clean up orphaned R2 object and any partially-inserted upload record
     await deleteObject(storage, key).catch(() => {});
-    await db.delete(upload).where(eq(upload.id, id)).catch(() => {});
+    await db
+      .delete(upload)
+      .where(eq(upload.id, id))
+      .catch(() => {});
     console.error("Failed to save upload record:", error);
     return c.json({ error: "Failed to save upload" }, 500);
   }
@@ -88,7 +88,10 @@ export async function uploadAvatar(c: Context<AppEnv>) {
   // Clean up old avatar AFTER new one is fully saved
   if (oldAvatar) {
     await deleteObject(storage, oldAvatar.key).catch(() => {});
-    await db.delete(upload).where(eq(upload.id, oldAvatar.id)).catch(() => {});
+    await db
+      .delete(upload)
+      .where(eq(upload.id, oldAvatar.id))
+      .catch(() => {});
   }
 
   return c.json({
@@ -100,6 +103,47 @@ export async function uploadAvatar(c: Context<AppEnv>) {
       size: record.size,
     },
   });
+}
+
+/**
+ * `DELETE /api/users/me/avatar`: removes the signed-in user's photo, so the
+ * app falls back to their initials (the Settings page's "Remove" action).
+ *
+ * The user row is cleared FIRST and the stored object deleted after: if the
+ * R2 delete fails the user still sees the change and only an unreferenced
+ * object is left behind (logged), whereas the reverse order could leave the
+ * user pointing at an image that no longer exists. Idempotent: a user with no
+ * avatar gets the same 200, so a double-click or a retry is harmless.
+ */
+export async function removeAvatar(c: Context<AppEnv>) {
+  const storage = c.env.STORAGE;
+  if (!storage) return c.json({ error: "File storage is not configured" }, 503);
+
+  const user = c.get("user");
+  if (!user) return c.json({ error: "Unauthorized" }, 401);
+
+  const db = createDb(c.env.DB);
+
+  const avatars = await db
+    .select()
+    .from(upload)
+    .where(and(eq(upload.userId, user.id), eq(upload.purpose, "avatar")));
+
+  await db
+    .update(userTable)
+    .set({ image: null, updatedAt: new Date() })
+    .where(eq(userTable.id, user.id));
+
+  for (const avatar of avatars) {
+    try {
+      await deleteObject(storage, avatar.key);
+      await db.delete(upload).where(eq(upload.id, avatar.id));
+    } catch (error) {
+      console.error(`Failed to delete avatar object ${avatar.key}:`, error);
+    }
+  }
+
+  return c.json({ ok: true });
 }
 
 export async function serveUpload(c: Context<AppEnv>) {
@@ -115,10 +159,7 @@ export async function serveUpload(c: Context<AppEnv>) {
   }
 
   c.header("Cache-Control", "public, max-age=31536000, immutable");
-  c.header(
-    "Content-Type",
-    object.httpMetadata?.contentType ?? "application/octet-stream",
-  );
+  c.header("Content-Type", object.httpMetadata?.contentType ?? "application/octet-stream");
 
   return c.body(object.body);
 }
@@ -131,11 +172,7 @@ export async function deleteUpload(c: Context<AppEnv>) {
   const { id } = c.req.param();
   const db = createDb(c.env.DB);
 
-  const [record] = await db
-    .select()
-    .from(upload)
-    .where(eq(upload.id, id))
-    .limit(1);
+  const [record] = await db.select().from(upload).where(eq(upload.id, id)).limit(1);
 
   if (!record) {
     return c.json({ error: "Upload not found" }, 404);

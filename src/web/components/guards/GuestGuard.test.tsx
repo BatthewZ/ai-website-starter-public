@@ -1,60 +1,85 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const mockNavigate = vi.fn();
+import { renderWithRouter } from "@/web/test-utils";
 
-vi.mock("react-router-dom", () => ({
-  Navigate: (props: { to: string; replace?: boolean }) => {
-    mockNavigate(props);
-    return null;
-  },
-}));
-
-const mockUseSession = vi.fn();
-
-vi.mock("@/web/lib/auth/auth-client", () => ({
-  useSession: () => mockUseSession(),
-}));
+const { useSession } = vi.hoisted(() => ({ useSession: vi.fn() }));
+vi.mock("@/web/lib/auth/auth-client", () => ({ useSession }));
 
 import { GuestGuard } from "./GuestGuard";
 
+/**
+ * GuestGuard is also what moves a user on after sign-in (the session store
+ * updates, this redirects), so where it sends them is the post-sign-in
+ * destination. These pin that it honours AuthGuard's remembered page and
+ * refuses anything that would leave the site.
+ */
 describe("GuestGuard", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    useSession.mockReset();
   });
 
-  it("renders children when user is not authenticated", () => {
-    mockUseSession.mockReturnValue({
-      data: null,
-      isPending: false,
-    });
-
-    render(<GuestGuard><span>Guest Content</span></GuestGuard>);
-    expect(screen.getByText("Guest Content")).toBeInTheDocument();
-  });
-
-  it("redirects to dashboard when user is authenticated", () => {
-    mockUseSession.mockReturnValue({
-      data: { user: { id: "1" } },
-      isPending: false,
-    });
-
-    render(<GuestGuard><span>Guest Content</span></GuestGuard>);
-    expect(screen.queryByText("Guest Content")).not.toBeInTheDocument();
-    expect(mockNavigate).toHaveBeenCalledWith(
-      expect.objectContaining({ to: "/dashboard", replace: true })
+  it("renders the sign-in form for a signed-out visitor", () => {
+    useSession.mockReturnValue({ data: null, isPending: false });
+    renderWithRouter(
+      <GuestGuard>
+        <p>Sign-in form</p>
+      </GuestGuard>,
+      { route: "/login", path: "/login" }
     );
+    expect(screen.getByText("Sign-in form")).toBeInTheDocument();
   });
 
-  it("shows loading state while auth is pending", () => {
-    mockUseSession.mockReturnValue({
-      data: null,
-      isPending: true,
-    });
+  it("shows a status, not the form, while the session is loading", () => {
+    useSession.mockReturnValue({ data: null, isPending: true });
+    renderWithRouter(
+      <GuestGuard>
+        <p>Sign-in form</p>
+      </GuestGuard>,
+      { route: "/login", path: "/login" }
+    );
+    expect(screen.queryByText("Sign-in form")).not.toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("Checking your session…");
+  });
 
-    const { container } = render(<GuestGuard><span>Guest Content</span></GuestGuard>);
-    expect(screen.queryByText("Guest Content")).not.toBeInTheDocument();
-    // Should render Spinner inside Center
-    expect(container.querySelector("[role='status']")).toBeTruthy();
+  it("sends a signed-in user to the dashboard by default", () => {
+    useSession.mockReturnValue({ data: { user: { id: "1" } }, isPending: false });
+    renderWithRouter(
+      <GuestGuard>
+        <p>Sign-in form</p>
+      </GuestGuard>,
+      { route: "/login", path: "/login" }
+    );
+    expect(screen.getByTestId("location")).toHaveTextContent("/dashboard");
+  });
+
+  it("returns a signed-in user to the page AuthGuard remembered", () => {
+    useSession.mockReturnValue({ data: { user: { id: "1" } }, isPending: false });
+    renderWithRouter(
+      <GuestGuard>
+        <p>Sign-in form</p>
+      </GuestGuard>,
+      {
+        route: "/login",
+        path: "/login",
+        state: { from: "/settings?tab=security" },
+      }
+    );
+    expect(screen.getByTestId("location")).toHaveTextContent("/settings?tab=security");
+  });
+
+  it("ignores a remembered page on another origin", () => {
+    useSession.mockReturnValue({ data: { user: { id: "1" } }, isPending: false });
+    renderWithRouter(
+      <GuestGuard>
+        <p>Sign-in form</p>
+      </GuestGuard>,
+      {
+        route: "/login",
+        path: "/login",
+        state: { from: "//evil.example/phish" },
+      }
+    );
+    expect(screen.getByTestId("location")).toHaveTextContent("/dashboard");
   });
 });

@@ -1,113 +1,85 @@
-import { Button, Card, Center, Field, FieldError, Input, Label, Stack, Text, useDocumentTitle } from "@batthewz/response-ui-react-components";
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Field,
+  Form,
+  FormActions,
+  Input,
+  Link,
+  PasswordInput,
+  Stack,
+  useForm,
+} from "@batthewz/r-ui-react-components";
+import { useLocation, useNavigate } from "react-router";
 
 import { loginSchema } from "@/shared/schemas/auth";
+import { FormAlert } from "@/web/components/forms/FormAlert";
+import { AuthLayout } from "@/web/components/layout";
 import { signIn } from "@/web/lib/auth/auth-client";
+import { authErrorMessage, NETWORK_ERROR_MESSAGE } from "@/web/lib/auth/errors";
+import { postSignInPath } from "@/web/lib/auth/redirect";
 
+/**
+ * Email + password sign-in. Validation is the shared `loginSchema` through
+ * r-ui's `useForm` (errors appear on blur, then clear as they are fixed; a
+ * failed submit focuses the first invalid field). A rejection from Better
+ * Auth is a form-level error: it says nothing about WHICH field was wrong, on
+ * purpose, so it is not pinned to one.
+ */
 export function Login() {
-  useDocumentTitle("Log In");
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const location = useLocation();
 
-  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError("");
-
-    const result = loginSchema.safeParse({ email, password });
-    if (!result.success) {
-      setError(result.error.issues[0].message);
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const { error: signInError } = await signIn.email({
-        email,
-        password,
-      });
-
-      if (signInError) {
-        setError(signInError.message ?? "Failed to sign in");
-        return;
+  const form = useForm({
+    schema: loginSchema,
+    defaultValues: { email: "", password: "" },
+    onSubmit: async (values, { setErrors }) => {
+      try {
+        const { error } = await signIn.email(values);
+        if (error) {
+          setErrors({ "": authErrorMessage(error, "Invalid email or password.") });
+          return;
+        }
+        void navigate(postSignInPath(location.state), { replace: true });
+      } catch {
+        setErrors({ "": NETWORK_ERROR_MESSAGE });
       }
-
-      void navigate("/dashboard");
-    } catch {
-      setError("Network error. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }
+    },
+  });
 
   return (
-    <Center className="min-h-screen bg-surface-1">
-      <Card className="w-full max-w-md" padding="r2">
+    <AuthLayout
+      title="Sign in"
+      description="Welcome back. Sign in to your account."
+      footer={
+        <span>
+          Don&apos;t have an account? <Link href="/register">Create one</Link>
+        </span>
+      }
+    >
+      <Form form={form}>
         <Stack gap="r3">
-          <Text variant="h4" as="h1" className="text-center">
-            Sign In
-          </Text>
+          <FormAlert form={form} />
 
-          <form onSubmit={(e) => void handleSubmit(e)}>
-            <Stack gap="r4">
-              <Field>
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  autoComplete="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  error={!!error}
-                  required
-                />
-              </Field>
+          <Field name="email" required>
+            <Field.Label>Email</Field.Label>
+            <Input type="email" autoComplete="email" inputMode="email" />
+            <Field.Error />
+          </Field>
 
-              <Field>
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  autoComplete="current-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  error={!!error}
-                  required
-                />
-              </Field>
+          <Field name="password" required>
+            <Field.Label>Password</Field.Label>
+            <PasswordInput autoComplete="current-password" />
+            <Field.Error />
+            <Field.Description>
+              <Link href="/forgot-password">Forgot your password?</Link>
+            </Field.Description>
+          </Field>
 
-              <Text variant="body-2" color="secondary" className="text-right">
-                <Link to="/forgot-password" className="link">
-                  Forgot password?
-                </Link>
-              </Text>
-
-              <FieldError>{error}</FieldError>
-
-              <Button
-                type="submit"
-                variant="primary"
-                size="md"
-                className="w-full"
-                disabled={loading}
-              >
-                {loading ? "Signing in..." : "Sign In"}
-              </Button>
-            </Stack>
-          </form>
-
-          <Text variant="body-2" color="secondary" className="text-center">
-            Don't have an account?{" "}
-            <Link to="/register" className="link">
-              Register
-            </Link>
-          </Text>
+          <FormActions>
+            <FormActions.Submit className="w-full">Sign in</FormActions.Submit>
+          </FormActions>
         </Stack>
-      </Card>
-    </Center>
+      </Form>
+    </AuthLayout>
   );
 }
 

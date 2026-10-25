@@ -1,46 +1,45 @@
-import { EXAMPLE_THEMES, type ExampleTheme } from "@batthewz/response-ui-react-components";
+/**
+ * The themes this app ships, in the order the switcher shows them.
+ *
+ * The FIRST entry is r-ui's `:root` palette and must stay first: r-ui treats
+ * the first theme as the one that REMOVES `data-theme` (it has no stylesheet
+ * of its own). That is why the default theme is not simply listed first:
+ * Harbour first would mean "remove the attribute", and picking it would
+ * render the plain `:root` palette instead. The default a visitor sees is
+ * `INITIAL_THEME`, below. Every other `value` is a `data-theme` name with a
+ * matching `src/web/style/themes/<value>.css` imported by `app.css`.
+ *
+ * One list, read in two places that must agree:
+ *   - the ThemeSwitcher / PreferencesMenu, which offer these choices, and
+ *   - the pre-paint script vite.config.ts inlines into index.html, which
+ *     restores a saved choice before first paint (no flash of the default).
+ * If they disagree, a saved theme is either offered but never restored, or
+ * restored but never offered. `themes.test.ts` also checks the list against
+ * the CSS on disk, so a theme without a stylesheet (it would render unthemed)
+ * fails the test suite rather than shipping.
+ *
+ * Plain data, no React: vite.config.ts imports this at build time.
+ * Module scope is load-bearing: the preference hooks memoise on the array's
+ * identity, so an inline literal at a call site would rebuild them each render.
+ */
+export const THEMES = [
+  { value: "default", label: "Light" },
+  { value: "harbour", label: "Harbour" },
+  { value: "dark", label: "Dark" },
+] as const satisfies readonly { value: string; label: string }[];
+
+export type AppTheme = (typeof THEMES)[number]["value"];
+
+/** The `data-theme` names, for the pre-paint script. */
+export const THEME_NAMES: readonly AppTheme[] = THEMES.map((t) => t.value);
 
 /**
- * The themes this app offers, and their display names.
+ * The theme a first visit opens in: the app's default look.
  *
- * One list, imported everywhere a theme is selected. It exists because the
- * theme names have to be stated by the *app*, not the library: as of
- * `@batthewz/response-ui-css` 0.13.0 the example themes are no longer carried
- * by the package's public entry, and `ThemeSwitcher` / `useTheme` offer only
- * `default` unless handed a list — "this package does not know your themes and
- * will not guess". Before this module the list was restated in three places
- * (two `ThemeSwitcher` call sites and the mobile bubble), which is exactly how
- * a switcher ends up offering a theme whose CSS nobody imported.
- *
- * `APP_THEMES` is re-exported from the library's `EXAMPLE_THEMES` rather than
- * retyped, so the ids cannot drift from the stylesheets `src/web/style/app.css`
- * actually imports. Swap this for your own ids when you replace the example
- * themes — that is the one edit, and the labels below move with it.
- *
- * Module scope is load-bearing, not stylistic: `useTheme` memoises its snapshot
- * reader on the array's identity, so an inline literal would rebuild the reader
- * every render.
+ * vite.config.ts ships index.html as `<html data-theme="harbour">`. With
+ * nothing saved, the pre-paint script leaves that attribute alone; a saved
+ * choice (including "Light", which removes the attribute) replaces it before
+ * the first paint. This is the mechanism r-ui's own showcase uses for its
+ * default. Set it to `THEMES[0].value` to open in the plain `:root` palette.
  */
-export const APP_THEMES = EXAMPLE_THEMES;
-
-export type AppTheme = ExampleTheme;
-
-/** Display names. A theme with no entry would be labelled by its raw id. */
-export const THEME_LABELS: Record<AppTheme, string> = {
-  default: "Default",
-  events: "Events",
-  grimdark: "Grimdark",
-  tech: "Tech",
-};
-
-/**
- * Swatch colours for the mobile theme bubble, which paints a preview dot per
- * theme before that theme is applied — so it cannot read the live tokens and
- * has to carry its own values.
- */
-export const THEME_COLORS: Record<AppTheme, { bg: string; border: string }> = {
-  default: { bg: "oklch(0.2795 0.0368 260.03)", border: "oklch(0.5544 0.0407 257.42)" },
-  events: { bg: "oklch(0.5413 0.2466 293.01)", border: "oklch(0.7049 0.1867 47.6)" },
-  grimdark: { bg: "oklch(0.2178 0 0)", border: "oklch(0.5054 0.1905 27.52)" },
-  tech: { bg: "oklch(0.1408 0.0044 285.82)", border: "oklch(0.8763 0.2278 152.55)" },
-};
+export const INITIAL_THEME: AppTheme = "harbour";

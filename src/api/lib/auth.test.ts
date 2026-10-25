@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
-import { parseTrustedOrigins, resolveAllowedOrigin } from "./auth";
+import { createAuth, parseTrustedOrigins, resolveAllowedOrigin } from "./auth";
 
 describe("parseTrustedOrigins", () => {
   it("returns [] for undefined input", () => {
@@ -53,9 +53,9 @@ describe("resolveAllowedOrigin", () => {
   });
 
   it("returns origin when it matches a trusted origin", () => {
-    expect(
-      resolveAllowedOrigin("https://trusted.com", baseUrl, "https://trusted.com")
-    ).toBe("https://trusted.com");
+    expect(resolveAllowedOrigin("https://trusted.com", baseUrl, "https://trusted.com")).toBe(
+      "https://trusted.com"
+    );
   });
 
   it("returns null for unlisted origin", () => {
@@ -63,12 +63,42 @@ describe("resolveAllowedOrigin", () => {
   });
 
   it("returns null for unlisted origin with trusted origins set", () => {
-    expect(
-      resolveAllowedOrigin("https://evil.com", baseUrl, "https://trusted.com")
-    ).toBeNull();
+    expect(resolveAllowedOrigin("https://evil.com", baseUrl, "https://trusted.com")).toBeNull();
   });
 
   it("handles undefined trustedOrigins", () => {
     expect(resolveAllowedOrigin(baseUrl, baseUrl, undefined)).toBe(baseUrl);
+  });
+});
+
+/**
+ * Email verification is "soft": sent at sign-up, signs the user in when the
+ * link is clicked, and is sent through the Worker's waitUntil so sign-up does
+ * not wait on the email provider. These pin the three settings that make
+ * that true; without `sendOnSignUp` no verification email is ever sent (the
+ * state this starter shipped in before).
+ */
+describe("createAuth email verification", () => {
+  const env = {
+    DB: {} as D1Database,
+    BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
+    BETTER_AUTH_URL: "http://localhost:8787",
+  } as Parameters<typeof createAuth>[0];
+
+  it("sends the verification email on sign-up and signs in from the link", () => {
+    const auth = createAuth(env);
+    expect(auth.options.emailVerification?.sendOnSignUp).toBe(true);
+    expect(auth.options.emailVerification?.autoSignInAfterVerification).toBe(true);
+    expect(auth.options.emailAndPassword).not.toHaveProperty("requireEmailVerification");
+  });
+
+  it("hands in-request emails to the Worker's waitUntil when given one", () => {
+    const waitUntil = vi.fn();
+    const auth = createAuth(env, { waitUntil });
+    expect(auth.options.advanced?.backgroundTasks?.handler).toBe(waitUntil);
+  });
+
+  it("awaits in-request emails when there is no waitUntil", () => {
+    expect(createAuth(env).options.advanced?.backgroundTasks).toBeUndefined();
   });
 });

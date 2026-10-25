@@ -28,6 +28,7 @@ describe("changePasswordSchema", () => {
       currentPassword: "oldpass123",
       newPassword: "newpass123",
       confirmPassword: "newpass123",
+      revokeOtherSessions: false,
     });
     expect(result.success).toBe(true);
   });
@@ -37,6 +38,7 @@ describe("changePasswordSchema", () => {
       currentPassword: "",
       newPassword: "newpass123",
       confirmPassword: "newpass123",
+      revokeOtherSessions: false,
     });
     expect(result.success).toBe(false);
     if (!result.success) {
@@ -49,6 +51,7 @@ describe("changePasswordSchema", () => {
       currentPassword: "oldpass123",
       newPassword: "short",
       confirmPassword: "short",
+      revokeOtherSessions: false,
     });
     expect(result.success).toBe(false);
     if (!result.success) {
@@ -61,12 +64,22 @@ describe("changePasswordSchema", () => {
       currentPassword: "oldpass123",
       newPassword: "newpass123",
       confirmPassword: "different456",
+      revokeOtherSessions: false,
     });
     expect(result.success).toBe(false);
     if (!result.success) {
       const confirmErr = result.error.issues.find((i) => i.path.includes("confirmPassword"));
       expect(confirmErr?.message).toBe("Passwords do not match");
     }
+  });
+
+  it("requires an explicit revokeOtherSessions choice", () => {
+    const result = changePasswordSchema.safeParse({
+      currentPassword: "oldpass123",
+      newPassword: "newpass123",
+      confirmPassword: "newpass123",
+    });
+    expect(result.success).toBe(false);
   });
 
   it("rejects missing fields", () => {

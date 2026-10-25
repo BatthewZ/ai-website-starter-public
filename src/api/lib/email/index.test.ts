@@ -18,9 +18,7 @@ describe("createEmailService", () => {
   it("warns when RESEND_API_KEY is set but EMAIL_FROM is not", () => {
     const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
     createEmailService({ RESEND_API_KEY: "re_test_123" });
-    expect(warnSpy).toHaveBeenCalledWith(
-      expect.stringContaining("EMAIL_FROM is not configured"),
-    );
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("EMAIL_FROM is not configured"));
     warnSpy.mockRestore();
   });
 

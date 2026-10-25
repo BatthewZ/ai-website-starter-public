@@ -16,6 +16,7 @@ app.use(
 ```
 
 The `resolveAllowedOrigin` function (from `src/api/lib/auth.ts`) builds an allow-list from:
+
 1. `BETTER_AUTH_URL` (always allowed)
 2. `TRUSTED_ORIGINS` (comma-separated, optional)
 

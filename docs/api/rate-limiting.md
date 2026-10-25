@@ -24,16 +24,16 @@ rateLimit({
 
 Every response (whether rate-limited or not) includes these headers:
 
-| Header | Description |
-|---|---|
-| `X-RateLimit-Limit` | Maximum requests allowed in the window. |
-| `X-RateLimit-Remaining` | Remaining requests in the current window. |
-| `X-RateLimit-Reset` | Unix timestamp (seconds) when the window resets. |
+| Header                  | Description                                      |
+| ----------------------- | ------------------------------------------------ |
+| `X-RateLimit-Limit`     | Maximum requests allowed in the window.          |
+| `X-RateLimit-Remaining` | Remaining requests in the current window.        |
+| `X-RateLimit-Reset`     | Unix timestamp (seconds) when the window resets. |
 
 When rate-limited (429), an additional header is set:
 
-| Header | Description |
-|---|---|
+| Header        | Description                         |
+| ------------- | ----------------------------------- |
 | `Retry-After` | Seconds until the client can retry. |
 
 ## Rate-Limited Response
@@ -55,11 +55,11 @@ X-RateLimit-Reset: 1700000000
 
 ## Current Rate Limits
 
-| Endpoint | Max | Window | Prefix |
-|---|---|---|---|
-| `/api/auth/sign-in/*` | 10 | 60s | `auth-signin` |
-| `/api/auth/sign-up/*` | 5 | 60s | `auth-signup` |
-| `/api/auth/*` (all other) | 30 | 60s | `auth-general` |
+| Endpoint                  | Max | Window | Prefix         |
+| ------------------------- | --- | ------ | -------------- |
+| `/api/auth/sign-in/*`     | 10  | 60s    | `auth-signin`  |
+| `/api/auth/sign-up/*`     | 5   | 60s    | `auth-signup`  |
+| `/api/auth/*` (all other) | 30  | 60s    | `auth-general` |
 
 ## Limitations
 

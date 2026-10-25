@@ -1,111 +1,78 @@
-import { Alert, Button, Card, Center, Field, FieldError, Input, Label, Stack, Text, useDocumentTitle } from "@batthewz/response-ui-react-components";
+import {
+  Alert,
+  Field,
+  Form,
+  FormActions,
+  Input,
+  Link,
+  Stack,
+  useForm,
+} from "@batthewz/r-ui-react-components";
 import { useState } from "react";
-import { Link } from "react-router-dom";
 
 import { forgotPasswordSchema } from "@/shared/schemas/auth";
+import { FormAlert } from "@/web/components/forms/FormAlert";
+import { AuthLayout } from "@/web/components/layout";
 import { requestPasswordReset } from "@/web/lib/auth/auth-client";
+import { authErrorMessage, NETWORK_ERROR_MESSAGE } from "@/web/lib/auth/errors";
 
+/**
+ * Requests a reset email. The confirmation is the same whether or not the
+ * address has an account (Better Auth answers the same way too), so this page
+ * cannot be used to find out who is registered.
+ */
 export function ForgotPassword() {
-  useDocumentTitle("Forgot Password");
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [sentTo, setSentTo] = useState<string | null>(null);
 
-  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError("");
-
-    const result = forgotPasswordSchema.safeParse({ email });
-    if (!result.success) {
-      setError(result.error.issues[0].message);
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const { error: resetError } = await requestPasswordReset({
-        email,
-        redirectTo: "/reset-password",
-      });
-
-      if (resetError) {
-        setError(resetError.message ?? "Failed to send reset link");
-        return;
+  const form = useForm({
+    schema: forgotPasswordSchema,
+    defaultValues: { email: "" },
+    onSubmit: async ({ email }, { setErrors }) => {
+      try {
+        const { error } = await requestPasswordReset({ email, redirectTo: "/reset-password" });
+        if (error) {
+          setErrors({
+            "": authErrorMessage(error, "We couldn't send the reset link. Please try again."),
+          });
+          return;
+        }
+        setSentTo(email);
+      } catch {
+        setErrors({ "": NETWORK_ERROR_MESSAGE });
       }
-
-      setSubmitted(true);
-    } catch {
-      setError("Network error. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }
+    },
+  });
 
   return (
-    <Center className="min-h-screen bg-surface-1">
-      <Card className="w-full max-w-md" padding="r2">
-        <Stack gap="r3">
-          <Text variant="h4" as="h1" className="text-center">
-            Forgot Password
-          </Text>
+    <AuthLayout
+      title="Reset your password"
+      description={
+        sentTo ? undefined : "Enter your email and we'll send you a link to choose a new password."
+      }
+      footer={<Link href="/login">Back to sign in</Link>}
+    >
+      {sentTo ? (
+        <Alert tone="success" title="Check your email">
+          If an account exists for {sentTo}, a password reset link is on its way.
+        </Alert>
+      ) : (
+        <Form form={form}>
+          <Stack gap="r3">
+            <FormAlert form={form} />
 
-          {submitted ? (
-            <Stack gap="r4">
-              <Alert variant="success">
-                If an account exists with that email, we've sent a password reset link.
-              </Alert>
-              <Text variant="body-2" color="secondary" className="text-center">
-                <Link to="/login" className="link">
-                  Back to Sign In
-                </Link>
-              </Text>
-            </Stack>
-          ) : (
-            <>
-              <Text variant="body-2" color="secondary" className="text-center">
-                Enter your email address and we'll send you a link to reset your password.
-              </Text>
+            <Field name="email" required>
+              <Field.Label>Email</Field.Label>
+              <Input type="email" autoComplete="email" inputMode="email" />
+              <Field.Error />
+            </Field>
 
-              <form onSubmit={(e) => void handleSubmit(e)}>
-                <Stack gap="r4">
-                  <Field>
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      autoComplete="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      error={!!error}
-                      required
-                    />
-                  </Field>
-
-                  <FieldError>{error}</FieldError>
-
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    size="md"
-                    className="w-full"
-                    disabled={loading}
-                  >
-                    {loading ? "Sending..." : "Send Reset Link"}
-                  </Button>
-                </Stack>
-              </form>
-
-              <Text variant="body-2" color="secondary" className="text-center">
-                <Link to="/login" className="link">
-                  Back to Sign In
-                </Link>
-              </Text>
-            </>
-          )}
-        </Stack>
-      </Card>
-    </Center>
+            <FormActions>
+              <FormActions.Submit className="w-full">Send reset link</FormActions.Submit>
+            </FormActions>
+          </Stack>
+        </Form>
+      )}
+    </AuthLayout>
   );
 }
 

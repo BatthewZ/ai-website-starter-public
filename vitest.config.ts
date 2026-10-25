@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
 
 const sharedResolve = {
-  alias: { "@": path.resolve(__dirname, "./src") },
+  alias: { "@": path.resolve(import.meta.dirname, "./src") },
 };
 
 export default defineConfig({

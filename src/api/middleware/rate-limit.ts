@@ -26,20 +26,13 @@ function getClientIp(c: Context): string {
   );
 }
 
-function setRateLimitHeaders(
-  c: Context,
-  max: number,
-  remaining: number,
-  resetAt: number
-) {
+function setRateLimitHeaders(c: Context, max: number, remaining: number, resetAt: number) {
   c.header("X-RateLimit-Limit", String(max));
   c.header("X-RateLimit-Remaining", String(remaining));
   c.header("X-RateLimit-Reset", String(Math.ceil(resetAt / 1000)));
 }
 
-export function rateLimit(
-  options: RateLimitOptions
-): MiddlewareHandler<AppEnv> {
+export function rateLimit(options: RateLimitOptions): MiddlewareHandler<AppEnv> {
   const { max, windowSeconds, prefix = "rl" } = options;
   const keyFn = options.keyFn ?? getClientIp;
   const store = new Map<string, RateLimitEntry>();

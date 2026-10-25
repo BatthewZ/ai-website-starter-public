@@ -78,6 +78,21 @@ Uploads a user avatar image. Requires authentication. Rate-limited to 10 request
 
 See [File Storage](./storage.md) for full details and error responses.
 
+### `DELETE /api/users/me/avatar`
+
+Removes the signed-in user's photo, so the app falls back to their initials (Settings →
+Profile → Remove). Requires authentication. Rate-limited to 10 requests per minute. Clears `user.image` first, then deletes the
+stored R2 objects and their `upload` rows. Idempotent: a user with no avatar gets the same
+200, so a double-click or retry is harmless.
+
+**Response** (200):
+
+```json
+{ "ok": true }
+```
+
+See [File Storage](./storage.md#delete-apiusersmeavatar) for the ordering rationale and error responses.
+
 ### `GET /api/uploads/:purpose/:userId/:filename`
 
 Serves a stored file from R2. No authentication required. Responses are cached with `Cache-Control: public, max-age=31536000, immutable`.

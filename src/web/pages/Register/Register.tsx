@@ -1,119 +1,92 @@
-import { Button, Card, Center, Field, FieldError, Input, Label, Stack, Text, useDocumentTitle } from "@batthewz/response-ui-react-components";
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Field,
+  Form,
+  FormActions,
+  Input,
+  Link,
+  PasswordInput,
+  Stack,
+  useForm,
+} from "@batthewz/r-ui-react-components";
+import { useNavigate } from "react-router";
 
 import { registerSchema } from "@/shared/schemas/auth";
+import { FormAlert } from "@/web/components/forms/FormAlert";
+import { AuthLayout } from "@/web/components/layout";
 import { signUp } from "@/web/lib/auth/auth-client";
+import { authErrorMessage, NETWORK_ERROR_MESSAGE } from "@/web/lib/auth/errors";
+import { AUTHENTICATED_HOME } from "@/web/lib/auth/redirect";
+import { EMAIL_VERIFIED_CALLBACK } from "@/web/lib/auth/verification";
 
+/**
+ * Account creation. Better Auth signs the new user in on success (its
+ * `autoSignIn` default), so this lands on the dashboard, and emails a
+ * verification link that also leads back there (`EMAIL_VERIFIED_CALLBACK`). The password field's
+ * strength meter is a nudge only; the enforced rule is `registerSchema`'s
+ * minimum length, checked here and again by Better Auth.
+ */
 export function Register() {
-  useDocumentTitle("Create Account");
   const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError("");
-
-    const result = registerSchema.safeParse({ name, email, password });
-    if (!result.success) {
-      setError(result.error.issues[0].message);
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const { error: signUpError } = await signUp.email({
-        name,
-        email,
-        password,
-      });
-
-      if (signUpError) {
-        setError(signUpError.message ?? "Failed to register");
-        return;
+  const form = useForm({
+    schema: registerSchema,
+    defaultValues: { name: "", email: "", password: "" },
+    onSubmit: async (values, { setErrors }) => {
+      try {
+        // The verification email sent at sign-up links back to the dashboard.
+        const { error } = await signUp.email({ ...values, callbackURL: EMAIL_VERIFIED_CALLBACK });
+        if (error) {
+          setErrors({
+            "": authErrorMessage(error, "We couldn't create your account. Please try again."),
+          });
+          return;
+        }
+        void navigate(AUTHENTICATED_HOME, { replace: true });
+      } catch {
+        setErrors({ "": NETWORK_ERROR_MESSAGE });
       }
-
-      void navigate("/dashboard");
-    } catch {
-      setError("Network error. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }
+    },
+  });
 
   return (
-    <Center className="min-h-screen bg-surface-1">
-      <Card className="w-full max-w-md" padding="r2">
+    <AuthLayout
+      title="Create an account"
+      description="It takes less than a minute."
+      footer={
+        <span>
+          Already have an account? <Link href="/login">Sign in</Link>
+        </span>
+      }
+    >
+      <Form form={form}>
         <Stack gap="r3">
-          <Text variant="h4" as="h1" className="text-center">
-            Register
-          </Text>
+          <FormAlert form={form} />
 
-          <form onSubmit={(e) => void handleSubmit(e)}>
-            <Stack gap="r4">
-              <Field>
-                <Label htmlFor="name">Name</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  autoComplete="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
-              </Field>
+          <Field name="name" required>
+            <Field.Label>Name</Field.Label>
+            <Input autoComplete="name" />
+            <Field.Error />
+          </Field>
 
-              <Field>
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  autoComplete="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </Field>
+          <Field name="email" required>
+            <Field.Label>Email</Field.Label>
+            <Input type="email" autoComplete="email" inputMode="email" />
+            <Field.Error />
+          </Field>
 
-              <Field>
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  autoComplete="new-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </Field>
+          <Field name="password" required>
+            <Field.Label>Password</Field.Label>
+            <PasswordInput autoComplete="new-password" strength />
+            <Field.Description>At least 8 characters.</Field.Description>
+            <Field.Error />
+          </Field>
 
-              <FieldError>{error}</FieldError>
-
-              <Button
-                type="submit"
-                variant="primary"
-                size="md"
-                className="w-full"
-                disabled={loading}
-              >
-                {loading ? "Creating account..." : "Register"}
-              </Button>
-            </Stack>
-          </form>
-
-          <Text variant="body-2" color="secondary" className="text-center">
-            Already have an account?{" "}
-            <Link to="/login" className="link">
-              Log in
-            </Link>
-          </Text>
+          <FormActions>
+            <FormActions.Submit className="w-full">Create account</FormActions.Submit>
+          </FormActions>
         </Stack>
-      </Card>
-    </Center>
+      </Form>
+    </AuthLayout>
   );
 }
 

@@ -1,151 +1,109 @@
-import { Alert, Button, Card, Center, Field, FieldError, Input, Label, Stack, Text, useDocumentTitle } from "@batthewz/response-ui-react-components";
+import {
+  Alert,
+  Field,
+  Form,
+  FormActions,
+  Link,
+  PasswordInput,
+  Stack,
+  useForm,
+} from "@batthewz/r-ui-react-components";
 import { useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 
 import { resetPasswordSchema } from "@/shared/schemas/auth";
+import { FormAlert } from "@/web/components/forms/FormAlert";
+import { AuthLayout } from "@/web/components/layout";
 import { resetPassword } from "@/web/lib/auth/auth-client";
+import { authErrorMessage, NETWORK_ERROR_MESSAGE } from "@/web/lib/auth/errors";
 
+/**
+ * The page the reset email links to. Better Auth verifies the link before it
+ * redirects here: a good link arrives as `?token=…`, an expired or used one as
+ * `?error=INVALID_TOKEN`. Both cases (and a hand-typed URL with neither) get a
+ * way forward rather than a form that can only fail.
+ */
 export function ResetPassword() {
-  useDocumentTitle("Reset Password");
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
+  const linkError = searchParams.get("error");
+  const [done, setDone] = useState(false);
 
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-
-  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError("");
-
-    const result = resetPasswordSchema.safeParse({ newPassword, confirmPassword });
-    if (!result.success) {
-      setError(result.error.issues[0].message);
-      return;
-    }
-
-    if (!token) {
-      setError("Invalid or missing reset token");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const { error: resetError } = await resetPassword({
-        newPassword,
-        token,
-      });
-
-      if (resetError) {
-        setError(resetError.message ?? "Failed to reset password");
-        return;
+  const form = useForm({
+    schema: resetPasswordSchema,
+    defaultValues: { newPassword: "", confirmPassword: "" },
+    onSubmit: async ({ newPassword }, { setErrors }) => {
+      if (!token) return;
+      try {
+        const { error } = await resetPassword({ newPassword, token });
+        if (error) {
+          setErrors({
+            "": authErrorMessage(
+              error,
+              "We couldn't reset your password. Request a new link and try again."
+            ),
+          });
+          return;
+        }
+        setDone(true);
+      } catch {
+        setErrors({ "": NETWORK_ERROR_MESSAGE });
       }
+    },
+  });
 
-      setSuccess(true);
-    } catch {
-      setError("Network error. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+  if (!token || linkError) {
+    return (
+      <AuthLayout title="Reset your password" footer={<Link href="/login">Back to sign in</Link>}>
+        <Alert
+          tone="error"
+          title="This link can't be used"
+          actions={<Link href="/forgot-password">Request a new link</Link>}
+        >
+          Reset links work once and expire after a while. Request a new one to continue.
+        </Alert>
+      </AuthLayout>
+    );
   }
 
-  if (!token) {
+  if (done) {
     return (
-      <Center className="min-h-screen bg-surface-1">
-        <Card className="w-full max-w-md" padding="r2">
-          <Stack gap="r3">
-            <Text variant="h4" as="h1" className="text-center">
-              Reset Password
-            </Text>
-            <Alert variant="error">
-              Invalid or expired reset link. Please request a new one.
-            </Alert>
-            <Text variant="body-2" color="secondary" className="text-center">
-              <Link to="/forgot-password" className="link">
-                Request new reset link
-              </Link>
-            </Text>
-          </Stack>
-        </Card>
-      </Center>
+      <AuthLayout title="Password updated">
+        <Alert tone="success" actions={<Link href="/login">Sign in with your new password</Link>}>
+          Your password has been changed.
+        </Alert>
+      </AuthLayout>
     );
   }
 
   return (
-    <Center className="min-h-screen bg-surface-1">
-      <Card className="w-full max-w-md" padding="r2">
+    <AuthLayout
+      title="Choose a new password"
+      description="Use at least 8 characters."
+      footer={<Link href="/login">Back to sign in</Link>}
+    >
+      <Form form={form}>
         <Stack gap="r3">
-          <Text variant="h4" as="h1" className="text-center">
-            Reset Password
-          </Text>
+          <FormAlert form={form} />
 
-          {success ? (
-            <Stack gap="r4">
-              <Alert variant="success">
-                Your password has been reset successfully.
-              </Alert>
-              <Text variant="body-2" color="secondary" className="text-center">
-                <Link to="/login" className="link">
-                  Sign in with your new password
-                </Link>
-              </Text>
-            </Stack>
-          ) : (
-            <>
-              <form onSubmit={(e) => void handleSubmit(e)}>
-                <Stack gap="r4">
-                  <Field>
-                    <Label htmlFor="newPassword">New Password</Label>
-                    <Input
-                      id="newPassword"
-                      type="password"
-                      autoComplete="new-password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      error={!!error}
-                      required
-                    />
-                  </Field>
+          <Field name="newPassword" required>
+            <Field.Label>New password</Field.Label>
+            <PasswordInput autoComplete="new-password" strength />
+            <Field.Error />
+          </Field>
 
-                  <Field>
-                    <Label htmlFor="confirmPassword">Confirm Password</Label>
-                    <Input
-                      id="confirmPassword"
-                      type="password"
-                      autoComplete="new-password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      error={!!error}
-                      required
-                    />
-                  </Field>
+          <Field name="confirmPassword" required>
+            <Field.Label>Confirm new password</Field.Label>
+            <PasswordInput autoComplete="new-password" />
+            <Field.Error />
+          </Field>
 
-                  <FieldError>{error}</FieldError>
-
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    size="md"
-                    className="w-full"
-                    disabled={loading}
-                  >
-                    {loading ? "Resetting..." : "Reset Password"}
-                  </Button>
-                </Stack>
-              </form>
-
-              <Text variant="body-2" color="secondary" className="text-center">
-                <Link to="/login" className="link">
-                  Back to Sign In
-                </Link>
-              </Text>
-            </>
-          )}
+          <FormActions>
+            <FormActions.Submit className="w-full">Update password</FormActions.Submit>
+          </FormActions>
         </Stack>
-      </Card>
-    </Center>
+      </Form>
+    </AuthLayout>
   );
 }
 

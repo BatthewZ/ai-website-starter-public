@@ -20,17 +20,21 @@ The project uses a [project references](https://www.typescriptlang.org/docs/hand
 
 The backend, frontend, and tests run in fundamentally different environments with different global types:
 
-| | `tsconfig.backend.json` | `tsconfig.web.json` | `tsconfig.test.json` |
-|---|---|---|---|
-| **Environment** | Cloudflare Workers | Browser | Vitest |
-| **Global types** | `@cloudflare/workers-types` | `DOM`, `DOM.Iterable`, `@types/react`, `@types/react-dom` | Vitest globals |
-| **Includes** | `src/api/**/*`, `src/db/**/*`, `src/shared/**/*` | `src/web/**/*`, `src/shared/**/*` | Test files |
-| **JSX** | Not configured | `react-jsx` | `react-jsx` |
+|                  | `tsconfig.backend.json`                          | `tsconfig.web.json`                                       | `tsconfig.test.json` |
+| ---------------- | ------------------------------------------------ | --------------------------------------------------------- | -------------------- |
+| **Environment**  | Cloudflare Workers                               | Browser                                                   | Vitest               |
+| **Global types** | `@cloudflare/workers-types`                      | `DOM`, `DOM.Iterable`, `@types/react`, `@types/react-dom` | Vitest globals       |
+| **Includes**     | `src/api/**/*`, `src/db/**/*`, `src/shared/**/*` | `src/web/**/*`, `src/shared/**/*`                         | Test files           |
+| **JSX**          | Not configured                                   | `react-jsx`                                               | `react-jsx`          |
 
 If these were combined into a single config:
 
 - Backend code would see `window`, `document`, and DOM APIs (which do not exist in Workers).
 - Frontend code would see `D1Database`, `KVNamespace`, and other Workers types (which do not exist in browsers).
+
+`tsconfig.web.json` excludes tests and `src/web/test-utils.tsx`; those are checked by `tsconfig.test.json`.
+
+**TypeScript 6 and CSS imports.** TypeScript 6 type-checks side-effect imports (`noUncheckedSideEffectImports` is on by default), so `import "./style/app.css"` in `main.tsx` would be an error without a declaration for `*.css`. `src/web/vite-env.d.ts` references `vite/client`, which declares CSS and asset imports and `import.meta.env`. Do not delete it.
 
 The `src/shared/` directory is included in **both** the backend and web configs. This is intentional -- shared code (Zod schemas, types, constants) must type-check in both environments.
 
@@ -49,6 +53,7 @@ bun run typecheck
 ```
 
 Each sub-script runs `tsc --noEmit` with the corresponding config:
+
 - `typecheck:backend` -- `tsc --noEmit -p tsconfig.backend.json`
 - `typecheck:web` -- `tsc --noEmit -p tsconfig.web.json`
 - `typecheck:tests` -- `tsc --noEmit -p tsconfig.test.json`

@@ -155,5 +155,5 @@ const Posts = lazy(() => import("./pages/Posts/Posts"));
       <Posts />
     </AuthGuard>
   }
-/>
+/>;
 ```

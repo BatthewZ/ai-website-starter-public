@@ -40,10 +40,7 @@ describe("deferWork", () => {
     // Allow the microtask (void promise) to settle
     await new Promise((r) => setTimeout(r, 10));
 
-    expect(errorSpy).toHaveBeenCalledWith(
-      "[defer] deferred work failed:",
-      expect.any(Error),
-    );
+    expect(errorSpy).toHaveBeenCalledWith("[defer] deferred work failed:", expect.any(Error));
     expect(errorSpy.mock.calls[0][1].message).toBe("boom");
 
     errorSpy.mockRestore();

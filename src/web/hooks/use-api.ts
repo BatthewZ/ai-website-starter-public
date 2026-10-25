@@ -13,9 +13,7 @@ interface UseApiResult<T> extends UseApiState<T> {
 }
 
 type Action<T> =
-  | { type: "fetch" }
-  | { type: "success"; data: T }
-  | { type: "error"; error: string };
+  { type: "fetch" } | { type: "success"; data: T } | { type: "error"; error: string };
 
 function reducer<T>(_state: UseApiState<T>, action: Action<T>): UseApiState<T> {
   switch (action.type) {

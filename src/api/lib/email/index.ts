@@ -9,7 +9,7 @@ export function createEmailService(env: {
   if (env.RESEND_API_KEY) {
     if (!env.EMAIL_FROM) {
       console.warn(
-        "[Email] RESEND_API_KEY is set but EMAIL_FROM is not configured. Emails will use 'noreply@example.com' which will likely be rejected by Resend.",
+        "[Email] RESEND_API_KEY is set but EMAIL_FROM is not configured. Emails will use 'noreply@example.com' which will likely be rejected by Resend."
       );
     }
     return new ResendEmailService(env.RESEND_API_KEY);

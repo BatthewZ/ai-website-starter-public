@@ -9,7 +9,11 @@ import { errorResponse } from "./lib/error-response";
 import { authSessionMiddleware } from "./middleware/auth";
 import { requestLogger } from "./middleware/logger";
 import { requestIdMiddleware } from "./middleware/request-id";
-import { securityHeadersMiddleware, withSpaSecurityHeaders } from "./middleware/security-headers";
+import {
+  securityHeadersMiddleware,
+  spaAssetRequest,
+  withSpaSecurityHeaders,
+} from "./middleware/security-headers";
 import routes from "./routes";
 
 const app = new Hono<AppEnv>();
@@ -67,8 +71,8 @@ app.all("/api/*", (c) => {
 });
 
 app.all("*", async (c) => {
-  const response = await c.env.ASSETS.fetch(c.req.raw);
-  return withSpaSecurityHeaders(response, c.req.path);
+  const response = await c.env.ASSETS.fetch(spaAssetRequest(c.req.raw, c.req.path));
+  return await withSpaSecurityHeaders(response, c.req.path);
 });
 
 export default app;

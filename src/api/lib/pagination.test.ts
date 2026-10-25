@@ -131,12 +131,22 @@ describe("computeCompoundNextCursor", () => {
   ];
 
   it("returns null when items.length < limit", () => {
-    const result = computeCompoundNextCursor(items, 5, (i) => i.createdAt, (i) => i.id);
+    const result = computeCompoundNextCursor(
+      items,
+      5,
+      (i) => i.createdAt,
+      (i) => i.id
+    );
     expect(result).toBeNull();
   });
 
   it("returns date|id format when items.length === limit", () => {
-    const result = computeCompoundNextCursor(items, 3, (i) => i.createdAt, (i) => i.id);
+    const result = computeCompoundNextCursor(
+      items,
+      3,
+      (i) => i.createdAt,
+      (i) => i.id
+    );
     expect(result).toBe("2025-03-03T00:00:00.000Z|c3");
   });
 });

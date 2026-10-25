@@ -1,15 +1,5 @@
-export type {
-  ForgotPasswordInput,
-  LoginInput,
-  RegisterInput,
-  ResetPasswordInput,
-} from "./auth";
-export {
-  forgotPasswordSchema,
-  loginSchema,
-  registerSchema,
-  resetPasswordSchema,
-} from "./auth";
+export type { ForgotPasswordInput, LoginInput, RegisterInput, ResetPasswordInput } from "./auth";
+export { forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema } from "./auth";
 export type { AvatarUploadInput, UploadInput } from "./upload";
 export {
   ALLOWED_IMAGE_TYPES,
@@ -18,5 +8,5 @@ export {
   MAX_UPLOAD_SIZE,
   uploadSchema,
 } from "./upload";
-export type { ChangePasswordInput, UpdateProfileInput } from "./user";
-export { changePasswordSchema, updateProfileSchema } from "./user";
+export type { ChangePasswordInput, DeleteAccountInput, UpdateProfileInput } from "./user";
+export { changePasswordSchema, deleteAccountSchema, updateProfileSchema } from "./user";

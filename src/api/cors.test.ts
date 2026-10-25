@@ -97,9 +97,7 @@ describe("CORS middleware", () => {
       headers: { Origin: "https://another.example.com" },
     });
 
-    expect(res.headers.get("Access-Control-Allow-Origin")).toBe(
-      "https://another.example.com"
-    );
+    expect(res.headers.get("Access-Control-Allow-Origin")).toBe("https://another.example.com");
   });
 
   it("works when TRUSTED_ORIGINS is undefined", async () => {

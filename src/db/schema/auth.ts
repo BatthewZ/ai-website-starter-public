@@ -32,6 +32,10 @@ export const account = sqliteTable("account", {
   providerId: text("providerId").notNull(),
   accessToken: text("accessToken"),
   refreshToken: text("refreshToken"),
+  // Required by Better Auth >= 1.7, which checks the Drizzle schema at startup
+  // and fails every request ("Drizzle schema mismatch") if it is missing.
+  // Holds the OIDC ID token for social / OIDC providers; null for email+password.
+  idToken: text("idToken"),
   accessTokenExpiresAt: integer("accessTokenExpiresAt", {
     mode: "timestamp",
   }),

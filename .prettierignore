@@ -3,3 +3,10 @@ node_modules/
 .wrangler/
 migrations/
 bun.lockb
+
+# Records, not sources: swarm run outputs and task files are historical agent
+# logs (reformatting would rewrite what was recorded), and .claude/skills are
+# vendored third-party skills, kept byte-for-byte as published.
+swarm/outputs/
+swarm/todo/
+.claude/

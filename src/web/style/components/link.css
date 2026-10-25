@@ -1,8 +1,0 @@
-.link {
-  @apply text-accent hover:underline active:opacity-55 hover:cursor-pointer;
-  font-weight: var(--Bold-Weight);
-}
-
-.link:disabled {
-  @apply hover:cursor-default;
-}
